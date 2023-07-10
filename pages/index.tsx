@@ -10,6 +10,7 @@ import ProductPerformance from "../src/components/dashboard/ProductPerformance";
 // import Blog from "../src/components/dashboard/Blog";
 import MonthlyEarnings from "../src/components/dashboard/MonthlyEarnings";
 import FullLayout from "../src/layouts/full/FullLayout";
+import Doctors from "../src/components/dashboard/ProductPerformance";
 
 export default function Home() {
   return (
@@ -33,7 +34,7 @@ export default function Home() {
             <RecentTransactions />
           </Grid> */}
           <Grid item xs={12} lg={8}>
-            <ProductPerformance />
+            <Doctors />
           </Grid>
           <Grid item xs={12}>
             {/* <Blog /> */}

@@ -9,7 +9,7 @@ type Props = {
 };
 
 const PageContainer = ({ title, description, children }: Props) => (
-  <HelmetProvider>
+  <HelmetProvider >
     <div>
       <Helmet>
         <title>{title}</title>

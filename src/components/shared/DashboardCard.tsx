@@ -26,8 +26,9 @@ const DashboardCard = ({
   middlecontent,
 }: Props) => {
   return (
+    <>
     <Card
-      sx={{ padding: 0, minWidth: 1000, minHeight: 600 }}
+      sx={{ marginTop: 5, minWidth: 1000, minHeight: 100 }}
       elevation={9}
       variant={undefined}
     >
@@ -70,6 +71,8 @@ const DashboardCard = ({
       {middlecontent}
       {footer}
     </Card>
+ 
+    </>
   );
 };
 

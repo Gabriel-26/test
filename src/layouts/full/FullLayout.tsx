@@ -50,7 +50,7 @@ const FullLayout: React.FC<Props> = ({ children }) => {
         {/* ------------------------------------------- */}
         <Container
           sx={{
-            paddingTop: "20px",
+            
             maxWidth: "1200px",
           }}
         >

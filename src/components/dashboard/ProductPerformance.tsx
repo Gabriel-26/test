@@ -89,7 +89,7 @@ const columns: GridColDef[] = [
   },
 ];
 
-const ProductPerformance = () => {
+const Doctors = () => {
   return (
     <DashboardCard title="Doctors">
       <Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
@@ -227,4 +227,4 @@ const ProductPerformance = () => {
   );
 };
 
-export default ProductPerformance;
+export default Doctors;
