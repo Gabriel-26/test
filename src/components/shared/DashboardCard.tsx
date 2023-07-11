@@ -1,6 +1,5 @@
 import React from "react";
 import { Card, CardContent, Typography, Stack, Box } from "@mui/material";
-import { Height } from "@mui/icons-material";
 
 type Props = {
   title?: string;
@@ -10,7 +9,7 @@ type Props = {
   cardheading?: string | JSX.Element;
   headtitle?: string | JSX.Element;
   headsubtitle?: string | JSX.Element;
-  children?: JSX.Element;
+  children?: JSX.Element | JSX.Element[];
   middlecontent?: string | JSX.Element;
 };
 
