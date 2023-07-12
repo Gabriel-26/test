@@ -1,5 +1,5 @@
 import type { ReactElement, ReactNode } from "react";
-
+import "/globals.css";
 import type { NextPage } from "next";
 import Head from "next/head";
 import { AppProps } from "next/app";

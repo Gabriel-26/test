@@ -62,7 +62,7 @@ const Menuitems = [
     id: uniqueId(),
     title: "EHR Form",
     icon: IconMoodHappy,
-    href: "/icons",
+    href: "/EHR",
   },
   {
     id: uniqueId(),
