@@ -109,43 +109,46 @@ export function EHRForm() {
   return (
     <>
     <PageContainer title="EHR Form" description="this is Icons">
-      <DashboardCard title="EHR Form">
+  <DashboardCard title="EHR Form">
     <form onSubmit={handleSubmit(onSubmit)}>
-      {/* <h1>EHR Form</h1> */}
+      {/* <h1 className="text-2xl">EHR Form</h1> */}
 
-      <div>
-        <label>
-          <span>Name</span>
+      <div className="my-4">
+        <label className="flex flex-col">
+          <span className="mb-2">Name</span>
           <input
             {...register("name")}
+            className="border border-gray-300 px-4 py-2 rounded-lg"
             placeholder="Name"
             type="text"
           />
         </label>
       </div>
 
-      <div>
-        <label>
-          <span>Age</span>
+      <div className="my-4">
+        <label className="flex flex-col">
+          <span className="mb-2">Age</span>
           <input
             {...register("age")}
+            className="border border-gray-300 px-4 py-2 rounded-lg"
             placeholder="Age"
             type="number"
           />
         </label>
       </div>
 
-      <div>
-        <p>Gender</p>
+      <div className="my-4">
+        <p className="mb-2">Gender</p>
         {[
           { label: "M", value: "male" },
           { label: "F", value: "Female" }
         ].map(({ label, value }, index) => {
           return (
-            <label key={value + index}>
-              <span>{label}</span>
+            <label key={value + index} className="flex items-center">
+              <span className="mr-2">{label}</span>
               <input
                 {...register("gender")}
+                className="border border-gray-300 rounded-lg"
                 aria-invalid={errors["gender"] ? "true" : "false"}
                 value={value}
                 type="radio"
@@ -156,238 +159,250 @@ export function EHRForm() {
         {errors["gender"] && <p role="alert">{errors["gender"]?.message}</p>}
       </div>
 
-      <div>
-        <label>
-          <span>Room</span>
+      <div className="my-4">
+        <label className="flex flex-col">
+          <span className="mb-2">Room</span>
           <input
             {...register("room")}
+            className="border border-gray-300 px-4 py-2 rounded-lg"
             placeholder="Room"
             type="text"
           />
         </label>
       </div>
 
-      <div>
-        <label>
-          <span>Chief Complaint</span>
+      <div className="my-4">
+        <label className="flex flex-col">
+          <span className="mb-2">Chief Complaint</span>
           <textarea
             {...register("chief-complaint")}
+            className="border border-gray-300 px-4 py-2 rounded-lg"
             placeholder="Input"
-             
           />
         </label>
       </div>
 
-      <div>
-        <label>
-          <span>Date</span>
+      <div className="my-4">
+        <label className="flex flex-col">
+          <span className="mb-2">Date</span>
           <input
             {...register("date")}
+            className="border border-gray-300 px-4 py-2 rounded-lg"
             type="date"
           />
         </label>
       </div>
 
-      <div>
-        <label>
-          <span>Start Time</span>
+      <div className="my-4">
+        <label className="flex flex-col">
+          <span className="mb-2">Start Time</span>
           <input
             {...register("start-time")}
+            className="border border-gray-300 px-4 py-2 rounded-lg"
             type="time"
           />
         </label>
       </div>
 
-      <div>
-        <label>
-          <span>Stop Time</span>
+      <div className="my-4">
+        <label className="flex flex-col">
+          <span className="mb-2">Stop Time</span>
           <input
             {...register("stop-time")}
+            className="border border-gray-300 px-4 py-2 rounded-lg"
             type="time"
           />
         </label>
       </div>
+      <div className="my-4">
+  <label className="flex flex-col">
+    <span className="mb-2">History of Present Illness</span>
+    <textarea
+      {...register("history-of-present-i-ilness")}
+      className="border border-gray-300 px-4 py-2 rounded-lg"
+    />
+  </label>
+</div>
 
-      <div>
-        <label>
-          <span>History of Present IIlness</span>
-          <textarea
-            {...register("history-of-present-i-ilness")}
-             
-          />
-        </label>
-      </div>
+<div className="my-4">
+  <label className="flex items-center">
+    <span className="mr-2">Patient is nonverbal</span>
+    <input
+      {...register("patient")}
+      className="form-checkbox h-5 w-5 text-indigo-600 rounded"
+      type="checkbox"
+    />
+  </label>
+</div>
 
-      <div>
-        <label>
-          <span>Patient is nonverbal</span>
-          <input
-            {...register("patient")}
-            type="checkbox"
-          />
-        </label>
-      </div>
+<div className="my-4">
+  <p className="mb-2">Hx obtained from</p>
+  {[
+    { label: "Parent", value: "Parent" },
+    { label: "Family", value: "Family" }
+  ].map(({ label, value }, index) => {
+    return (
+      <label key={value + index} className="flex items-center">
+        <span className="mr-2">{label}</span>
+        <input
+          {...register("hx-obtained-from")}
+          className="form-radio h-5 w-5 text-indigo-600 rounded"
+          aria-invalid={errors["hx-obtained-from"] ? "true" : "false"}
+          value={value}
+          type="radio"
+        />
+      </label>
+    );
+  })}
+  {errors["hx-obtained-from"] && <p role="alert">{errors["hx-obtained-from"]?.message}</p>}
+</div>
 
-      <div>
-        <p>Hx obtained from</p>
-        {[
-          { label: "Parent", value: "Parent" },
-          { label: "Family", value: "Family" }
-        ].map(({ label, value }, index) => {
-          return (
-            <label key={value + index}>
-              <span>{label}</span>
-              <input
-                {...register("hx-obtained-from")}
-                aria-invalid={errors["hx-obtained-from"] ? "true" : "false"}
-                value={value}
-                type="radio"
-              />
-            </label>
-          );
-        })}
-        {errors["hx-obtained-from"] && <p role="alert">{errors["hx-obtained-from"]?.message}</p>}
-      </div>
+<div className="my-4">
+  <label className="flex items-center">
+    <span className="mr-2">Med Records</span>
+    <input
+      {...register("med-records")}
+      className="form-checkbox h-5 w-5 text-indigo-600 rounded"
+      type="checkbox"
+    />
+  </label>
+</div>
 
-      <div>
-        <label>
-          <span>Med Records</span>
-          <input
-            {...register("med-records")}
-            type="checkbox"
-          />
-        </label>
-      </div>
+<div className="my-4">
+  <label className="flex items-center">
+    <span className="mr-2">Allergies</span>
+    <input
+      {...register("allergies")}
+      className="form-checkbox h-5 w-5 text-indigo-600 rounded"
+      type="checkbox"
+    />
+  </label>
+</div>
 
-      <div>
-        <label>
-          <span>Allergies</span>
-          <input
-            {...register("allergies")}
-            type="checkbox"
-          />
-        </label>
-      </div>
+<div className="my-4">
+  <label className="flex flex-col">
+    <span className="mb-2">Allergies</span>
+    <textarea
+      {...register("allergie")}
+      className="border border-gray-300 px-4 py-2 rounded-lg"
+    />
+  </label>
+</div>
 
-      <div>
-        <label>
-          <span>Allergies</span>
-          <textarea
-            {...register("allergie")}
-             
-          />
-        </label>
-      </div>
+<div className="my-4">
+  <p className="mb-2 font-medium">Past Medical History</p>
+  {[
+    { label: "Asthma", value: "Asthma" },
+    { label: "HTN", value: "HTN" },
+    { label: "Thyroid", value: "Thyroid" },
+    { label: "Diabetes", value: "Diabetes" },
+    { label: "Hepatic, Renal", value: "Hepatic" },
+    { label: "Tuberculosis", value: "Tuberculosis" },
+    { label: "Psychiatric", value: "Psychiatric" },
+    { label: "CAD, CHF", value: "CAD, CHF" },
+    { label: "Others", value: "Others" }
+  ].map(({ label, value }, index) => {
+    return (
+      <label key={value + index} className="flex items-center mt-2">
+        <input
+          {...register("medhistory")}
+          className="form-checkbox h-4 w-4 text-indigo-600 rounded mr-2"
+          aria-invalid={errors["medhistory"] ? "true" : "false"}
+          value={value}
+          type="checkbox"
+        />
+        <span>{label}</span>
+      </label>
+    );
+  })}
+  {errors["medhistory"] && <p role="alert">{errors["medhistory"]?.message}</p>}
+</div>
 
-      <div>
-        <p>Past Medical History</p>
-        {[
-          { label: "Asthma", value: "Asthma" },
-          { label: "HTN", value: "HTN" },
-          { label: "Thyroid", value: "Thyroid" },
-          { label: "Diabetes", value: "Diabetes" },
-          { label: "Hepatic,Renal", value: "Hepatic" },
-          { label: "Tuberculosis", value: "Tuberculosis" },
-          { label: "Psychiatric", value: "Psychiatric" },
-          { label: "CAD, CHF", value: "CAD, CHF" },
-          { label: "Others", value: "Others" }
-        ].map(({ label, value }, index) => {
-          return (
-            <label key={value + index}>
-              <span>{label}</span>
-              <input
-                {...register("medhistory")}
-                aria-invalid={errors["medhistory"] ? "true" : "false"}
-                value={value}
-                type="checkbox"
-              />
-            </label>
-          );
-        })}
-        {errors["medhistory"] && <p role="alert">{errors["medhistory"]?.message}</p>}
-      </div>
 
-      <div>
-        <label>
-          <span>Others</span>
-          <textarea
-            {...register("others")}
-             
-          />
-        </label>
-      </div>
 
-      <div>
-        <label>
-          <span>Previous Hospitalizations </span>
-          <textarea
-            {...register("previous-hospitalization")}
-             
-          />
-        </label>
-      </div>
+      <div className="my-4">
+  <label className="flex flex-col">
+    <span className="mb-2">Others</span>
+    <textarea
+      {...register("others")}
+      className="border border-gray-300 px-4 py-2 rounded-lg"
+    />
+  </label>
+</div>
 
-      <div>
-        <label>
-          <span>Maintenance Medications/Herbal Drug Use</span>
-          <textarea
-            {...register("maintenance-medications-herbal-drug-us")}
-             
-          />
-        </label>
-      </div>
+<div className="my-4">
+  <label className="flex flex-col">
+    <span className="mb-2">Previous Hospitalizations</span>
+    <textarea
+      {...register("previous-hospitalization")}
+      className="border border-gray-300 px-4 py-2 rounded-lg"
+    />
+  </label>
+</div>
 
-      <div>
-        <p>Malignancy</p>
-        {[
-          { label: "Yes", value: "Yes" },
-          { label: "No", value: "No" }
-        ].map(({ label, value }, index) => {
-          return (
-            <label key={value + index}>
-              <span>{label}</span>
-              <input
-                {...register("malignancy")}
-                aria-invalid={errors["malignancy"] ? "true" : "false"}
-                value={value}
-                type="radio"
-              />
-            </label>
-          );
-        })}
-        {errors["malignancy"] && <p role="alert">{errors["malignancy"]?.message}</p>}
-      </div>
+<div className="my-4">
+  <label className="flex flex-col">
+    <span className="mb-2">Maintenance Medications/Herbal Drug Use</span>
+    <textarea
+      {...register("maintenance-medications-herbal-drug-us")}
+      className="border border-gray-300 px-4 py-2 rounded-lg"
+    />
+  </label>
+</div>
 
-      <div>
-        <label>
-          <span>Malignancy </span>
-          <textarea
-            {...register("malignanc")}
-             
-          />
-        </label>
-      </div>
+<div className="my-4">
+  <p className="mb-2 font-medium">Malignancy</p>
+  {[
+    { label: "Yes", value: "Yes" },
+    { label: "No", value: "No" }
+  ].map(({ label, value }, index) => {
+    return (
+      <label key={value + index} className="flex items-center">
+        <input
+          {...register("malignancy")}
+          className="form-radio h-4 w-4 text-indigo-600 rounded mr-2"
+          aria-invalid={errors["malignancy"] ? "true" : "false"}
+          value={value}
+          type="radio"
+        />
+        <span>{label}</span>
+      </label>
+    );
+  })}
+  {errors["malignancy"] && <p role="alert">{errors["malignancy"]?.message}</p>}
+</div>
 
-      <div>
-        <p>Surgeries</p>
-        {[
-          { label: "Yes", value: "Yes" },
-          { label: "No", value: "No" }
-        ].map(({ label, value }, index) => {
-          return (
-            <label key={value + index}>
-              <span>{label}</span>
-              <input
-                {...register("surgeries")}
-                aria-invalid={errors["surgeries"] ? "true" : "false"}
-                value={value}
-                type="radio"
-              />
-            </label>
-          );
-        })}
-        {errors["surgeries"] && <p role="alert">{errors["surgeries"]?.message}</p>}
-      </div>
+<div className="my-4">
+  <label className="flex flex-col">
+    <span className="mb-2">Malignancy</span>
+    <textarea
+      {...register("malignancy")}
+      className="border border-gray-300 px-4 py-2 rounded-lg"
+    />
+  </label>
+</div>
+
+<div className="my-4">
+  <p className="mb-2 font-medium">Surgeries</p>
+  {[
+    { label: "Yes", value: "Yes" },
+    { label: "No", value: "No" }
+  ].map(({ label, value }, index) => {
+    return (
+      <label key={value + index} className="flex items-center">
+        <input
+          {...register("surgeries")}
+          className="form-radio h-4 w-4 text-indigo-600 rounded mr-2"
+          aria-invalid={errors["surgeries"] ? "true" : "false"}
+          value={value}
+          type="radio"
+        />
+        <span>{label}</span>
+      </label>
+    );
+  })}
+  {errors["surgeries"] && <p role="alert">{errors["surgeries"]?.message}</p>}
+</div>
 
       <div>
         <label>

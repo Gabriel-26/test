@@ -11,7 +11,7 @@ import {
   IconButton,
   TextField,
 } from "@mui/material";
-import DashboardCard from "../../../src/components/shared/DashboardCard";
+import DashboardCard from "../shared/DashboardCard";
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
 import DeleteIcon from "@mui/icons-material/Delete";
 import BorderColorIcon from "@mui/icons-material/BorderColor";
