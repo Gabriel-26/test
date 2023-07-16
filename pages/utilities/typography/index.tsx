@@ -12,92 +12,119 @@ import CardActions from "@mui/material/CardActions";
 import NavigationIcon from "@mui/icons-material/Navigation";
 import ShareIcon from "@mui/icons-material/Share";
 import CardContent from "@mui/material/CardContent";
+import ExpandableCard from "./ExpandableCard";
 
-interface ExpandMoreProps extends IconButtonProps {
-  expand: boolean;
-}
-
-const ExpandMore = styled((props: ExpandMoreProps) => {
-  const { expand, ...other } = props;
-  return <IconButton {...other} />;
-})(({ theme, expand }) => ({
-  transform: !expand ? "rotate(0deg)" : "rotate(180deg)",
-  marginLeft: "auto",
-  transition: theme.transitions.create("transform", {
-    duration: theme.transitions.duration.shortest,
-  }),
-}));
-
-const navigateButtons = Array.from(Array(23), (_, index) => index + 1);
+// const navigateButtons = Array.from(Array(23), (_, index) => index + 1);
 
 const Floors = () => {
-  const [expanded, setExpanded] = React.useState(false);
+  const annexAButtons = Array.from(Array(23), (_, index) => ({
+    label: ` 0${index + 0o1}`,
+  }));
+  const annexBButtons = Array.from(Array(14), (_, index) => ({
+    label: `${index + 101}`,
+  }));
+  const annexC1Buttons = Array.from(Array(16), (_, index) => ({
+    label: `Room ${index + 201}`,
+  }));
+  const annexC2Buttons = Array.from(Array(20), (_, index) => ({
+    label: `Room${index + 212}`,
+  }));
+  const annexC3Buttons = Array.from(Array(9), (_, index) => ({
+    label: `Room ${index + 232}`,
+  }));
+  const annexD1Buttons = Array.from(Array(23), (_, index) => ({
+    label: `Room 0${index + 0o1}`,
+  }));
 
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
-  };
+  annexAButtons[17].label = "18SR";
+  annexC2Buttons[0].label = "SR1";
+  annexC2Buttons[1].label = "SR2";
+  annexC2Buttons[2].label = "SR3";
+  annexC2Buttons[3].label = "SR4";
+  annexC2Buttons[4].label = "SR5";
+
+  annexC3Buttons[0].label = "32W(ABC)";
+  annexC3Buttons[3].label = "35W(ABC)";
+  annexC3Buttons[4].label = "36W(ABC)";
+  annexC3Buttons[8].label = "SR7";
+
   return (
     <div>
       <PageContainer title="Annex A" description="this is Sample page">
         <DashboardCard title="Annex A">
-          <Typography>This is a sample page</Typography>
-          <CardActions disableSpacing>
-            <ExpandMore
-              expand={expanded}
-              onClick={handleExpandClick}
-              aria-expanded={expanded}
-              aria-label="show more1"
-            >
-              <ExpandMoreIcon />
-            </ExpandMore>
-          </CardActions>
-          <Collapse in={expanded} timeout="auto" unmountOnExit>
-            <CardContent>
-              {navigateButtons.map((buttonIndex) => (
-                <Fab key={buttonIndex} variant="extended">
-                  <NavigationIcon sx={{ mr: 1 }} />
-                  Navigate {buttonIndex}
-                </Fab>
-              ))}
-            </CardContent>
-          </Collapse>
+          <ExpandableCard>
+            <Typography>This is a sample page</Typography>
+            {annexAButtons.map((buttonIndex) => (
+              <Fab key={buttonIndex.label} variant="extended">
+                Room {buttonIndex.label}
+              </Fab>
+            ))}
+          </ExpandableCard>
         </DashboardCard>
       </PageContainer>
 
       <PageContainer title="Annex B" description="this is Sample page">
         <DashboardCard title="Annex B">
-          <Typography>This is a sample page</Typography>
-          <CardActions disableSpacing>
-            <ExpandMore
-              expand={expanded}
-              onClick={handleExpandClick}
-              aria-expanded={expanded}
-              aria-label="show more"
-            >
-              <ExpandMoreIcon />
-            </ExpandMore>
-          </CardActions>
-          <Collapse in={expanded} timeout="auto" unmountOnExit>
-            <CardContent>
-              {navigateButtons.map((buttonIndex) => (
-                <Fab key={buttonIndex} variant="extended">
-                  <NavigationIcon sx={{ mr: 1 }} />
-                  Navigate {buttonIndex}
-                </Fab>
-              ))}
-            </CardContent>
-          </Collapse>
+          <ExpandableCard>
+            <Typography>This is a sample page</Typography>
+            {annexBButtons.map((buttonIndex) => (
+              <Fab key={buttonIndex.label} variant="extended">
+                Room {buttonIndex.label}
+              </Fab>
+            ))}
+          </ExpandableCard>
         </DashboardCard>
       </PageContainer>
 
-      <PageContainer title="Sample Page" description="this is Sample page">
+      <PageContainer title="Annex C1" description="this is Sample page">
         <DashboardCard title="Annex C1">
-          <Typography>This is a sample page</Typography>
+          <ExpandableCard>
+            <Typography>This is a sample page</Typography>
+            {annexC1Buttons.map((buttonIndex) => (
+              <Fab key={buttonIndex.label} variant="extended">
+                {buttonIndex.label}
+              </Fab>
+            ))}
+          </ExpandableCard>
         </DashboardCard>
       </PageContainer>
-      <PageContainer title="Sample Page" description="this is Sample page">
-        <DashboardCard title="Floor 2">
-          <Typography>This is a sample page</Typography>
+
+      <PageContainer title="Annex C2" description="this is Sample page">
+        <DashboardCard title="Annex C2">
+          <ExpandableCard>
+            <Typography>This is a sample page</Typography>
+            {annexC2Buttons.map((buttonIndex) => (
+              <Fab key={buttonIndex.label} variant="extended">
+                {buttonIndex.label}
+              </Fab>
+            ))}
+          </ExpandableCard>
+        </DashboardCard>
+      </PageContainer>
+
+      <PageContainer title="Annex C3" description="this is Sample page">
+        <DashboardCard title="Annex C3">
+          <ExpandableCard>
+            <Typography>This is a sample page</Typography>
+            {annexC3Buttons.map((buttonIndex) => (
+              <Fab key={buttonIndex.label} variant="extended">
+                {buttonIndex.label}
+              </Fab>
+            ))}
+          </ExpandableCard>
+        </DashboardCard>
+      </PageContainer>
+
+      <PageContainer title="Annex D1" description="this is Sample page">
+        <DashboardCard title="Annex D1">
+          <ExpandableCard>
+            <Typography>This is a sample page</Typography>
+            {annexD1Buttons.map((buttonIndex) => (
+              <Fab key={buttonIndex.label} variant="extended">
+                {buttonIndex.label}
+              </Fab>
+            ))}
+          </ExpandableCard>
         </DashboardCard>
       </PageContainer>
     </div>

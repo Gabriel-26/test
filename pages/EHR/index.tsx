@@ -96,7 +96,7 @@ export function EHRForm() {
   return (
     <>
       <PageContainer title="EHR Form" description="this is Icons">
-        <DashboardCard title="EHR Form">
+        <DashboardCard title="">
           <form onSubmit={handleSubmit(onSubmit)}>
             <h1 className="text-3xl">EHR Form</h1>
 

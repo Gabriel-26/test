@@ -20,7 +20,7 @@ const Shadow = () => {
   return (
     <PageContainer title="Shadow" description="this is Shadow">
       <DashboardCard title="Shadow">
-        <Grid container spacing={2}>
+        {/* <Grid container spacing={2}>
           {[lightTheme, darkTheme].map((theme, index) => (
             <Grid item xs={6} key={index}>
               <ThemeProvider theme={theme}>
@@ -42,7 +42,7 @@ const Shadow = () => {
               </ThemeProvider>
             </Grid>
           ))}
-        </Grid>
+        </Grid> */}
       </DashboardCard>
     </PageContainer>
   );

@@ -17,58 +17,24 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import BorderColorIcon from "@mui/icons-material/BorderColor";
 import { green, red } from "@mui/material/colors";
 import SearchIcon from "@mui/icons-material/Search";
-
-// const MyTableBody = () => {
-//   const [products, setProducts] = useState([]);
-
-//   useEffect(() => {
-//     // Fetch data from Laravel API endpoint
-//     fetch("https://your-laravel-api-endpoint.com/products")
-//       .then((response) => response.json())
-//       .then((data) => setProducts(data))
-//       .catch((error) => console.log(error));
-//   }, []);
-
-const products = [
-  {
-    id: "1",
-    name: "Sunil Joshi",
-    post: "Web Designer",
-    pname: "Elite Admin",
-    priority: "Low",
-    pbg: "primary.main",
-    budget: "3.9",
-  },
-  {
-    id: "2",
-    name: "Andrew McDownland",
-    post: "Project Manager",
-    pname: "Real Homes WP Theme",
-    priority: "Medium",
-    pbg: "secondary.main",
-    budget: "24.5",
-  },
-  {
-    id: "3",
-    name: "Christopher Jamil",
-    post: "Project Manager",
-    pname: "MedicalPro WP Theme",
-    priority: "High",
-    pbg: "error.main",
-    budget: "12.8",
-  },
-  {
-    id: "4",
-    name: "Nirav Joshi",
-    post: "Frontend Engineer",
-    pname: "Hosting Press HTML",
-    priority: "Critical",
-    pbg: "success.main",
-    budget: "2.4",
-  },
-];
+import axios from "axios";
 
 const Doctors = () => {
+  const [doctors, setDoctors] = useState([]);
+
+  useEffect(() => {
+    fetchDoctors();
+  }, []);
+
+  const fetchDoctors = async () => {
+    try {
+      const response = await axios.get("http://127.0.0.1:8000/api/residents");
+      setDoctors(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <DashboardCard title="Doctors">
       <Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
@@ -120,8 +86,8 @@ const Doctors = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {products.map((product) => (
-              <TableRow key={product.name}>
+            {doctors.map((doctor) => (
+              <TableRow key={doctor.resident_id}>
                 <TableCell>
                   <Typography
                     sx={{
@@ -129,7 +95,7 @@ const Doctors = () => {
                       fontWeight: "500",
                     }}
                   >
-                    {product.id}
+                    {doctor.resident_id}
                   </Typography>
                 </TableCell>
                 <TableCell>
@@ -141,7 +107,7 @@ const Doctors = () => {
                   >
                     <Box>
                       <Typography variant="subtitle2" fontWeight={600}>
-                        {product.name}
+                        {doctor.resident_userName}
                       </Typography>
                       <Typography
                         color="textSecondary"
@@ -149,7 +115,7 @@ const Doctors = () => {
                           fontSize: "13px",
                         }}
                       >
-                        {product.name}
+                        {doctor.resident_fName} {doctor.resident_lName}
                       </Typography>
                     </Box>
                   </Box>
@@ -160,22 +126,22 @@ const Doctors = () => {
                     variant="subtitle2"
                     fontWeight={400}
                   >
-                    {product.name}
+                    {doctor.resident_mName}
                   </Typography>
                 </TableCell>
                 <TableCell>
                   <Chip
                     sx={{
                       px: "4px",
-                      backgroundColor: product.pbg,
+                      backgroundColor: "slateblue",
                       color: "#fff",
                     }}
                     size="small"
-                    label={product.priority}
+                    label={doctor.department_id}
                   ></Chip>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography variant="h6">${product.budget}k</Typography>
+                  <Typography variant="h6">${doctor.budget}k</Typography>
                 </TableCell>
                 <TableCell align="right">
                   <IconButton>
