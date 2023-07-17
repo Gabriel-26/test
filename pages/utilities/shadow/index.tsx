@@ -4,6 +4,8 @@ import PageContainer from "../../../src/components/container/PageContainer";
 import DashboardCard from "../../../src/components/shared/DashboardCard";
 import { createTheme, ThemeProvider, styled } from "@mui/material/styles";
 import FullLayout from "../../../src/layouts/full/FullLayout";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs"
+
 
 const Item = styled(Paper)(({ theme }) => ({
   ...theme.typography.body1,
@@ -20,29 +22,15 @@ const Shadow = () => {
   return (
     <PageContainer title="Shadow" description="this is Shadow">
       <DashboardCard title="Shadow">
-        {/* <Grid container spacing={2}>
-          {[lightTheme, darkTheme].map((theme, index) => (
-            <Grid item xs={6} key={index}>
-              <ThemeProvider theme={theme}>
-                <Box
-                  sx={{
-                    p: 2,
-                    bgcolor: "background.default",
-                    display: "grid",
-                    gridTemplateColumns: { md: "1fr 1fr" },
-                    gap: 2,
-                  }}
-                >
-                  {[0, 1, 2, 3, 4, 6, 8, 12, 16, 24].map((elevation) => (
-                    <Item key={elevation} elevation={elevation}>
-                      {`elevation=${elevation}`}
-                    </Item>
-                  ))}
-                </Box>
-              </ThemeProvider>
-            </Grid>
-          ))}
-        </Grid> */}
+      <Tabs defaultValue="account" className="w-[400px]">
+  <TabsList>
+    <TabsTrigger value="account">Patient Info</TabsTrigger>
+    <TabsTrigger value="password">Patient History</TabsTrigger>
+  </TabsList>
+  <TabsContent value="account">Make changes to your account here.</TabsContent>
+  <TabsContent value="password">Change your password here.</TabsContent>
+</Tabs>
+
       </DashboardCard>
     </PageContainer>
   );

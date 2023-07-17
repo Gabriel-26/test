@@ -10,6 +10,8 @@ import {
   Chip,
   IconButton,
   TextField,
+  Collapse,
+  Button,
 } from "@mui/material";
 import DashboardCard from "../shared/DashboardCard";
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
@@ -21,6 +23,16 @@ import axios from "axios";
 
 const Doctors = () => {
   const [doctors, setDoctors] = useState([]);
+  const [isAddingDoctor, setIsAddingDoctor] = useState(false);
+  const [newDoctor, setNewDoctor] = useState({
+    resident_id: "",
+    resident_userName: "",
+    resident_fName: "",
+    resident_lName: "",
+    resident_mName: "",
+    department_id: "",
+
+  });
 
   useEffect(() => {
     fetchDoctors();
@@ -35,9 +47,125 @@ const Doctors = () => {
     }
   };
 
+  const handleAddDoctor = () => {
+    setIsAddingDoctor(!isAddingDoctor);
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewDoctor((prevDoctor) => ({
+      ...prevDoctor,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async () => {
+    try {
+
+      // Send a POST request to the API endpoint with the new doctor data
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/residents",
+        newDoctor
+      );
+  
+      // Handle the response as needed
+      console.log("New doctor added successfully:", response.data);
+  
+      // Fetch the updated list of doctors
+      fetchDoctors();
+  
+      // Clear the form and close the collapsible form section
+      setNewDoctor({
+        resident_id: "",
+        resident_userName: "",
+        resident_fName: "",
+        resident_lName: "",
+        resident_mName: "",
+        department_id: "",
+      });
+      setIsAddingDoctor(false);
+    } catch (error) {
+      console.log("Error adding new doctor:", error);
+      // Handle any error that occurred during the request
+    }
+  };
+  
+
   return (
     <DashboardCard title="Doctors">
       <Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
+        <Button
+          variant="outlined"
+          color="primary"
+          onClick={handleAddDoctor}
+          sx={{ marginBottom: "10px" }}
+        >
+          Add Doctor
+        </Button>
+        <Collapse in={isAddingDoctor}>
+          <Box sx={{ marginBottom: "10px" }}>
+            <TextField  
+              label="Resident ID"
+              name="resident_id"
+              value={newDoctor.resident_id}
+              onChange={handleInputChange}
+              fullWidth
+              sx={{ marginBottom: "10px" }}
+            />
+            <TextField
+              label="Username"
+              name="resident_userName"
+              value={newDoctor.resident_userName}
+              onChange={handleInputChange}
+              fullWidth
+              sx={{ marginBottom: "10px" }}
+            />
+            <TextField
+              label="First Name"
+              name="resident_fName"
+              value={newDoctor.resident_fName}
+              onChange={handleInputChange}
+              fullWidth
+              sx={{ marginBottom: "10px" }}
+            />
+            <TextField
+              label="Last Name"
+              name="resident_lName"
+              value={newDoctor.resident_lName}
+              onChange={handleInputChange}
+              fullWidth
+              sx={{ marginBottom: "10px" }}
+            />
+            <TextField
+              label="Middle Name"
+              name="resident_mName"
+              value={newDoctor.resident_mName}
+              onChange={handleInputChange}
+              fullWidth
+              sx={{ marginBottom: "10px" }}
+            />
+            <TextField
+              label="Department ID"
+              name="department_id"
+              value={newDoctor.department_id}
+              onChange={handleInputChange}
+              fullWidth
+              sx={{ marginBottom: "10px" }}
+            />
+            
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSubmit}
+            >
+              Add
+            </Button>
+          </Box>
+        </Collapse>
+        {/* Rest of the code */}
+  
+  
+    
         <TextField
           label="Search"
           InputProps={{
@@ -60,25 +188,30 @@ const Doctors = () => {
               </TableCell>
               <TableCell>
                 <Typography variant="subtitle2" fontWeight={600}>
-                  Assigned
+                  Username
                 </Typography>
               </TableCell>
               <TableCell>
                 <Typography variant="subtitle2" fontWeight={600}>
-                  Name
+                 First Name
                 </Typography>
               </TableCell>
               <TableCell>
                 <Typography variant="subtitle2" fontWeight={600}>
-                  Priority
+                  Last Name
                 </Typography>
               </TableCell>
-              <TableCell align="right">
+              <TableCell>
                 <Typography variant="subtitle2" fontWeight={600}>
-                  Budget
+                  Middle Name
                 </Typography>
               </TableCell>
-              <TableCell align="right">
+              <TableCell>
+                <Typography variant="subtitle2" fontWeight={600}>
+                  Department ID
+                </Typography>
+              </TableCell>
+              <TableCell>
                 <Typography variant="subtitle2" fontWeight={600}>
                   Actions
                 </Typography>
@@ -115,7 +248,7 @@ const Doctors = () => {
                           fontSize: "13px",
                         }}
                       >
-                        {doctor.resident_fName} {doctor.resident_lName}
+                
                       </Typography>
                     </Box>
                   </Box>
@@ -126,24 +259,25 @@ const Doctors = () => {
                     variant="subtitle2"
                     fontWeight={400}
                   >
-                    {doctor.resident_mName}
+                    {doctor.resident_fName}
                   </Typography>
                 </TableCell>
+                <TableCell >
+                 <Typography color="textSecondary"
+                    variant="subtitle2"
+                    fontWeight={400}>
+                  {doctor.resident_lName}
+                </Typography>  
+
+            
+                </TableCell>
                 <TableCell>
-                  <Chip
-                    sx={{
-                      px: "4px",
-                      backgroundColor: "slateblue",
-                      color: "#fff",
-                    }}
-                    size="small"
-                    label={doctor.department_id}
-                  ></Chip>
+                  <Typography >{doctor.resident_mName}</Typography>
                 </TableCell>
-                <TableCell align="right">
-                  <Typography variant="h6">${doctor.budget}k</Typography>
+                <TableCell>
+                  <Typography >{doctor.department_id}</Typography>
                 </TableCell>
-                <TableCell align="right">
+                <TableCell>
                   <IconButton>
                     <DeleteIcon sx={{ color: green[400] }} />
                   </IconButton>
