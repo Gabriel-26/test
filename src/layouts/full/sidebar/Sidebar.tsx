@@ -76,7 +76,7 @@ const Sidebar = ({
       PaperProps={{
         sx: {
           width: sidebarWidth,
-          boxShadow: (theme) => theme.shadows[8],
+          boxShadow: (theme: { shadows: any[] }) => theme.shadows[8],
         },
       }}
     >

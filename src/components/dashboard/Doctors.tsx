@@ -31,7 +31,6 @@ const Doctors = () => {
     resident_lName: "",
     resident_mName: "",
     department_id: "",
-
   });
 
   useEffect(() => {
@@ -51,7 +50,7 @@ const Doctors = () => {
     setIsAddingDoctor(!isAddingDoctor);
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
     setNewDoctor((prevDoctor) => ({
       ...prevDoctor,
@@ -61,19 +60,18 @@ const Doctors = () => {
 
   const handleSubmit = async () => {
     try {
-
       // Send a POST request to the API endpoint with the new doctor data
       const response = await axios.post(
         "http://127.0.0.1:8000/api/residents",
         newDoctor
       );
-  
+
       // Handle the response as needed
       console.log("New doctor added successfully:", response.data);
-  
+
       // Fetch the updated list of doctors
       fetchDoctors();
-  
+
       // Clear the form and close the collapsible form section
       setNewDoctor({
         resident_id: "",
@@ -89,7 +87,6 @@ const Doctors = () => {
       // Handle any error that occurred during the request
     }
   };
-  
 
   return (
     <DashboardCard title="Doctors">
@@ -104,7 +101,7 @@ const Doctors = () => {
         </Button>
         <Collapse in={isAddingDoctor}>
           <Box sx={{ marginBottom: "10px" }}>
-            <TextField  
+            <TextField
               label="Resident ID"
               name="resident_id"
               value={newDoctor.resident_id}
@@ -152,20 +149,14 @@ const Doctors = () => {
               fullWidth
               sx={{ marginBottom: "10px" }}
             />
-            
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleSubmit}
-            >
+
+            <Button variant="contained" color="primary" onClick={handleSubmit}>
               Add
             </Button>
           </Box>
         </Collapse>
         {/* Rest of the code */}
-  
-  
-    
+
         <TextField
           label="Search"
           InputProps={{
@@ -193,7 +184,7 @@ const Doctors = () => {
               </TableCell>
               <TableCell>
                 <Typography variant="subtitle2" fontWeight={600}>
-                 First Name
+                  First Name
                 </Typography>
               </TableCell>
               <TableCell>
@@ -247,9 +238,7 @@ const Doctors = () => {
                         sx={{
                           fontSize: "13px",
                         }}
-                      >
-                
-                      </Typography>
+                      ></Typography>
                     </Box>
                   </Box>
                 </TableCell>
@@ -262,27 +251,27 @@ const Doctors = () => {
                     {doctor.resident_fName}
                   </Typography>
                 </TableCell>
-                <TableCell >
-                 <Typography color="textSecondary"
+                <TableCell>
+                  <Typography
+                    color="textSecondary"
                     variant="subtitle2"
-                    fontWeight={400}>
-                  {doctor.resident_lName}
-                </Typography>  
-
-            
+                    fontWeight={400}
+                  >
+                    {doctor.resident_lName}
+                  </Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography >{doctor.resident_mName}</Typography>
+                  <Typography>{doctor.resident_mName}</Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography >{doctor.department_id}</Typography>
+                  <Typography>{doctor.department_id}</Typography>
                 </TableCell>
                 <TableCell>
-                  <IconButton>
+                  {/* <IconButton>
                     <DeleteIcon sx={{ color: green[400] }} />
-                  </IconButton>
-                  <IconButton sx={{ marginX: -1 }}>
-                    <BorderColorIcon sx={{ color: red[400] }} />
+                  </IconButton> */}
+                  <IconButton sx={{ marginX: 1 }}>
+                    <BorderColorIcon sx={{ color: green[400] }} />
                   </IconButton>
                 </TableCell>
               </TableRow>
