@@ -19,7 +19,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import BorderColorIcon from "@mui/icons-material/BorderColor";
 import { green, red } from "@mui/material/colors";
 import SearchIcon from "@mui/icons-material/Search";
-import axios from "axios";
+import axios from '../utils/axiosInstance';
 
 const Doctors = () => {
   const [doctors, setDoctors] = useState([]);
@@ -30,6 +30,8 @@ const Doctors = () => {
     resident_fName: "",
     resident_lName: "",
     resident_mName: "",
+    resident_password:"",
+    isChief:"",
     department_id: "",
   });
 
@@ -39,7 +41,7 @@ const Doctors = () => {
 
   const fetchDoctors = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/residents");
+      const response = await axios.get("/residents");
       setDoctors(response.data);
     } catch (error) {
       console.log(error);
@@ -62,8 +64,9 @@ const Doctors = () => {
     try {
       // Send a POST request to the API endpoint with the new doctor data
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/residents",
-        newDoctor
+        "/residents",  
+        newDoctor 
+        
       );
 
       // Handle the response as needed
@@ -79,6 +82,8 @@ const Doctors = () => {
         resident_fName: "",
         resident_lName: "",
         resident_mName: "",
+        resident_password:"",
+        isChief:"",
         department_id: "",
       });
       setIsAddingDoctor(false);
@@ -88,7 +93,7 @@ const Doctors = () => {
     }
   };
 
-  return (
+  return (  
     <DashboardCard title="Doctors">
       <Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
         <Button
@@ -141,7 +146,24 @@ const Doctors = () => {
               fullWidth
               sx={{ marginBottom: "10px" }}
             />
+             <TextField
+              label="Password"
+              name="resident_password"
+              value={newDoctor.resident_password}
+              onChange={handleInputChange}
+              fullWidth
+              sx={{ marginBottom: "10px" }}
+            />
+                 <TextField
+              label="Chief"
+              name="isChief"
+              value={newDoctor.isChief}
+              onChange={handleInputChange}
+              fullWidth
+              sx={{ marginBottom: "10px" }}
+            />
             <TextField
+            
               label="Department ID"
               name="department_id"
               value={newDoctor.department_id}
