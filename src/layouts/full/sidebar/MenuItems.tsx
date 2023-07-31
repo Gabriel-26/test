@@ -15,7 +15,6 @@ const Menuitems = [
     navlabel: true,
     subheader: "Home",
   },
-
   {
     id: uniqueId(),
     title: "Dashboard",
@@ -24,19 +23,24 @@ const Menuitems = [
   },
   {
     navlabel: true,
-    subheader: "Utilities",
+    subheader: "Doctors",
   },
   {
     id: uniqueId(),
-    title: "Floors",
-    icon: IconTypography,
-    href: "/utilities/typography",
+    title: "Residents",
+    icon: IconLogin,
+    href: "/doctors/residents",
   },
   {
     id: uniqueId(),
-    title: "Shadow",
-    icon: IconCopy,
-    href: "/utilities/shadow",
+    title: "Chief Resident",
+    icon: IconLogin,
+    href: "/doctors/chiefresident",
+  },
+  {
+    navlabel: true,
+    type: "expandable-card", // Add the type property for the expandable-card
+    children: [],
   },
   {
     navlabel: true,
@@ -48,12 +52,12 @@ const Menuitems = [
     icon: IconLogin,
     href: "/authentication/login",
   },
-  // {
-  //   id: uniqueId(),
-  //   title: "Register",
-  //   icon: IconUserPlus,
-  //   href: "/authentication/register",
-  // },
+  {
+    id: uniqueId(),
+    title: "Room/PatientView",
+    icon: IconLogin,
+    href: "/utilities/patientroom",
+  },
   {
     navlabel: true,
     subheader: "Extra",

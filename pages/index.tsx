@@ -3,10 +3,10 @@ import { Grid, Box } from "@mui/material";
 import PageContainer from "../src/components/container/PageContainer";
 
 // components
-import SalesOverview from "../src/components/dashboard/SalesOverview";
+import FloorsList from "../src/components/dashboard/FloorsList";
 import YearlyBreakup from "../src/components/dashboard/YearlyBreakup";
 import RecentTransactions from "../src/components/dashboard/RecentTransactions";
-import Doctors from "../src/components/dashboard/Doctors";
+import Doctors from "./doctors/residents";
 // import Blog from "../src/components/dashboard/Blog";
 import MonthlyEarnings from "../src/components/dashboard/MonthlyEarnings";
 import FullLayout from "../src/layouts/full/FullLayout";
@@ -16,9 +16,9 @@ export default function Home() {
     <PageContainer title="Dashboard" description="this is Dashboard">
       <Box>
         <Grid container spacing={3}>
-          {/* <Grid item xs={12} lg={8}>
-            <SalesOverview />
-          </Grid> */}
+          <Grid item xs={4} lg={2}>
+            <FloorsList />
+          </Grid>
           {/* <Grid item xs={12} lg={4}>
             <Grid container spacing={3}>
               <Grid item xs={12}>
@@ -35,9 +35,9 @@ export default function Home() {
           <Grid item xs={12} lg={8}>
             <Doctors />
           </Grid>
-          <Grid item xs={12}>
-            {/* <Blog /> */}
-          </Grid>
+          {/* <Grid item xs={12}>
+            <Blog />
+          </Grid> */}
         </Grid>
       </Box>
     </PageContainer>

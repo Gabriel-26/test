@@ -1,5 +1,12 @@
 import React from "react";
-import { Card, CardContent, Typography, Stack, Box } from "@mui/material";
+import {
+  Card,
+  CardContent,
+  Typography,
+  Stack,
+  Box,
+  useMediaQuery,
+} from "@mui/material";
 
 type Props = {
   title?: string;
@@ -24,53 +31,57 @@ const DashboardCard = ({
   headsubtitle,
   middlecontent,
 }: Props) => {
+  const isLargeScreen = useMediaQuery(
+    (theme: { breakpoints: { up: (arg0: string) => string } }) =>
+      theme.breakpoints.up("md")
+  );
+  const cardWidth = isLargeScreen ? 1000 : 600;
   return (
     <>
-    <Card
-      sx={{ marginTop: 5, minWidth: 1000, minHeight: 100 }}
-      elevation={9}
-      variant={undefined}
-    >
-      {cardheading ? (
-        <CardContent>
-          <Typography variant="h5">{headtitle}</Typography>
-          <Typography variant="subtitle2" color="textSecondary">
-            {headsubtitle}
-          </Typography>
-        </CardContent>
-      ) : (
-        <CardContent sx={{ p: "30px" }}>
-          {title ? (
-            <Stack
-              direction="row"
-              spacing={2}
-              justifyContent="space-between"
-              alignItems={"center"}
-              mb={3}
-            >
-              <Box>
-                {title ? <Typography variant="h5">{title}</Typography> : ""}
+      <Card
+        sx={{ marginTop: 5, minWidth: cardWidth, minHeight: 100 }}
+        elevation={9}
+        variant={undefined}
+      >
+        {cardheading ? (
+          <CardContent>
+            <Typography variant="h5">{headtitle}</Typography>
+            <Typography variant="subtitle2" color="textSecondary">
+              {headsubtitle}
+            </Typography>
+          </CardContent>
+        ) : (
+          <CardContent sx={{ p: "30px" }}>
+            {title ? (
+              <Stack
+                direction="row"
+                spacing={2}
+                justifyContent="space-between"
+                alignItems={"center"}
+                mb={3}
+              >
+                <Box>
+                  {title ? <Typography variant="h5">{title}</Typography> : ""}
 
-                {subtitle ? (
-                  <Typography variant="subtitle2" color="textSecondary">
-                    {subtitle}
-                  </Typography>
-                ) : (
-                  ""
-                )}
-              </Box>
-              {action}
-            </Stack>
-          ) : null}
+                  {subtitle ? (
+                    <Typography variant="subtitle2" color="textSecondary">
+                      {subtitle}
+                    </Typography>
+                  ) : (
+                    ""
+                  )}
+                </Box>
+                {action}
+              </Stack>
+            ) : null}
 
-          {children}
-        </CardContent>
-      )}
+            {children}
+          </CardContent>
+        )}
 
-      {middlecontent}
-      {footer}
-    </Card>
- 
+        {middlecontent}
+        {footer}
+      </Card>
     </>
   );
 };

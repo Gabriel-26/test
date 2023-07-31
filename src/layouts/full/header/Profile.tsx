@@ -10,8 +10,8 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
-
 import { IconListCheck, IconMail, IconUser } from "@tabler/icons-react";
+import useAuth from "../../../components/utils/useAuth"; // Correct path to useAuth
 
 const Profile = () => {
   const [anchorEl2, setAnchorEl2] = useState(null);
@@ -20,6 +20,12 @@ const Profile = () => {
   };
   const handleClose2 = () => {
     setAnchorEl2(null);
+  };
+
+  const { logout } = useAuth(); // Use the logout function from useAuth
+
+  const handleLogout = async () => {
+    await logout(); // Call the logout function to log the user out
   };
 
   return (
@@ -83,11 +89,10 @@ const Profile = () => {
         </MenuItem> */}
         <Box mt={1} py={1} px={2}>
           <Button
-            href="/authentication/login"
             variant="outlined"
             color="primary"
-            component={Link}
             fullWidth
+            onClick={handleLogout}
           >
             Logout
           </Button>

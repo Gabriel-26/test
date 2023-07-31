@@ -1,10 +1,19 @@
 import React, { useState } from "react";
-import { Box, Typography, FormGroup, FormControlLabel, Button, Stack, Checkbox } from "@mui/material";
+import {
+  Box,
+  Typography,
+  FormGroup,
+  FormControlLabel,
+  Button,
+  Stack,
+  Checkbox,
+} from "@mui/material";
 import Link from "next/link";
-import axios from "axios";
 import CustomTextField from "../../../src/components/forms/theme-elements/CustomTextField";
 import { JSX } from "@emotion/react/jsx-runtime";
 import { useRouter } from "next/router";
+import axios from "../../../src/components/utils/axiosInstance";
+import useAuth from "../../../src/components/utils/useAuth"; // Correct path to useAuth
 
 interface loginType {
   title?: string;
@@ -12,41 +21,39 @@ interface loginType {
   subtext?: JSX.Element | JSX.Element[];
 }
 
-const AuthLogin = ({ title, subtitle, subtext }: loginType) => {  
-  const [resident_userName, setUsername] = useState("");
-  const [resident_password, setPassword] = useState("");
+const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
+  const [resident_userName, setResidentUserName] = useState("");
+  const [resident_password, setResidentPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
-  const router = useRouter();
+
+  const { login } = useAuth();
 
   const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUsername(event.target.value);
+    setResidentUserName(event.target.value);
   };
 
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(event.target.value);
+    setResidentPassword(event.target.value);
   };
 
-  const handleRememberMeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleRememberMeChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setRememberMe(event.target.checked);
   };
 
   const handleSignIn = async () => {
     try {
-      const response = await axios.post("http://127.0.0.1:8000/api/loginResident", {
+      await login({
         resident_userName,
         resident_password,
       });
 
-      // Store the authentication token in local storage or cookies
-      const authToken = response.data.token;
-      // Example of storing token in local storage
-      localStorage.setItem("authToken", authToken);
-
-      // Redirect to the desired page after successful authentication
-      router.push("/");
+      const token = sessionStorage.getItem("authToken");
+      console.log("Token:", token);
     } catch (error) {
-      console.error(error);
-      // Handle authentication error
+      // Handle any login errors here, if needed
+      console.error("Error occurred during login:", error);
     }
   };
 
@@ -57,7 +64,6 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
           {title}
         </Typography>
       ) : null}
-
       {subtext}
 
       <Stack>
@@ -66,7 +72,7 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
             variant="subtitle1"
             fontWeight={600}
             component="label"
-            htmlFor="username"
+            htmlFor="resident_userName"
             mb="5px"
           >
             Username
@@ -74,6 +80,7 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
           <CustomTextField
             variant="outlined"
             fullWidth
+            name="resident_userName"
             value={resident_userName}
             onChange={handleUsernameChange}
           />
@@ -83,7 +90,7 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
             variant="subtitle1"
             fontWeight={600}
             component="label"
-            htmlFor="password"
+            htmlFor="resident_password"
             mb="5px"
           >
             Password
@@ -92,6 +99,7 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
             type="password"
             variant="outlined"
             fullWidth
+            name="resident_password"
             value={resident_password}
             onChange={handlePasswordChange}
           />

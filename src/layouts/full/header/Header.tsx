@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   AppBar,
@@ -10,8 +10,7 @@ import {
   Button,
 } from "@mui/material";
 import PropTypes from "prop-types";
-
-// components
+import axios from "../../../components/utils/axiosInstance";
 import Profile from "./Profile";
 import { IconBellRinging, IconMenu } from "@tabler/icons-react";
 
@@ -20,8 +19,23 @@ interface ItemType {
 }
 
 const Header = ({ toggleMobileSidebar }: ItemType) => {
-  // const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
-  // const lgDown = useMediaQuery((theme) => theme.breakpoints.down('lg'));
+  const [loggedInUserName, setLoggedInUserName] = useState("");
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  const fetchUserData = async () => {
+    try {
+      // Fetch user data from your Laravel API
+      const response = await axios.get("/residents"); // Replace '/api/user' with your API endpoint for getting user data
+      // Assuming the API response contains a property 'resident_userName'
+      const userName = response.data.resident_userName;
+      setLoggedInUserName(userName);
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
 
   const AppBarStyled = styled(AppBar)(({ theme }) => ({
     boxShadow: "none",
@@ -67,16 +81,8 @@ const Header = ({ toggleMobileSidebar }: ItemType) => {
         </IconButton>
         <Box flexGrow={1} />
         <Stack spacing={1} direction="row" alignItems="center">
-          {/* <Button
-            variant="contained"
-            disableElevation
-            color="primary"
-            target="_blank"
-            href="https://adminmart.com/product/modernize-next-js-admin-dashboard"
-          >
-            Upgrade to Pro
-          </Button> */}
-          <Profile />
+          <Profile loggedInUserName={loggedInUserName} />{" "}
+          {/* Pass the username as prop */}
         </Stack>
       </ToolbarStyled>
     </AppBarStyled>
