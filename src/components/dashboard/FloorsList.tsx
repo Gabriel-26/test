@@ -12,12 +12,15 @@ import {
 } from "@mui/material";
 import axiosInstance from "../utils/axiosInstance";
 import DashboardCard from "../shared/DashboardCard";
+import useFloorStore from "../utils/zustandStore"; // Import the Zustand store
 
 const FloorList = () => {
-  const [floors, setFloors] = useState([]);
   const [floorName, setFloorName] = useState("");
   const [floorID, setFloorID] = useState("");
   const [showAddForm, setShowAddForm] = useState(false);
+
+  const floors = useFloorStore((state) => state.floors);
+  const setFloors = useFloorStore((state) => state.setFloors);
 
   const getFloors = async () => {
     try {
@@ -36,7 +39,7 @@ const FloorList = () => {
     }
   };
 
-  const addFloor = async (floorName, floorID) => {
+  const addFloor = async (floorName: string, floorID: string) => {
     try {
       const response = await axiosInstance.post("/floors", {
         floor_name: floorName,
@@ -52,7 +55,7 @@ const FloorList = () => {
 
   useEffect(() => {
     getFloors().then((data) => setFloors(data));
-  }, []);
+  }, [setFloors]);
 
   const handleAddFloorClick = () => {
     setShowAddForm(!showAddForm);
@@ -63,7 +66,10 @@ const FloorList = () => {
       setShowAddForm(false);
       setFloorName("");
       setFloorID("");
-      getFloors().then((data) => setFloors(data));
+      // After adding a new floor, update the floors in the Zustand store
+      getFloors().then((data) => {
+        setFloors(data); // Update the floors in the Zustand store
+      });
     });
   };
 
@@ -74,20 +80,38 @@ const FloorList = () => {
           <Typography variant="h5" gutterBottom paddingLeft={2}>
             Floors
           </Typography>
-          {floors.map((floor) => (
-            <ListItem key={floor.floor_id}>
-              <ListItemText
-                primary={floor.floor_name}
-                style={{ textAlign: "center" }}
-              />
-            </ListItem>
-          ))}
+          {floors.map(
+            (floor: {
+              floor_id: React.Key | null | undefined;
+              floor_name:
+                | string
+                | number
+                | boolean
+                | React.ReactElement<
+                    any,
+                    string | React.JSXElementConstructor<any>
+                  >
+                | Iterable<React.ReactNode>
+                | React.ReactPortal
+                | React.PromiseLikeOfReactNode
+                | null
+                | undefined;
+            }) => (
+              <ListItem key={floor.floor_id}>
+                <ListItemText
+                  primary={floor.floor_name}
+                  style={{ textAlign: "center" }}
+                />
+              </ListItem>
+            )
+          )}
         </List>
         <Button
           variant="contained"
           color="primary"
           onClick={handleAddFloorClick}
           fullWidth
+          sx={{ color: "#03bdcc" }}
         >
           {showAddForm ? "Cancel" : "Add Floor"}
         </Button>
@@ -109,6 +133,7 @@ const FloorList = () => {
             color="primary"
             onClick={handleAddFloor}
             fullWidth // Set the width to 100%
+            sx={{ color: "#03bdcc" }}
           >
             Add Floor
           </Button>

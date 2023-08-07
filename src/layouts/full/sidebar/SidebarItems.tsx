@@ -8,32 +8,17 @@ import axios from "../../../components/utils/axiosInstance"; // Import your Axio
 import { IconTypography } from "@tabler/icons-react";
 import { uniqueId } from "lodash";
 import Menuitems from "./MenuItems";
+import useFloorStore from "../../../components/utils/zustandStore";
 
 const SidebarItems = ({ toggleMobileSidebar }: any) => {
   const { pathname } = useRouter();
   const pathDirect = pathname;
 
   // State to store the fetched floor names
-  const [floorNames, setFloorNames] = useState([]);
+  // const [floorNames, setFloorNames] = useState([]);
+  const floorNames = useFloorStore((state) => state.floors);
 
   // Fetch floor names from the Laravel API
-  useEffect(() => {
-    async function fetchFloorNames() {
-      try {
-        const token = sessionStorage.getItem("authToken");
-
-        // Set the token in Axios headers for this request
-        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
-        const response = await axios.get("/floors"); // Replace '/api/floors' with the actual endpoint of your Laravel API that returns floor names
-        setFloorNames(response.data);
-      } catch (error) {
-        console.error("Error fetching floor names:", error);
-      }
-    }
-
-    fetchFloorNames();
-  }, []);
 
   // Use the fetched floor names to create the updatedMenuitems array
   const updatedMenuitems = Menuitems.map((item) => {

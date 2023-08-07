@@ -1,7 +1,5 @@
 import { ReactElement, useEffect, useState } from "react";
 import axios from "../../../src/components/utils/axiosInstance";
-import // ... (other imports remain the same)
-"@mui/material";
 import PageContainer from "../../../src/components/container/PageContainer";
 import DashboardCard from "../../../src/components/shared/DashboardCard";
 import FullLayout from "../../../src/layouts/full/FullLayout";
@@ -14,13 +12,16 @@ import {
   TableRow,
   TableCell,
   TableBody,
+  Link as MuiLink, // Rename the Link component to avoid conflict with next/link
 } from "@mui/material";
+import useFloorStore from "../../../src/components/utils/zustandStore";
 
 const Rooms = () => {
   const [rooms, setRooms] = useState([]);
   const [floorName, setFloorName] = useState("");
   const router = useRouter();
   const { floor_name: queryFloorName, floor_id: queryFloorId } = router.query; // Get the floor_name and floor_id from the query parameters
+  const floors = useFloorStore((state) => state.floors); // Access the floors data from the Zustand store
 
   useEffect(() => {
     if (queryFloorName) {
@@ -38,8 +39,8 @@ const Rooms = () => {
 
       let url = "/Rooms";
       if (floorId) {
-        // If floor_id is provided, append it to the URL query parameters
-        url += `?floor_id=${floorId}`;
+        // If floor_id is provided, append it to the URL as a parameter
+        url = `/Rooms/getRoomsByfloor/${floorId}`;
       }
 
       const response = await axios.get(url);
@@ -48,6 +49,8 @@ const Rooms = () => {
       console.error("Error fetching rooms:", error);
     }
   };
+
+  // Step 2: Define a function to handle navigation to another page
   return (
     <div>
       <PageContainer
@@ -61,7 +64,7 @@ const Rooms = () => {
                 <TableRow>
                   <TableCell>Room ID</TableCell>
                   <TableCell>Room Name</TableCell>
-                  <TableCell>Building</TableCell>
+                  <TableCell>Floor</TableCell>
                   <TableCell>Room Type</TableCell>
                   <TableCell>Floor ID</TableCell>
                   <TableCell>Room Price</TableCell>
@@ -69,10 +72,19 @@ const Rooms = () => {
               </TableHead>
               <TableBody>
                 {rooms.map((room) => (
+                  // Step 3: Wrap the cells in a clickable element (e.g., Link)
                   <TableRow key={room.room_id}>
-                    <TableCell>{room.room_id}</TableCell>
+                    <TableCell>
+                      {/* Step 4: Use next/link for navigation */}
+                      <MuiLink
+                        href={`/utilities/patientroom/${room.room_name}?room_id=${room.room_id}`}
+                      >
+                        {/* The room_id is displayed as a link */}
+                        {room.room_id}
+                      </MuiLink>
+                    </TableCell>
                     <TableCell>{room.room_name}</TableCell>
-                    <TableCell>{room.room_building}</TableCell>
+                    <TableCell>{room.room_floor}</TableCell>
                     <TableCell>{room.room_type}</TableCell>
                     <TableCell>{room.floor_id}</TableCell>
                     <TableCell>{room.room_price}</TableCell>

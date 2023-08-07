@@ -1,36 +1,34 @@
 import { ReactElement, useState } from "react";
-import PageContainer from "../../src/components/container/PageContainer";
-import DashboardCard from "../../src/components/shared/DashboardCard";
-import FullLayout from "../../src/layouts/full/FullLayout";
+import PageContainer from "../../../src/components/container/PageContainer";
+import DashboardCard from "../../../src/components/shared/DashboardCard";
 import { useForm } from "react-hook-form";
-import axios from "../../src/components/utils/axiosInstance";
+import axiosInstance from "../../../src/components/utils/axiosInstance";
 
-export function EHRForm() {
+export function EditForm({ examinationData }) {
   const {
     register,
     handleSubmit,
     control,
-    watch,
     formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
-      patient_id: "",
-      patient_fName: "",
-      patient_mName: "",
-      patient_lName: "",
-      patient_age: "",
-      patient_sex: "",
-      room_name: "",
-      patient_vaccination_stat: "",
-      phr_chiefComaplaint: "",
-      //  date: "",
-      phr_startTime: "",
-      phr_endTime: "",
-      phr_historyOfPresentIllness: "",
+      patient_id: examinationData.patient_id,
+      patient_fName: examinationData.patient_fName,
+      patient_mName: examinationData.patient_mName,
+      patient_lName: examinationData.patient_lName,
+      patient_age: examinationData.patient_age,
+      patient_sex: examinationData.patient_sex,
+      room_name: examinationData.room_name,
+      patient_vaccination_stat: examinationData.patient_vaccination_stat,
+      phr_chiefComaplaint: examinationData.phr_chiefComaplaint,
+      //  date
+      phr_startTime: examinationData.phr_startTime,
+      phr_endTime: examinationData.phr_endTime,
+      phr_historyOfPresentIllness: examinationData.phr_historyOfPresentIllness,
       phr_nonVerbalPatient: "",
       phr_HxFrom: "",
       phr_medRecAvailable: "",
-      // "med-records": "",
+      // "med-records" ,
       phr_PMH_Asthma: "",
       phr_PMH_HTN: "",
       phr_PMH_Thyroid: "",
@@ -41,47 +39,21 @@ export function EHRForm() {
       phr_PMH_CAD: "",
       phr_PMH_CHF: "",
       phr_PMH_otherIllness: "",
-      phr_PMH_specifyOtherIllness: "",
       phr_allergies: "",
-      phr_specifyAllergies: "",
-      phr_specifyPrevHospitalization: "",
-      // "maintenance-medications-herbal-drug-use": [],
       phr_maintenanceMeds: "",
-      phr_specifyMaintenanceMeds: "",
       phr_malignancy: "",
-      phr_specifyMalignancy: "",
       phr_surgeries: "",
-      phr_specifySurgeries: "",
-      phr_vaccinationHistory: "",
       phr_tobacco: "",
-      phr_tobaccoPacks: "",
-      phr_tobaccoQuit: "",
       phr_recDrugs: "",
-      phr_specifyRecDrugs: "",
       phr_alcohol: "",
       phr_alcoholDrinksFrequency: "",
-      phr_noOfAlcoholDrinks: "",
-      phr_specifyFamilialDisease: "",
-      phr_specifyCivilStatus: "",
-      phr_specifyPertinentHistory: "",
-      phr_bpSitting: "",
-      phr_bpStanding: "",
-      phr_bpLying: "",
       phr_heartRate: "",
-      phr_respiratoryRate: "",
-      t: "",
-      phr_oxygenSaturation: "",
-      // "body-habitus": "",
       phr_bodyHabitusWNL: "",
       phr_bodyHabitusCathetic: "",
       phr_bodyHabitusObese: "",
-      phr_heightCM: "",
-      phr_weightKG: "",
-      phr_BMI: "",
-      // "nasal-mucosa-septum-turbinates": "",
       phr_nasalMucosaSeptumTurbinatesWNL: "",
       phr_nasalMucosaSeptumTurbinatesEdeOrEryPresent: "",
-      // "dentition-gums": "",
+      // "dentition-gums" ,
       phr_dentionAndGumsWNL: "",
       phr_dentionAndGumsDentalCanes: "",
       phr_dentionAndGumsGingivitis: "",
@@ -90,6 +62,9 @@ export function EHRForm() {
       phr_oropharynxEdeOrEryPresent: "",
       phr_oropharynxOralUlcers: "",
       phr_oropharynxOralPetachie: "",
+      phr_DREFindings: examinationData.phr_DREFindings,
+      phr_CardiovascularAdditionalFindings:
+        examinationData.phr_CardiovascularAdditionalFindings,
       mallampati: "",
       phr_mallampati1: "",
       phr_mallampati2: "",
@@ -103,20 +78,19 @@ export function EHRForm() {
       phr_thyroidThyromegaly: "",
       phr_thyroidNodulesPalpable: "",
       phr_thyroidNeckMass: "",
-      // "jugular-veins": "",
+      // "jugular-veins" ,
       phr_jugularVeinsWNL: "",
       phr_jugularVeinsEngorged: "",
-      chest: "",
-      // "respiratory-effort": "",
+      // "respiratory-effort" ,
       phr_respiratoryEffortWNL: "",
       phr_respiratoryEffortAccessoryMuscleUse: "",
       phr_respiratoryEffortIntercostalRetractions: "",
       phr_respiratoryEffortParadoxicMovements: "",
-      // "chest-percussion": "",
+      // "chest-percussion" ,
       phr_chestPercussionWNL: "",
       phr_chestPercussionDullnessToPercussion: "",
       phr_chestPercussionHyperResonance: "",
-      // "tactile-fremitus": "",
+      // "tactile-fremitus" ,
       phr_tactileFremitusWNL: "",
       phr_tactileFremitusIncreased: "",
       phr_tactileFremitusDecreased: "",
@@ -128,8 +102,6 @@ export function EHRForm() {
       phr_AuscultationRhonchi: "",
       phr_AuscultationWheezes: "",
       phr_AuscultationRub: "",
-      phr_CardiovascularAdditionalFindings: "",
-      // "heart-sounds": "",
       phr_heartSoundsClearS1: "",
       phr_heartSoundsClearS2: "",
       phr_heartSoundsNoMurmur: "",
@@ -138,26 +110,22 @@ export function EHRForm() {
       phr_heartSoundsMurmursPresent: "",
       phr_heartSoundsSystolic: "",
       phr_heartSoundsDiastolic: "",
-      phr_grade: "",
-      phr_RespiratoryAdditionalFindings: "",
       abdomen: "",
       phr_massPresent: "",
-      // "bowel-sounds": "",
+      // "bowel-sounds" ,
       phr_bowelSoundsNormaoactive: "",
       phr_bowelSoundsUp: "",
       phr_bowelSoundsDown: "",
-      // "liver-spleen": "",
+      // "liver-spleen" ,
       phr_unableToPalpateLiver: "",
       phr_unableToPalpateSpleen: "",
       organomegaly: "",
       phr_organomegalyLiver: "",
       phr_organomegalySpleen: "",
-      // "dre-findings": "",
-      phr_DREFindings: "",
-      // "kidney-punch-sign": "",
+      // "dre-findings" ,
       phr_kidneyPunchSignNegative: "",
       phr_kidneyPunchSignPositive: "",
-      // "if-positive": "",
+      // "if-positive" ,
       phr_IfPositiveR: "",
       phr_IfPositiveL: "",
       extremities: "",
@@ -172,9 +140,174 @@ export function EHRForm() {
       phr_skinEccymosis: "",
       phr_skinNodules: "",
       phr_skinUlcer: "",
-      phr_Assessment: "",
+      phr_PMH_specifyOtherIllness: examinationData.phr_PMH_specifyOtherIllness,
+      phr_specifyAllergies: examinationData.phr_specifyAllergies,
+      phr_specifyPrevHospitalization:
+        examinationData.phr_specifyPrevHospitalization,
+      // "maintenance-medications-herbal-drug-use": [],
+
+      phr_specifyMaintenanceMeds: examinationData.phr_specifyMaintenanceMeds,
+
+      phr_specifyMalignancy: examinationData.phr_specifyMalignancy,
+
+      phr_specifySurgeries: examinationData.phr_specifySurgeries,
+      phr_vaccinationHistory: examinationData.phr_vaccinationHistory,
+
+      phr_tobaccoPacks: examinationData.phr_tobaccoPacks,
+      phr_tobaccoQuit: examinationData.phr_tobaccoQuit,
+
+      phr_specifyRecDrugs: examinationData.phr_specifyRecDrugs,
+
+      phr_noOfAlcoholDrinks: examinationData.phr_noOfAlcoholDrinks,
+      phr_specifyFamilialDisease: examinationData.phr_specifyFamilialDisease,
+      phr_specifyCivilStatus: examinationData.phr_specifyCivilStatus,
+      phr_specifyPertinentHistory: examinationData.phr_specifyPertinentHistory,
+      phr_bpSitting: examinationData.phr_bpSitting,
+      phr_bpStanding: examinationData.phr_bpStanding,
+      phr_bpLying: examinationData.phr_bpLying,
+
+      phr_respiratoryRate: examinationData.phr_respiratoryRate,
+      t: examinationData.t,
+      phr_oxygenSaturation: examinationData.phr_oxygenSaturation,
+      // "body-habitus" ,
+      phr_heightCM: examinationData.phr_heightCM,
+      phr_weightKG: examinationData.phr_weightKG,
+      phr_BMI: examinationData.phr_BMI,
+      // "nasal-mucosa-septum-turbinates" ,
+
+      // "dentition-gums" ,
+
+      phr_grade: examinationData.phr_grade,
+      phr_RespiratoryAdditionalFindings:
+        examinationData.phr_RespiratoryAdditionalFindings,
+
+      phr_Assessment: examinationData.phr_Assessment,
     },
   });
+
+  const checkboxFields = [
+    "phr_nonVerbalPatient",
+    "phr_HxFrom",
+    "phr_medRecAvailable",
+    // "med-records" ,
+    "phr_PMH_Asthma",
+    "phr_PMH_HTN",
+    "phr_PMH_Thyroid",
+    "phr_PMH_Diabetes",
+    "phr_PMH_HepaticRenal",
+    "phr_PMH_Tuberculosis",
+    "phr_PMH_Psychiatric",
+    "phr_PMH_CAD",
+    "phr_PMH_CHF",
+    "phr_PMH_otherIllness",
+    "phr_allergies",
+    "phr_maintenanceMeds",
+    "phr_malignancy",
+    "phr_surgeries",
+    "phr_tobacco",
+    "phr_recDrugs",
+    "phr_alcohol",
+    "phr_alcoholDrinksFrequency",
+    "phr_heartRate",
+    "phr_bodyHabitusWNL",
+    "phr_bodyHabitusCathetic",
+    "phr_bodyHabitusObese",
+    "phr_nasalMucosaSeptumTurbinatesWNL",
+    "phr_nasalMucosaSeptumTurbinatesEdeOrEryPresent",
+    // "dentition-gums" ,
+    "phr_dentionAndGumsWNL",
+    "phr_dentionAndGumsDentalCanes",
+    "phr_dentionAndGumsGingivitis",
+    "oropharynx",
+    "phr_oropharynxWNL",
+    "phr_oropharynxEdeOrEryPresent",
+    "phr_oropharynxOralUlcers",
+    "phr_oropharynxOralPetachie",
+    "mallampati",
+    "phr_mallampati1",
+    "phr_mallampati2",
+    "phr_mallampati3",
+    "phr_mallampati4",
+    "neck",
+    "phr_neckWNL",
+    "phr_neckLymphadenopathy",
+    "thyroid",
+    "phr_thyroidWNL",
+    "phr_thyroidThyromegaly",
+    "phr_thyroidNodulesPalpable",
+    "phr_thyroidNeckMass",
+    // "jugular-veins" ,
+    "phr_jugularVeinsWNL",
+    "phr_jugularVeinsEngorged",
+    // "respiratory-effort" ,
+    "phr_respiratoryEffortWNL",
+    "phr_respiratoryEffortAccessoryMuscleUse",
+    "phr_respiratoryEffortIntercostalRetractions",
+    "phr_respiratoryEffortParadoxicMovements",
+    // "chest-percussion" ,
+    "phr_chestPercussionWNL",
+    "phr_chestPercussionDullnessToPercussion",
+    "phr_chestPercussionHyperResonance",
+    // "tactile-fremitus" ,
+    "phr_tactileFremitusWNL",
+    "phr_tactileFremitusIncreased",
+    "phr_tactileFremitusDecreased",
+    "auscultation",
+    "phr_AuscultationWNL",
+    "phr_AuscultationBronchialBreathSounds",
+    "phr_AuscultationEgophony",
+    "phr_AuscultationRales",
+    "phr_AuscultationRhonchi",
+    "phr_AuscultationWheezes",
+    "phr_AuscultationRub",
+    "phr_heartSoundsClearS1",
+    "phr_heartSoundsClearS2",
+    "phr_heartSoundsNoMurmur",
+    "phr_heartSoundsGallopAudible",
+    "phr_heartSoundsRubAudible",
+    "phr_heartSoundsMurmursPresent",
+    "phr_heartSoundsSystolic",
+    "phr_heartSoundsDiastolic",
+    "abdomen",
+    "phr_massPresent",
+    // "bowel-sounds" ,
+    "phr_bowelSoundsNormaoactive",
+    "phr_bowelSoundsUp",
+    "phr_bowelSoundsDown",
+    // "liver-spleen" ,
+    "phr_unableToPalpateLiver",
+    "phr_unableToPalpateSpleen",
+    "organomegaly",
+    "phr_organomegalyLiver",
+    "phr_organomegalySpleen",
+    // "dre-findings" ,
+    "phr_kidneyPunchSignNegative",
+    "phr_kidneyPunchSignPositive",
+    // "if-positive" ,
+    "phr_IfPositiveR",
+    "phr_IfPositiveL",
+    "extremities",
+    "phr_extremitiesWNL",
+    "phr_extremitiesClubbing",
+    "phr_extremitiesCyanosis",
+    "phr_extremitiesPetachiae",
+    "phr_capillaryRefillTime",
+    // skin: [],
+    "phr_skinWNL",
+    "phr_skinRash",
+    "phr_skinEccymosis",
+    "phr_skinNodules",
+    "phr_skinUlcer",
+  ];
+  ("");
+
+  const initialValues = {
+    ...examinationData,
+    ...checkboxFields.reduce((acc, field) => {
+      acc[field] = examinationData[field] ? 1 : 0;
+      return acc;
+    }, {}),
+  };
 
   const onSubmit = (data: any) => {
     const mappedData = {
@@ -293,8 +426,8 @@ export function EHRForm() {
       phr_skinUlcer: data.phr_skinUlcer ? 1 : 0,
     };
     console.log(mappedData);
-    axios
-      .post("/PatientHealthRecord", data)
+    axiosInstance
+      .put("/PatientHealthRecord", data)
       .then((response) => {
         console.log("Data sent successfully:", response.data);
         // Handle success or redirect to another page
@@ -320,6 +453,7 @@ export function EHRForm() {
                   className="border border-gray-300 px-4 py-2 rounded-lg"
                   placeholder="Name"
                   type="text"
+                  defaultValue={examinationData.patient_id}
                 />
               </label>
             </div>
@@ -332,6 +466,7 @@ export function EHRForm() {
                   className="border border-gray-300 px-4 py-2 rounded-lg"
                   placeholder="First Name"
                   type="text"
+                  defaultValue={initialValues.patient_id}
                 />
               </label>
             </div>
@@ -344,6 +479,7 @@ export function EHRForm() {
                   className="border border-gray-300 px-4 py-2 rounded-lg"
                   placeholder="Name"
                   type="text"
+                  defaultValue={initialValues.patient_id}
                 />
               </label>
             </div>
@@ -356,6 +492,7 @@ export function EHRForm() {
                   className="border border-gray-300 px-4 py-2 rounded-lg"
                   placeholder="Name"
                   type="text"
+                  defaultValue={initialValues.patient_id}
                 />
               </label>
             </div>
@@ -368,6 +505,7 @@ export function EHRForm() {
                   className="border border-gray-300 px-4 py-2 rounded-lg"
                   placeholder="Age"
                   type="number"
+                  defaultValue={initialValues.patient_id}
                 />
               </label>
             </div>
@@ -387,6 +525,7 @@ export function EHRForm() {
                       aria-invalid={errors["patient_sex"] ? "true" : "false"}
                       value={value}
                       type="radio"
+                      defaultValue={initialValues.patient_id}
                     />
                   </label>
                 );
@@ -404,6 +543,7 @@ export function EHRForm() {
                   className="border border-gray-300 px-4 py-2 rounded-lg"
                   placeholder="Room"
                   type="text"
+                  defaultValue={initialValues.patient_id}
                 />
               </label>
             </div>
@@ -415,6 +555,7 @@ export function EHRForm() {
                   {...register("phr_chiefComaplaint")}
                   className="border border-gray-300 px-4 py-2 rounded-lg"
                   placeholder="Input"
+                  defaultValue={initialValues.patient_id}
                 />
               </label>
             </div>
@@ -424,19 +565,20 @@ export function EHRForm() {
                 <textarea
                   {...register("patient_vaccination_stat")}
                   className="border border-gray-300 px-4 py-2 rounded-lg"
+                  defaultValue={initialValues.patient_id}
                 />
               </label>
             </div>
             {/* <div className="my-4">
-              <label className="flex flex-col">
-                <span className="mb-2">Date</span>
-                <input
-                  {...register("date")}
-                  className="border border-gray-300 px-4 py-2 rounded-lg"
-                  type="date"
-                />
-              </label>
-            </div> */}
+                  <label className="flex flex-col">
+                    <span className="mb-2">Date</span>
+                    <input
+                      {...register("date")}
+                      className="border border-gray-300 px-4 py-2 rounded-lg"
+                      type="date"
+                    />
+                  </label>
+                </div> */}
 
             <div className="my-4">
               <label className="flex flex-col">
@@ -445,6 +587,7 @@ export function EHRForm() {
                   {...register("phr_startTime")}
                   className="border border-gray-300 px-4 py-2 rounded-lg"
                   type="time"
+                  defaultValue={initialValues.patient_id}
                 />
               </label>
             </div>
@@ -456,6 +599,7 @@ export function EHRForm() {
                   {...register("phr_endTime")}
                   className="border border-gray-300 px-4 py-2 rounded-lg"
                   type="time"
+                  defaultValue={initialValues.patient_id}
                 />
               </label>
             </div>
@@ -465,6 +609,7 @@ export function EHRForm() {
                 <textarea
                   {...register("phr_historyOfPresentIllness")}
                   className="border border-gray-300 px-4 py-2 rounded-lg"
+                  defaultValue={initialValues.patient_id}
                 />
               </label>
             </div>
@@ -476,6 +621,7 @@ export function EHRForm() {
                   {...register("phr_nonVerbalPatient")}
                   className="form-checkbox h-5 w-5 text-indigo-600 rounded"
                   type="checkbox"
+                  defaultValue={initialValues.patient_id}
                 />
               </label>
             </div>
@@ -495,6 +641,7 @@ export function EHRForm() {
                       aria-invalid={errors["phr_HxFrom"] ? "true" : "false"}
                       value={errors[field] ? 0 : 1}
                       type="radio"
+                      defaultValue={initialValues.patient_id}
                     />
                   </label>
                 );
@@ -511,6 +658,7 @@ export function EHRForm() {
                   {...register("phr_medRecAvailable")}
                   className="form-checkbox h-5 w-5 text-indigo-600 rounded"
                   type="checkbox"
+                  defaultValue={initialValues.phr_medRecAvailable}
                 />
               </label>
             </div>
@@ -522,6 +670,7 @@ export function EHRForm() {
                   {...register("phr_allergies")}
                   className="form-checkbox h-5 w-5 text-indigo-600 rounded"
                   type="checkbox"
+                  defaultValue={initialValues.phr_allergies}
                 />
               </label>
             </div>
@@ -532,6 +681,7 @@ export function EHRForm() {
                 <textarea
                   {...register("phr_specifyAllergies")}
                   className="border border-gray-300 px-4 py-2 rounded-lg"
+                  defaultValue={initialValues.phr_specifyAllergies}
                 />
               </label>
             </div>
@@ -559,6 +709,7 @@ export function EHRForm() {
                       value={1} // Set the default value to 0
                       type="checkbox"
                       defaultChecked={false} // Set defaultChecked to false
+                      defaultValue={initialValues[field]}
                     />
 
                     <span>{label}</span>
@@ -586,6 +737,7 @@ export function EHRForm() {
                 <textarea
                   {...register("phr_specifyPrevHospitalization")}
                   className="border border-gray-300 px-4 py-2 rounded-lg"
+                  defaultValue={initialValues.patient_id}
                 />
               </label>
             </div>
@@ -596,6 +748,7 @@ export function EHRForm() {
                   {...register("phr_maintenanceMeds")}
                   type="checkbox"
                   className="form-checkbox h-4 w-4 text-indigo-600 rounded mr-2"
+                  defaultValue={initialValues.patient_id}
                 />
                 <span className="font-bold">
                   Maintenance Medications/Herbal drug use
@@ -607,6 +760,7 @@ export function EHRForm() {
                   type="text"
                   className="border border-gray-300 px-4 py-2 rounded-lg mt-2"
                   placeholder="Enter additional information"
+                  defaultValue={initialValues.patient_id}
                 />
               </label>
             </div>
@@ -625,6 +779,7 @@ export function EHRForm() {
                       aria-invalid={errors["phr_malignancy"] ? "true" : "false"}
                       value={errors[field] ? 0 : 1}
                       type="radio"
+                      defaultValue={initialValues.patient_id}
                     />
                     <span>{label}</span>
                   </label>
@@ -641,6 +796,7 @@ export function EHRForm() {
                 <textarea
                   {...register("phr_specifyMalignancy")}
                   className="border border-gray-300 px-4 py-2 rounded-lg"
+                  defaultValue={initialValues.patient_id}
                 />
               </label>
             </div>
@@ -659,6 +815,7 @@ export function EHRForm() {
                       aria-invalid={errors["phr_surgeries"] ? "true" : "false"}
                       value={errors[field] ? 0 : 1}
                       type="radio"
+                      defaultValue={initialValues.patient_id}
                     />
                     <span>{label}</span>
                   </label>
@@ -675,6 +832,7 @@ export function EHRForm() {
                 <textarea
                   {...register("phr_specifySurgeries")}
                   className="border border-gray-300 px-4 py-2 rounded-lg"
+                  defaultValue={initialValues.patient_id}
                 />
               </label>
             </div>
@@ -685,6 +843,7 @@ export function EHRForm() {
                 <textarea
                   {...register("phr_vaccinationHistory")}
                   className="border border-gray-300 px-4 py-2 rounded-lg"
+                  defaultValue={initialValues.patient_id}
                 />
               </label>
             </div>
@@ -704,6 +863,7 @@ export function EHRForm() {
                       value={errors[field] ? 0 : 1}
                       type="radio"
                       className="form-radio h-4 w-4 text-indigo-600 rounded"
+                      defaultValue={initialValues.patient_id}
                     />
                   </label>
                 );
@@ -721,6 +881,7 @@ export function EHRForm() {
                   placeholder="0"
                   type="number"
                   className="border border-gray-300 px-4 py-2 rounded-lg"
+                  defaultValue={initialValues.patient_id}
                 />
               </label>
             </div>
@@ -732,6 +893,7 @@ export function EHRForm() {
                   {...register("phr_tobaccoQuit")}
                   type="date"
                   className="border border-gray-300 px-4 py-2 rounded-lg"
+                  defaultValue={initialValues.patient_id}
                 />
               </label>
             </div>
@@ -751,6 +913,7 @@ export function EHRForm() {
                       value={errors[field] ? 0 : 1}
                       type="radio"
                       className="form-radio h-4 w-4 text-indigo-600 rounded"
+                      defaultValue={initialValues.patient_id}
                     />
                   </label>
                 );
@@ -766,6 +929,7 @@ export function EHRForm() {
                 <textarea
                   {...register("phr_specifyRecDrugs")}
                   className="border border-gray-300 px-4 py-2 rounded-lg"
+                  defaultValue={initialValues.patient_id}
                 />
               </label>
             </div>
@@ -785,6 +949,7 @@ export function EHRForm() {
                       value={errors[field] ? 0 : 1}
                       type="radio"
                       className="form-radio h-4 w-4 text-indigo-600 rounded"
+                      defaultValue={initialValues.patient_id}
                     />
                   </label>
                 );
@@ -811,6 +976,7 @@ export function EHRForm() {
                       value={errors[field] ? 0 : 1}
                       type="radio"
                       className="form-radio h-4 w-4 text-indigo-600 rounded"
+                      defaultValue={initialValues.patient_id}
                     />
                   </label>
                 );
@@ -830,6 +996,7 @@ export function EHRForm() {
                   placeholder="0"
                   type="number"
                   className="border border-gray-300 px-4 py-2 rounded-lg"
+                  defaultValue={initialValues.patient_id}
                 />
               </label>
             </div>
@@ -840,6 +1007,7 @@ export function EHRForm() {
                 <textarea
                   {...register("phr_specifyFamilialDisease")}
                   className="border border-gray-300 px-4 py-2 rounded-lg"
+                  defaultValue={initialValues.patient_id}
                 />
               </label>
             </div>
@@ -850,6 +1018,7 @@ export function EHRForm() {
                 <textarea
                   {...register("phr_specifyCivilStatus")}
                   className="border border-gray-300 px-4 py-2 rounded-lg"
+                  defaultValue={initialValues.patient_id}
                 />
               </label>
             </div>
@@ -860,6 +1029,7 @@ export function EHRForm() {
                 <textarea
                   {...register("phr_specifyPertinentHistory")}
                   className="border border-gray-300 px-4 py-2 rounded-lg"
+                  defaultValue={initialValues.patient_id}
                 />
               </label>
             </div>
@@ -871,6 +1041,7 @@ export function EHRForm() {
                   {...register("phr_bpSitting")}
                   type="number"
                   className="border border-gray-300 px-4 py-2 rounded-lg"
+                  defaultValue={initialValues.patient_id}
                 />
               </label>
             </div>
@@ -882,6 +1053,7 @@ export function EHRForm() {
                   {...register("phr_bpStanding")}
                   type="number"
                   className="border border-gray-300 px-4 py-2 rounded-lg"
+                  defaultValue={initialValues.patient_id}
                 />
               </label>
             </div>
@@ -893,6 +1065,7 @@ export function EHRForm() {
                   {...register("phr_bpLying")}
                   type="number"
                   className="border border-gray-300 px-4 py-2 rounded-lg"
+                  defaultValue={initialValues.patient_id}
                 />
               </label>
             </div>
@@ -912,6 +1085,7 @@ export function EHRForm() {
                       value={errors[field] ? 0 : 1}
                       type="radio"
                       className="form-radio h-4 w-4 text-indigo-600 rounded"
+                      defaultValue={initialValues.patient_id}
                     />
                   </label>
                 );
@@ -928,6 +1102,7 @@ export function EHRForm() {
                   {...register("phr_respiratoryRate")}
                   type="number"
                   className="border border-gray-300 px-4 py-2 rounded-lg"
+                  defaultValue={initialValues.patient_id}
                 />
               </label>
             </div>
@@ -939,6 +1114,7 @@ export function EHRForm() {
                   {...register("t")}
                   type="number"
                   className="border border-gray-300 px-4 py-2 rounded-lg"
+                  defaultValue={initialValues.patient_id}
                 />
               </label>
             </div>
@@ -950,6 +1126,7 @@ export function EHRForm() {
                   {...register("phr_oxygenSaturation")}
                   type="number"
                   className="border border-gray-300 px-4 py-2 rounded-lg"
+                  defaultValue={initialValues.patient_id}
                 />
               </label>
             </div>
@@ -970,6 +1147,7 @@ export function EHRForm() {
                       value={1}
                       type="radio"
                       className="form-radio h-4 w-4 text-indigo-600 rounded"
+                      defaultValue={initialValues[field]}
                     />
                   </label>
                 );
@@ -986,6 +1164,7 @@ export function EHRForm() {
                   {...register("phr_heightCM")}
                   type="text"
                   className="border border-gray-300 px-4 py-2 rounded-lg"
+                  defaultValue={initialValues.patient_id}
                 />
               </label>
             </div>
@@ -997,6 +1176,7 @@ export function EHRForm() {
                   {...register("phr_weightKG")}
                   type="text"
                   className="border border-gray-300 px-4 py-2 rounded-lg"
+                  defaultValue={initialValues.patient_id}
                 />
               </label>
             </div>
@@ -1008,6 +1188,7 @@ export function EHRForm() {
                   {...register("phr_BMI")}
                   type="number"
                   className="border border-gray-300 px-4 py-2 rounded-lg"
+                  defaultValue={initialValues.patient_id}
                 />
               </label>
             </div>
@@ -1030,6 +1211,7 @@ export function EHRForm() {
                       value={errors[field] ? 0 : 1}
                       type="checkbox"
                       className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
+                      defaultValue={initialValues[field]}
                     />
                   </label>
                 );
@@ -1049,7 +1231,10 @@ export function EHRForm() {
                   label: "Dental canes",
                   field: "phr_dentionAndGumsDentalCanes",
                 },
-                { label: "Gingivitis", field: "phr_dentionAndGumsGingivitis" },
+                {
+                  label: "Gingivitis",
+                  field: "phr_dentionAndGumsGingivitis",
+                },
               ].map(({ label, field }, index) => {
                 return (
                   <label key={field} className="flex items-center">
@@ -1060,6 +1245,7 @@ export function EHRForm() {
                       value={errors[field] ? 0 : 1}
                       type="checkbox"
                       className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
+                      defaultValue={initialValues[field]}
                     />
                   </label>
                 );
@@ -1094,6 +1280,7 @@ export function EHRForm() {
                       value={errors[field] ? 0 : 1}
                       type="checkbox"
                       className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
+                      defaultValue={initialValues[field]}
                     />
                   </label>
                 );
@@ -1122,6 +1309,7 @@ export function EHRForm() {
                       value={errors[field] ? 0 : 1}
                       type="checkbox"
                       className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
+                      defaultValue={initialValues[field]}
                     />
                   </label>
                 );
@@ -1137,7 +1325,10 @@ export function EHRForm() {
               <p className="font-bold">Neck</p>
               {[
                 { label: "WNL", field: "phr_neckWNL" },
-                { label: "Lymphadenopathy", field: "phr_neckLymphadenopathy" },
+                {
+                  label: "Lymphadenopathy",
+                  field: "phr_neckLymphadenopathy",
+                },
               ].map(({ label, field }, index) => {
                 return (
                   <label key={field} className="flex items-center">
@@ -1148,6 +1339,7 @@ export function EHRForm() {
                       value={errors[field] ? 0 : 1}
                       type="checkbox"
                       className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
+                      defaultValue={initialValues[field]}
                     />
                   </label>
                 );
@@ -1179,6 +1371,7 @@ export function EHRForm() {
                       value={errors[field] ? 0 : 1}
                       type="checkbox"
                       className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
+                      defaultValue={initialValues[field]}
                     />
                   </label>
                 );
@@ -1205,6 +1398,7 @@ export function EHRForm() {
                       value={errors[field] ? 0 : 1}
                       type="checkbox"
                       className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
+                      defaultValue={initialValues[field]}
                     />
                   </label>
                 );
@@ -1226,6 +1420,7 @@ export function EHRForm() {
                   aria-invalid={errors["chest"] ? "true" : "false"}
                   type="checkbox"
                   className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
+                  defaultValue={initialValues.chest}
                 />
               </label>
             </div>
@@ -1256,6 +1451,7 @@ export function EHRForm() {
                       value={errors[field] ? 0 : 1}
                       type="checkbox"
                       className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
+                      defaultValue={initialValues[field]}
                     />
                   </label>
                 );
@@ -1289,6 +1485,7 @@ export function EHRForm() {
                       value={errors[field] ? 0 : 1}
                       type="checkbox"
                       className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
+                      defaultValue={initialValues[field]}
                     />
                   </label>
                 );
@@ -1316,6 +1513,7 @@ export function EHRForm() {
                       value={errors[field] ? 0 : 1}
                       type="checkbox"
                       className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
+                      defaultValue={initialValues[field]}
                     />
                   </label>
                 );
@@ -1350,6 +1548,7 @@ export function EHRForm() {
                       value={1}
                       type="checkbox"
                       className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
+                      defaultValue={initialValues[field]}
                     />
                   </label>
                 );
@@ -1367,6 +1566,7 @@ export function EHRForm() {
                 <textarea
                   {...register("phr_RespiratoryAdditionalFindings")}
                   className="border border-gray-300 px-4 py-2 rounded-lg"
+                  defaultValue={initialValues.phr_RespiratoryAdditionalFindings}
                 />
               </label>
             </div>
@@ -1407,6 +1607,7 @@ export function EHRForm() {
                       value={1}
                       type="checkbox"
                       className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
+                      defaultValue={initialValues[field]}
                     />
                   </label>
                 );
@@ -1425,6 +1626,7 @@ export function EHRForm() {
                   {...register("phr_grade")}
                   type="number"
                   className="border border-gray-300 px-4 py-2 rounded-lg"
+                  defaultValue={initialValues.phr_grade}
                 />
               </label>
             </div>
@@ -1435,6 +1637,7 @@ export function EHRForm() {
                 <textarea
                   {...register("phr_CardiovascularAdditionalFindings")}
                   className="border border-gray-300 px-4 py-2 rounded-lg"
+                  defaultValue={initialValues.phr_grade}
                 ></textarea>
               </label>
             </div>
@@ -1447,6 +1650,7 @@ export function EHRForm() {
                   {...register("abdomen")}
                   type="checkbox"
                   className="form-checkbox h-4 w-4 text-indigo-600 rounded"
+                  defaultValue={initialValues.phr_grade}
                 />
               </div>
             </div>
@@ -1457,6 +1661,7 @@ export function EHRForm() {
                   {...register("phr_massPresent")}
                   type="checkbox"
                   className="form-checkbox h-4 w-4 text-indigo-600 rounded mr-2"
+                  defaultValue={initialValues.phr_grade}
                 />
                 <span className="font-bold">Mass Present</span>
               </label>
@@ -1466,6 +1671,7 @@ export function EHRForm() {
                   type="text"
                   className="border border-gray-300 px-4 py-2 rounded-lg mt-2"
                   placeholder="Enter additional information"
+                  defaultValue={initialValues.phr_grade}
                 />
               </label>
             </div>
@@ -1473,7 +1679,10 @@ export function EHRForm() {
             <div className="my-4">
               <p className="font-bold">Bowel Sounds</p>
               {[
-                { label: "normoactive", field: "phr_bowelSoundsNormaoactive" },
+                {
+                  label: "normoactive",
+                  field: "phr_bowelSoundsNormaoactive",
+                },
                 { label: "Up", field: "phr_bowelSoundsUp" },
                 { label: "Down", field: "phr_bowelSoundsDown" },
               ].map(({ label, field }, index) => {
@@ -1486,6 +1695,7 @@ export function EHRForm() {
                       value={1}
                       type="checkbox"
                       className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
+                      defaultValue={initialValues[field]}
                     />
                   </label>
                 );
@@ -1505,6 +1715,7 @@ export function EHRForm() {
                   {...register("liver-spleen")}
                   type="checkbox"
                   className="form-checkbox h-4 w-4 text-indigo-600 rounded"
+                  defaultValue={initialValues.phr_grade}
                 />
               </div>
             </div>
@@ -1524,6 +1735,7 @@ export function EHRForm() {
                       value={errors[field] ? 0 : 1}
                       type="checkbox"
                       className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
+                      defaultValue={initialValues[field]}
                     />
                   </label>
                 );
@@ -1550,6 +1762,7 @@ export function EHRForm() {
                       value={errors[field] ? 0 : 1}
                       type="checkbox"
                       className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
+                      defaultValue={initialValues[field]}
                     />
                   </label>
                 );
@@ -1567,6 +1780,7 @@ export function EHRForm() {
                 <textarea
                   {...register("phr_DREFindings")}
                   className="border border-gray-300 px-4 py-2 rounded-lg"
+                  defaultValue={initialValues.phr_DREFindings}
                 ></textarea>
               </label>
             </div>
@@ -1586,6 +1800,7 @@ export function EHRForm() {
                       value={errors[field] ? 0 : 1}
                       type="checkbox"
                       className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
+                      defaultValue={initialValues[field]}
                     />
                   </label>
                 );
@@ -1612,6 +1827,7 @@ export function EHRForm() {
                       value={errors[field] ? 0 : 1}
                       type="checkbox"
                       className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
+                      defaultValue={initialValues[field]}
                     />
                   </label>
                 );
@@ -1640,6 +1856,7 @@ export function EHRForm() {
                       value={1}
                       type="checkbox"
                       className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
+                      defaultValue={initialValues[field]}
                     />
                   </label>
                 );
@@ -1658,6 +1875,7 @@ export function EHRForm() {
                   {...register("phr_capillaryRefillTime")}
                   type="number"
                   className="border border-gray-300 px-4 py-2 rounded-lg"
+                  defaultValue={initialValues.phr_capillaryRefillTime}
                 />
               </label>
             </div>
@@ -1680,6 +1898,7 @@ export function EHRForm() {
                       value={1}
                       type="checkbox"
                       className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
+                      defaultValue={initialValues[field]}
                     />
                   </label>
                 );
@@ -1697,6 +1916,7 @@ export function EHRForm() {
                 <textarea
                   {...register("phr_Assessment")}
                   className="border border-gray-300 px-4 py-2 rounded-lg"
+                  defaultValue={initialValues.phr_Assessment}
                 ></textarea>
               </label>
             </div>
@@ -1714,7 +1934,7 @@ export function EHRForm() {
   );
 }
 
-export default EHRForm;
-EHRForm.getLayout = function getLayout(page: ReactElement) {
-  return <FullLayout>{page}</FullLayout>;
-};
+export default EditForm;
+// EditForm.getLayout = function getLayout(page: ReactElement) {
+//   return <FullLayout>{page}</FullLayout>;
+// };

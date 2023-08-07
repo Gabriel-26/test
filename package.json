@@ -23,9 +23,12 @@
     "@mui/x-data-grid": "^6.9.2",
     "@next/font": "latest",
     "@radix-ui/react-tabs": "^1.0.4",
+    "@reduxjs/toolkit": "^1.9.5",
     "@tabler/icons": "^2.1.2",
     "@tabler/icons-react": "^2.1.1",
     "@tanstack/react-table": "^8.9.3",
+    "@types/redux": "^3.6.0",
+    "@types/redux-thunk": "^2.1.0",
     "antd": "^5.6.4",
     "apexcharts": "3.36.3",
     "axios": "^1.4.0",
@@ -44,7 +47,8 @@
     "styled-components": "^5.3.11",
     "swr": "^2.2.0",
     "tailwind-merge": "^1.14.0",
-    "tailwindcss-animate": "^1.0.6"
+    "tailwindcss-animate": "^1.0.6",
+    "zustand": "^4.4.0"
   },
   "devDependencies": {
     "@types/csurf": "^1.11.2",

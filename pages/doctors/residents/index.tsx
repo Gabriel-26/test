@@ -11,7 +11,6 @@ import {
   IconButton,
   TextField,
   Collapse,
-  Button,
   TablePagination,
 } from "@mui/material";
 import DashboardCard from "../../../src/components/shared/DashboardCard";
@@ -25,6 +24,10 @@ import axios from "../../../src/components/utils/axiosInstance";
 import type { ReactElement } from "react";
 import PageContainer from "../../../src/components/container/PageContainer";
 import FullLayout from "../../../src/layouts/full/FullLayout";
+import { Button, Drawer, Form, Input, Select, Row, Col, Space } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
+
+const { Option } = Select;
 
 const Doctors = () => {
   const [doctors, setDoctors] = useState([]);
@@ -64,7 +67,15 @@ const Doctors = () => {
       console.log(error);
     }
   };
+  // const [open, setOpen] = useState(false);
 
+  // const showDrawer = () => {
+  //   setOpen(true);
+  // };
+
+  // const onClose = () => {
+  //   setOpen(false);
+  // };
   const handleAddDoctor = () => {
     setIsAddingDoctor(!isAddingDoctor);
   };
@@ -197,82 +208,137 @@ const Doctors = () => {
       <DashboardCard title="Residents">
         <Box sx={{ overflow: "auto", width: { xs: "600px", sm: "auto" } }}>
           <Button
-            variant="outlined"
-            color="primary"
             onClick={handleAddDoctor}
-            sx={{ marginBottom: "10px" }}
+            // icon={<PlusOutlined />}
+            // sx={{ marginBottom: "10px" }}
           >
-            Add Doctor
+            New Resident
           </Button>
-          <Collapse in={isAddingDoctor}>
-            <Box sx={{ marginBottom: "10px" }}>
-              <TextField
-                label="Resident ID"
-                name="resident_id"
-                value={newDoctor.resident_id}
-                onChange={handleInputChange}
-                fullWidth
-                sx={{ marginBottom: "10px" }}
-              />
-              <TextField
-                label="Username"
-                name="resident_userName"
-                value={newDoctor.resident_userName}
-                onChange={handleInputChange}
-                fullWidth
-                sx={{ marginBottom: "10px" }}
-              />
-              <TextField
-                label="First Name"
-                name="resident_fName"
-                value={newDoctor.resident_fName}
-                onChange={handleInputChange}
-                fullWidth
-                sx={{ marginBottom: "10px" }}
-              />
-              <TextField
-                label="Last Name"
-                name="resident_lName"
-                value={newDoctor.resident_lName}
-                onChange={handleInputChange}
-                fullWidth
-                sx={{ marginBottom: "10px" }}
-              />
-              <TextField
-                label="Middle Name"
-                name="resident_mName"
-                value={newDoctor.resident_mName}
-                onChange={handleInputChange}
-                fullWidth
-                sx={{ marginBottom: "10px" }}
-              />
-              <TextField
-                label="Password"
-                name="resident_password"
-                value={newDoctor.resident_password}
-                onChange={handleInputChange}
-                fullWidth
-                sx={{ marginBottom: "10px" }}
-              />
-
-              <TextField
-                label="Department ID"
-                name="department_id"
-                value={newDoctor.department_id}
-                onChange={handleInputChange}
-                fullWidth
-                sx={{ marginBottom: "10px" }}
-              />
-
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleSubmit}
-              >
-                Add
-              </Button>
-            </Box>
-          </Collapse>
+          <Drawer
+            title="Add a Resident"
+            width={720}
+            onClose={handleAddDoctor}
+            open={isAddingDoctor}
+            bodyStyle={{ paddingBottom: 80 }}
+            extra={
+              <Space>
+                <Button onClick={handleAddDoctor}>Cancel</Button>
+                <Button onClick={handleSubmit} type="primary">
+                  Submit
+                </Button>
+              </Space>
+            }
+          >
+            <Form layout="vertical" requiredMark>
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item
+                    label="Resident ID"
+                    rules={[
+                      { required: true, message: "Please enter resident ID" },
+                    ]}
+                  >
+                    <Input
+                      name="resident_id"
+                      placeholder="Please enter resident ID"
+                      value={newDoctor.resident_id}
+                      onChange={handleInputChange}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item
+                    label="Resident UserName"
+                    rules={[
+                      { required: true, message: "Please enter resident ID" },
+                    ]}
+                  >
+                    <Input
+                      name="resident_userName"
+                      placeholder="Please enter resident username"
+                      value={newDoctor.resident_userName}
+                      onChange={handleInputChange}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item
+                    label="First Name"
+                    rules={[
+                      { required: true, message: "Please enter first name" },
+                    ]}
+                  >
+                    <Input
+                      name="resident_fName"
+                      placeholder="Please enter first name"
+                      value={newDoctor.resident_fName}
+                      onChange={handleInputChange}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item
+                    label="Last Name"
+                    rules={[
+                      { required: true, message: "Please enter last name" },
+                    ]}
+                  >
+                    <Input
+                      name="resident_lName"
+                      placeholder="Please enter last name"
+                      value={newDoctor.resident_lName}
+                      onChange={handleInputChange}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item
+                    label="Middle Name"
+                    rules={[
+                      { required: true, message: "Please enter middle name" },
+                    ]}
+                  >
+                    <Input
+                      name="resident_mName"
+                      placeholder="Please enter middle name"
+                      value={newDoctor.resident_mName}
+                      onChange={handleInputChange}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item
+                    label="Password"
+                    rules={[
+                      { required: true, message: "Please enter password" },
+                    ]}
+                  >
+                    <Input
+                      name="resident_password"
+                      placeholder="Please enter password"
+                      value={newDoctor.resident_password}
+                      onChange={handleInputChange}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item
+                    label="Department ID"
+                    rules={[
+                      { required: true, message: "Please enter Department ID" },
+                    ]}
+                  >
+                    <Input
+                      name="department_id"
+                      placeholder="Please enter Department ID"
+                      value={newDoctor.department_id}
+                      onChange={handleInputChange}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+            </Form>
+          </Drawer>
 
           <Collapse in={isEditing}>
             <Box sx={{ marginBottom: "10px" }}>

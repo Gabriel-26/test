@@ -27,7 +27,7 @@ const ExpandableCard = ({
       <CardActions disableSpacing>
         <Grid container alignItems="center" spacing={1}>
           <Grid item>
-            <Typography className=" font-bold ml-1 text-xs ">
+            <Typography className="font-bold ml-1 text-xs">
               {subheader}
             </Typography>
           </Grid>
@@ -36,7 +36,11 @@ const ExpandableCard = ({
               onClick={handleExpandClick}
               aria-expanded={expanded}
               aria-label="show more"
-              sx={{ cursor: "pointer" }}
+              sx={{
+                cursor: "pointer",
+                transform: expanded ? "rotate(180deg)" : "rotate(0deg)",
+                transition: "transform 0.3s",
+              }}
             />
           </Grid>
         </Grid>
