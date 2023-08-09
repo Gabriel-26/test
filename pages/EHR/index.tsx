@@ -14,7 +14,6 @@ export function EHRForm() {
     formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
-      patient_id: "",
       patient_fName: "",
       patient_mName: "",
       patient_lName: "",
@@ -23,14 +22,13 @@ export function EHRForm() {
       room_name: "",
       patient_vaccination_stat: "",
       phr_chiefComaplaint: "",
-      //  date: "",
       phr_startTime: "",
       phr_endTime: "",
       phr_historyOfPresentIllness: "",
       phr_nonVerbalPatient: "",
-      phr_HxFrom: "",
+      phr_HxFromParent: "",
+      phr_HxFromFamily: "",
       phr_medRecAvailable: "",
-      // "med-records": "",
       phr_PMH_Asthma: "",
       phr_PMH_HTN: "",
       phr_PMH_Thyroid: "",
@@ -45,7 +43,6 @@ export function EHRForm() {
       phr_allergies: "",
       phr_specifyAllergies: "",
       phr_specifyPrevHospitalization: "",
-      // "maintenance-medications-herbal-drug-use": [],
       phr_maintenanceMeds: "",
       phr_specifyMaintenanceMeds: "",
       phr_malignancy: "",
@@ -59,7 +56,8 @@ export function EHRForm() {
       phr_recDrugs: "",
       phr_specifyRecDrugs: "",
       phr_alcohol: "",
-      phr_alcoholDrinksFrequency: "",
+      phr_alcoholDrinksFrequencyDay: "",
+      phr_alcoholDrinksFrequencyWeek: "",
       phr_noOfAlcoholDrinks: "",
       phr_specifyFamilialDisease: "",
       phr_specifyCivilStatus: "",
@@ -67,60 +65,49 @@ export function EHRForm() {
       phr_bpSitting: "",
       phr_bpStanding: "",
       phr_bpLying: "",
-      phr_heartRate: "",
-      phr_respiratoryRate: "",
-      t: "",
-      phr_oxygenSaturation: "",
-      // "body-habitus": "",
+      phr_hrRegular: "",
+      phr_hrIrregular: "",
+      phr_rr: "",
+      "phr_T*": "",
+      "phr_Sp-02": "",
       phr_bodyHabitusWNL: "",
       phr_bodyHabitusCathetic: "",
       phr_bodyHabitusObese: "",
       phr_heightCM: "",
       phr_weightKG: "",
       phr_BMI: "",
-      // "nasal-mucosa-septum-turbinates": "",
       phr_nasalMucosaSeptumTurbinatesWNL: "",
       phr_nasalMucosaSeptumTurbinatesEdeOrEryPresent: "",
-      // "dentition-gums": "",
       phr_dentionAndGumsWNL: "",
       phr_dentionAndGumsDentalCanes: "",
       phr_dentionAndGumsGingivitis: "",
-      oropharynx: "",
       phr_oropharynxWNL: "",
       phr_oropharynxEdeOrEryPresent: "",
       phr_oropharynxOralUlcers: "",
       phr_oropharynxOralPetachie: "",
-      mallampati: "",
       phr_mallampati1: "",
       phr_mallampati2: "",
       phr_mallampati3: "",
       phr_mallampati4: "",
-      neck: "",
       phr_neckWNL: "",
       phr_neckLymphadenopathy: "",
-      thyroid: "",
       phr_thyroidWNL: "",
       phr_thyroidThyromegaly: "",
       phr_thyroidNodulesPalpable: "",
       phr_thyroidNeckMass: "",
-      // "jugular-veins": "",
       phr_jugularVeinsWNL: "",
       phr_jugularVeinsEngorged: "",
-      chest: "",
-      // "respiratory-effort": "",
+      phr_chestExpansionAndSymmetrical: "",
       phr_respiratoryEffortWNL: "",
       phr_respiratoryEffortAccessoryMuscleUse: "",
       phr_respiratoryEffortIntercostalRetractions: "",
       phr_respiratoryEffortParadoxicMovements: "",
-      // "chest-percussion": "",
       phr_chestPercussionWNL: "",
       phr_chestPercussionDullnessToPercussion: "",
       phr_chestPercussionHyperResonance: "",
-      // "tactile-fremitus": "",
       phr_tactileFremitusWNL: "",
       phr_tactileFremitusIncreased: "",
       phr_tactileFremitusDecreased: "",
-      auscultation: "",
       phr_AuscultationWNL: "",
       phr_AuscultationBronchialBreathSounds: "",
       phr_AuscultationEgophony: "",
@@ -129,7 +116,6 @@ export function EHRForm() {
       phr_AuscultationWheezes: "",
       phr_AuscultationRub: "",
       phr_CardiovascularAdditionalFindings: "",
-      // "heart-sounds": "",
       phr_heartSoundsClearS1: "",
       phr_heartSoundsClearS2: "",
       phr_heartSoundsNoMurmur: "",
@@ -140,33 +126,26 @@ export function EHRForm() {
       phr_heartSoundsDiastolic: "",
       phr_grade: "",
       phr_RespiratoryAdditionalFindings: "",
-      abdomen: "",
+      phr_abdomenWNL: "",
       phr_massPresent: "",
-      // "bowel-sounds": "",
+      phr_specifyMassPresent: "",
       phr_bowelSoundsNormaoactive: "",
       phr_bowelSoundsUp: "",
       phr_bowelSoundsDown: "",
-      // "liver-spleen": "",
       phr_unableToPalpateLiver: "",
       phr_unableToPalpateSpleen: "",
-      organomegaly: "",
       phr_organomegalyLiver: "",
       phr_organomegalySpleen: "",
-      // "dre-findings": "",
       phr_DREFindings: "",
-      // "kidney-punch-sign": "",
       phr_kidneyPunchSignNegative: "",
       phr_kidneyPunchSignPositive: "",
-      // "if-positive": "",
       phr_IfPositiveR: "",
       phr_IfPositiveL: "",
-      extremities: "",
       phr_extremitiesWNL: "",
       phr_extremitiesClubbing: "",
       phr_extremitiesCyanosis: "",
       phr_extremitiesPetachiae: "",
       phr_capillaryRefillTime: "",
-      // skin: [],
       phr_skinWNL: "",
       phr_skinRash: "",
       phr_skinEccymosis: "",
@@ -190,7 +169,9 @@ export function EHRForm() {
       phr_PMH_CAD: data.phr_PMH_CAD ? 1 : 0,
       phr_PMH_CHF: data.phr_PMH_CHF ? 1 : 0,
       phr_PMH_otherIllness: data.phr_PMH_otherIllness ? 1 : 0,
-
+      phr_HxFromParent: data.phr_HxFromParent ? 1 : 0,
+      phr_HxFromFamily: data.phr_HxFromParent ? 1 : 0,
+      phr_abdomenWNL: data.phr_abdomenWNL ? 1 : 0,
       phr_bodyHabitusWNL: data.phr_bodyHabitusWNL ? 1 : 0,
       phr_bodyHabitusCathetic: data.phr_bodyHabitusCathetic ? 1 : 0,
       phr_bodyHabitusObese: data.phr_bodyHabitusObese ? 1 : 0,
@@ -208,7 +189,8 @@ export function EHRForm() {
       phr_oropharynxEdeOrEryPresent: data.phr_oropharynxEdeOrEryPresent ? 1 : 0,
       phr_oropharynxOralUlcers: data.phr_oropharynxOralUlcers ? 1 : 0,
       phr_oropharynxOralPetachie: data.phr_oropharynxOralPetachie ? 1 : 0,
-
+      phr_recDrugs: data.phr_recDrugs ? 1 : 0,
+      phr_alcohol: data.phr_alcohol ? 1 : 0,
       phr_mallampati1: data.phr_mallampati1 ? 1 : 0,
       phr_mallampati2: data.phr_mallampati2 ? 1 : 0,
       phr_mallampati3: data.phr_mallampati3 ? 1 : 0,
@@ -224,7 +206,9 @@ export function EHRForm() {
 
       phr_jugularVeinsWNL: data.phr_jugularVeinsWNL ? 1 : 0,
       phr_jugularVeinsEngorged: data.phr_jugularVeinsEngorged ? 1 : 0,
-      chest: data.chest ? 1 : 0,
+      phr_chestExpansionAndSymmetrical: data.phr_chestExpansionAndSymmetrical
+        ? 1
+        : 0,
 
       phr_respiratoryEffortWNL: data.phr_respiratoryEffortWNL ? 1 : 0,
       phr_respiratoryEffortAccessoryMuscleUse:
@@ -312,7 +296,7 @@ export function EHRForm() {
           <form onSubmit={handleSubmit(onSubmit)}>
             <h1 className="text-3xl">EHR Form</h1>
 
-            <div className="my-4">
+            {/* <div className="my-4">
               <label className="flex flex-col">
                 <span className="mb-2">Patient ID</span>
                 <input
@@ -322,7 +306,7 @@ export function EHRForm() {
                   type="text"
                 />
               </label>
-            </div>
+            </div> */}
 
             <div className="my-4">
               <label className="flex flex-col">
@@ -483,17 +467,17 @@ export function EHRForm() {
             <div className="my-4">
               <p className="mb-2">Hx obtained from</p>
               {[
-                { label: "Parent", field: "Parent" },
-                { label: "Family", field: "Family" },
+                { label: "Parent", field: "phr_HxFromParent" },
+                { label: "Family", field: "phr_HxFromFamily" },
               ].map(({ label, field }, index) => {
                 return (
                   <label key={field} className="flex items-center">
                     <span className="mr-2">{label}</span>
                     <input
-                      {...register("phr_HxFrom")}
+                      {...register(field)}
                       className="form-radio h-5 w-5 text-indigo-600 rounded"
-                      aria-invalid={errors["phr_HxFrom"] ? "true" : "false"}
-                      value={errors[field] ? 0 : 1}
+                      aria-invalid={errors[field] ? "true" : "false"}
+                      value={1}
                       type="radio"
                     />
                   </label>
@@ -739,8 +723,8 @@ export function EHRForm() {
             <div className="my-4">
               <p>Recreational Drugs</p>
               {[
-                { label: "Yes", field: "Yes" },
-                { label: "No", field: "No" },
+                { label: "Yes", field: "1" },
+                { label: "No", field: "0" },
               ].map(({ label, field }, index) => {
                 return (
                   <label key={field} className="flex items-center">
@@ -773,8 +757,8 @@ export function EHRForm() {
             <div className="my-4">
               <p>Alcohol</p>
               {[
-                { label: "Yes", field: "Yes" },
-                { label: "No", field: "No" },
+                { label: "Yes", field: "1" },
+                { label: "No", field: "0" },
               ].map(({ label, field }, index) => {
                 return (
                   <label key={field} className="flex items-center">
@@ -797,19 +781,17 @@ export function EHRForm() {
             <div className="my-4">
               <p>Drinks per</p>
               {[
-                { label: "Day", field: "Day" },
-                { label: "Week", field: "Week" },
+                { label: "Day", field: "phr_alcoholDrinksFrequencyDay" },
+                { label: "Week", field: "phr_alcoholDrinksFrequencyWeek" },
               ].map(({ label, field }, index) => {
                 return (
                   <label key={field} className="flex items-center">
                     <span>{label}</span>
                     <input
-                      {...register("phr_alcoholDrinksFrequency")}
-                      aria-invalid={
-                        errors["phr_alcoholDrinksFrequency"] ? "true" : "false"
-                      }
+                      {...register(field)}
+                      aria-invalid={errors[field] ? "true" : "false"}
                       value={errors[field] ? 0 : 1}
-                      type="radio"
+                      type="checkbox"
                       className="form-radio h-4 w-4 text-indigo-600 rounded"
                     />
                   </label>
@@ -900,15 +882,15 @@ export function EHRForm() {
             <div className="my-4">
               <p>HR</p>
               {[
-                { label: "Regular", field: "Regular" },
-                { label: "Irregular", field: "Irregular" },
+                { label: "Regular", field: "phr_hrRegular" },
+                { label: "Irregular", field: "phr_hrIrregular" },
               ].map(({ label, field }, index) => {
                 return (
                   <label key={field} className="flex items-center">
                     <span>{label}</span>
                     <input
-                      {...register("phr_heartRate")}
-                      aria-invalid={errors["phr_heartRate"] ? "true" : "false"}
+                      {...register(field)}
+                      aria-invalid={errors[field] ? "true" : "false"}
                       value={errors[field] ? 0 : 1}
                       type="radio"
                       className="form-radio h-4 w-4 text-indigo-600 rounded"
@@ -925,7 +907,7 @@ export function EHRForm() {
               <label className="flex flex-col">
                 <span>RR</span>
                 <input
-                  {...register("phr_respiratoryRate")}
+                  {...register("phr_rr")}
                   type="number"
                   className="border border-gray-300 px-4 py-2 rounded-lg"
                 />
@@ -936,7 +918,7 @@ export function EHRForm() {
               <label className="flex flex-col">
                 <span>T*</span>
                 <input
-                  {...register("t")}
+                  {...register("phr_T*")}
                   type="number"
                   className="border border-gray-300 px-4 py-2 rounded-lg"
                 />
@@ -947,7 +929,7 @@ export function EHRForm() {
               <label className="flex flex-col">
                 <span>SpO2</span>
                 <input
-                  {...register("phr_oxygenSaturation")}
+                  {...register("phr_Sp-02")}
                   type="number"
                   className="border border-gray-300 px-4 py-2 rounded-lg"
                 />
@@ -1222,8 +1204,12 @@ export function EHRForm() {
                   Chest (Equal chest expansion & symmetrical){" "}
                 </span>
                 <input
-                  {...register("chest")}
-                  aria-invalid={errors["chest"] ? "true" : "false"}
+                  {...register("phr_chestExpansionAndSymmetrical")}
+                  aria-invalid={
+                    errors["phr_chestExpansionAndSymmetrical"]
+                      ? "true"
+                      : "false"
+                  }
                   type="checkbox"
                   className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
                 />
@@ -1444,7 +1430,7 @@ export function EHRForm() {
               <div className="flex items-center">
                 <p className="mr-4">WNL</p>
                 <input
-                  {...register("abdomen")}
+                  {...register("phr_abdomenWNL")}
                   type="checkbox"
                   className="form-checkbox h-4 w-4 text-indigo-600 rounded"
                 />
@@ -1462,7 +1448,7 @@ export function EHRForm() {
               </label>
               <label className="flex flex-col">
                 <input
-                  {...register("mass_present_text")}
+                  {...register("phr_specifyMassPresent")}
                   type="text"
                   className="border border-gray-300 px-4 py-2 rounded-lg mt-2"
                   placeholder="Enter additional information"

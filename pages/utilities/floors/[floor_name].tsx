@@ -12,16 +12,22 @@ import {
   TableRow,
   TableCell,
   TableBody,
-  Link as MuiLink, // Rename the Link component to avoid conflict with next/link
+  Link as MuiLink,
+  Button,
+  Drawer,
+  Typography, // Rename the Link component to avoid conflict with next/link
 } from "@mui/material";
 import useFloorStore from "../../../src/components/utils/zustandStore";
+import FloorList from "../../../src/components/dashboard/FloorsList";
+import RoomDrawer from "./RoomDrawer";
 
 const Rooms = () => {
   const [rooms, setRooms] = useState([]);
   const [floorName, setFloorName] = useState("");
   const router = useRouter();
   const { floor_name: queryFloorName, floor_id: queryFloorId } = router.query; // Get the floor_name and floor_id from the query parameters
-  const floors = useFloorStore((state) => state.floors); // Access the floors data from the Zustand store
+  const [showDrawer, setShowDrawer] = useState(false);
+  const [showRoomDrawer, setShowRoomDrawer] = useState(false); // New state for the room drawer
 
   useEffect(() => {
     if (queryFloorName) {
@@ -58,6 +64,37 @@ const Rooms = () => {
         description="This is Sample page"
       >
         <DashboardCard title={floorName || "Loading..."}>
+          {/* Add the button or link beside the floorName */}
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => setShowDrawer(true)}
+            >
+              Add Floor
+            </Button>
+            <Drawer
+              anchor="right"
+              open={showDrawer}
+              onClose={() => setShowDrawer(false)}
+            >
+              <FloorList />
+            </Drawer>
+            <Button
+              variant="contained"
+              color="secondary" // You can choose a different color
+              onClick={() => setShowRoomDrawer(true)} // Open the room drawer
+            >
+              Add Room
+            </Button>
+            <Drawer
+              anchor="right"
+              open={showRoomDrawer}
+              onClose={() => setShowRoomDrawer(false)} // Close the room drawer
+            >
+              <RoomDrawer />
+            </Drawer>
+          </div>
           <TableContainer component={Paper}>
             <Table>
               <TableHead>

@@ -3,7 +3,7 @@ import { Grid, Box } from "@mui/material";
 import PageContainer from "../src/components/container/PageContainer";
 
 // components
-import FloorsList from "../src/components/dashboard/FloorsList";
+import FloorsList from "../src/components/dashboard/FloorDrawer";
 import ResidentsOverview from "../src/components/dashboard/ResidentsOverview";
 import RoomsOverview from "../src/components/dashboard/RoomsOverview";
 import Doctors from "./doctors/residents";
@@ -16,9 +16,9 @@ export default function Home() {
     <PageContainer title="Dashboard" description="this is Dashboard">
       <Box>
         <Grid container spacing={3}>
-          <Grid item xs={4} lg={2}>
+          {/* <Grid item xs={4} lg={2}>
             <FloorsList />
-          </Grid>
+          </Grid> */}
           <Grid item xs={12} lg={6}>
             <Grid container spacing={3}>
               <Grid item xs={12}>
