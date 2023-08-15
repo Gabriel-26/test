@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Paper } from "@mui/material";
+import {Grid, Paper, Typography } from "@mui/material";
 import axiosInstance from "../../../src/components/utils/axiosInstance";
 import { useRouter } from "next/router";
 
@@ -8,7 +8,7 @@ const PatientHistory = () => {
   const { room_id } = router.query; // Get the room_id from the query parameters
 
   // Step 1: State to store patient history data
-  const [patientHistory, setPatientHistory] = useState({});
+  const [patientHistory, setPatientHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -155,7 +155,7 @@ const PatientHistory = () => {
     }
   }, [room_id]);
 
-  const fetchPatientHistory = async (roomId) => {
+  const fetchPatientHistory = async (roomId: string | string[]) => {
     try {
       const token = sessionStorage.getItem("authToken");
       axiosInstance.defaults.headers.common[
@@ -181,34 +181,53 @@ const PatientHistory = () => {
     }
   };
 
-  let content;
-  if (loading) {
-    content = <p>Loading patient history data...</p>;
-  } else if (error) {
-    content = <p>Error fetching patient history data: {error.message}</p>;
-  } else if (patientHistory.length > 0) {
-    content = (
-      <>
-        <h2>Patient History</h2>
-        {patientHistory.map((historyEntry, index) => (
-          <div key={index}>
-            {fieldsToDisplay.map((field) => (
-              <p key={field}>
-                <strong>{field}:</strong> {historyEntry[field]}
-              </p>
-            ))}
-            <hr />
-          </div>
-        ))}
-      </>
-    );
-  } else {
-    content = <p>No patient history data found.</p>;
-  }
+  // let content;
+  // if (loading) {
+  //   content = <p>Loading patient history data...</p>;
+  // } else if (error) {
+  //   content = <p>Error fetching patient history data: {error.message}</p>;
+  // } else if (patientHistory.length > 0) {
+  //   content = (
+  //     <>
+  //       <h2>Patient History</h2>
+  //       {patientHistory.map((historyEntry, index) => (
+  //         <div key={index}>
+  //           {fieldsToDisplay.map((field) => (
+  //             <p key={field}>
+  //               <strong>{field}:</strong> {historyEntry[field]}
+  //             </p>
+  //           ))}
+  //           <hr />
+  //         </div>
+  //       ))}
+  //     </>
+  //   );
+  // } else {
+  //   content = <p>No patient history data found.</p>;
+  // }
 
-  return (
+ return (
     <Paper elevation={3} style={{ padding: "20px", margin: "20px" }}>
-      {content}
+      <Typography variant="h4" gutterBottom>
+        Patient History
+      </Typography>
+      {patientHistory.map((historyEntry: { [x: string]: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | React.PromiseLikeOfReactNode | null | undefined; }, index: React.Key | null | undefined) => (
+        <div key={index}>
+          <Typography variant="h6" gutterBottom>
+            Entry {index + 1}
+          </Typography>
+          <Grid container spacing={2}>
+            {fieldsToDisplay.map((field) => (
+              <Grid item xs={6} key={field}>
+                <Typography variant="body1">
+                  <strong>{field}:</strong> {historyEntry[field]}
+                </Typography>
+              </Grid>
+            ))}
+          </Grid>
+          <hr style={{ margin: "20px 0" }} />
+        </div>
+      ))}
     </Paper>
   );
 };

@@ -1,39 +1,36 @@
 import React, { useState, useEffect } from "react";
-import { Paper } from "@mui/material";
+import {  Drawer, Form, Input, Button } from "antd"; // Import necessary components
 import axiosInstance from "../../../src/components/utils/axiosInstance";
 import { useRouter } from "next/router";
+import { Paper } from "@mui/material";
 
 const PatientInfo = () => {
   const router = useRouter();
-  const { room_id } = router.query; // Get the room_id from the query parameters
+  const { room_id } = router.query;
 
-  // Step 1: State to store patient data
   const [patientData, setPatientData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Step 2: Fetch patient data from API
+  const [editDrawerVisible, setEditDrawerVisible] = useState(false);
+  const [editingPatient, setEditingPatient] = useState(null);
+
   useEffect(() => {
     if (room_id) {
-      fetchPatientData(room_id); // Fetch patient data for the specified room_id
+      fetchPatientData(room_id);
     }
   }, [room_id]);
 
   const fetchPatientData = async (roomId) => {
     try {
       const token = sessionStorage.getItem("authToken");
-      axiosInstance.defaults.headers.common[
-        "Authorization"
-      ] = `Bearer ${token}`;
+      axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
       const response = await axiosInstance.get(
         `/PatientHealthRecord/getPatientbyRoom/${roomId}`
       );
 
-      // Assuming the API response is an array of patients for the given room_id
       const data = response.data;
-
-      console.log("API Response Data:", data); // Log the API response for debugging
 
       if (data && data.length > 0) {
         setPatientData(data);
@@ -45,6 +42,35 @@ const PatientInfo = () => {
       console.error("Error fetching patient data:", error);
       setError(error);
       setLoading(false);
+    }
+  };
+
+  const showEditDrawer = (patient) => {
+    setEditingPatient(patient);
+    setEditDrawerVisible(true);
+  };
+
+  const closeEditDrawer = () => {
+    setEditingPatient(null);
+    setEditDrawerVisible(false);
+  };
+
+  const onFinish = async (values) => {
+    try {
+      // Update patient information using API call
+      const token = sessionStorage.getItem("authToken");
+      axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+      await axiosInstance.put(
+        `/PatientHealthRecord/updatePatient/${editingPatient.patient_id}`,
+        values
+      );
+
+      // Close the edit drawer and fetch updated patient data
+      closeEditDrawer();
+      fetchPatientData(room_id);
+    } catch (error) {
+      console.error("Error updating patient data:", error);
     }
   };
 
@@ -66,6 +92,7 @@ const PatientInfo = () => {
             <p>Age: {patient.patient_age}</p>
             <p>Sex: {patient.patient_sex}</p>
             <p>Vaccination Status: {patient.patient_vaccination_stat}</p>
+            <Button onClick={() => showEditDrawer(patient)}>Edit</Button>
             <hr />
           </div>
         ))}
@@ -78,6 +105,43 @@ const PatientInfo = () => {
   return (
     <Paper elevation={3} style={{ padding: "20px", margin: "20px" }}>
       {content}
+      <Drawer
+        title="Edit Patient Information"
+        visible={editDrawerVisible}
+        onClose={closeEditDrawer}
+      >
+        {editingPatient && (
+          <Form
+            layout="vertical"
+            initialValues={editingPatient}
+            onFinish={onFinish}
+          >
+            <Form.Item label="First Name" name="patient_fName">
+              <Input />
+            </Form.Item>
+            <Form.Item label="Last Name" name="patient_lName">
+              <Input />
+            </Form.Item>
+            <Form.Item label="Middle Name" name="patient_mName">
+              <Input />
+            </Form.Item>
+            <Form.Item label="Age" name="patient_age">
+              <Input />
+            </Form.Item>
+            <Form.Item label="Sex" name="patient_sex">
+              <Input />
+            </Form.Item>
+            <Form.Item label="Vaccination Status" name="patient_vaccination_stat">
+              <Input />
+            </Form.Item>
+            <Form.Item>
+              <Button type="primary" htmlType="submit">
+                Save
+              </Button>
+            </Form.Item>
+          </Form>
+        )}
+      </Drawer>
     </Paper>
   );
 };
