@@ -11,8 +11,8 @@ import {
   IconButton,
   TextField,
   Collapse,
-  Button,
   TablePagination,
+  Stack,
 } from "@mui/material";
 import DashboardCard from "../../../src/components/shared/DashboardCard";
 import BorderColorIcon from "@mui/icons-material/BorderColor";
@@ -23,6 +23,7 @@ import axios from "../../../src/components/utils/axiosInstance";
 import type { ReactElement } from "react";
 import PageContainer from "../../../src/components/container/PageContainer";
 import FullLayout from "../../../src/layouts/full/FullLayout";
+import { Button, Drawer, Form, Input, Select, Row, Col, Space } from "antd";
 
 const ChiefResident = () => {
   const [doctors, setDoctors] = useState([]);
@@ -37,6 +38,7 @@ const ChiefResident = () => {
     isChief: "",
     department_id: "",
   });
+  const [searchQuery, setSearchQuery] = useState("");
 
   const [isEditing, setIsEditing] = useState(false);
   const [editDoctor, setEditDoctor] = useState({
@@ -196,165 +198,257 @@ const ChiefResident = () => {
       <DashboardCard title="Chief Residents">
         <Box sx={{ overflow: "auto", width: { xs: "600px", sm: "auto" } }}>
           <Button
-            variant="outlined"
-            color="primary"
             onClick={handleAddDoctor}
-            sx={{ marginBottom: "10px" }}
+            // icon={<PlusOutlined />}
+            // sx={{ marginBottom: "10px" }}
           >
-            Add Doctor
+            New Resident
           </Button>
-          <Collapse in={isAddingDoctor}>
-            <Box sx={{ marginBottom: "10px" }}>
-              <TextField
-                label="Resident ID"
-                name="resident_id"
-                value={newDoctor.resident_id}
-                onChange={handleInputChange}
-                fullWidth
-                sx={{ marginBottom: "10px" }}
-              />
-              <TextField
-                label="Username"
-                name="resident_userName"
-                value={newDoctor.resident_userName}
-                onChange={handleInputChange}
-                fullWidth
-                sx={{ marginBottom: "10px" }}
-              />
-              <TextField
-                label="First Name"
-                name="resident_fName"
-                value={newDoctor.resident_fName}
-                onChange={handleInputChange}
-                fullWidth
-                sx={{ marginBottom: "10px" }}
-              />
-              <TextField
-                label="Last Name"
-                name="resident_lName"
-                value={newDoctor.resident_lName}
-                onChange={handleInputChange}
-                fullWidth
-                sx={{ marginBottom: "10px" }}
-              />
-              <TextField
-                label="Middle Name"
-                name="resident_mName"
-                value={newDoctor.resident_mName}
-                onChange={handleInputChange}
-                fullWidth
-                sx={{ marginBottom: "10px" }}
-              />
-              <TextField
-                label="Password"
-                name="resident_password"
-                value={newDoctor.resident_password}
-                onChange={handleInputChange}
-                fullWidth
-                sx={{ marginBottom: "10px" }}
-              />
-              {/* <TextField
-                label="Chief"
-                name="isChief"
-                value={newDoctor.isChief}
-                onChange={handleInputChange}
-                fullWidth
-                sx={{ marginBottom: "10px" }}
-              /> */}
-              <TextField
-                label="Department ID"
-                name="department_id"
-                value={newDoctor.department_id}
-                onChange={handleInputChange}
-                fullWidth
-                sx={{ marginBottom: "10px" }}
-              />
+          <Stack direction="column" spacing={2}>
+            <TextField
+              label="Search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              InputProps={{
+                type: "search",
+              }}
+            />
+          </Stack>
 
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleSubmit}
-              >
-                Add
-              </Button>
-            </Box>
-          </Collapse>
-
-          <Collapse in={isEditing}>
-            <Box sx={{ marginBottom: "10px" }}>
-              <TextField
-                label="Username"
-                name="resident_userName"
-                value={editDoctor.resident_userName}
-                onChange={handleEditInputChange}
-                fullWidth
-                sx={{ marginBottom: "10px" }}
-              />
-              <TextField
-                label="First Name"
-                name="resident_fName"
-                value={editDoctor.resident_fName}
-                onChange={handleEditInputChange}
-                fullWidth
-                sx={{ marginBottom: "10px" }}
-              />
-              <TextField
-                label="Last Name"
-                name="resident_lName"
-                value={editDoctor.resident_lName}
-                onChange={handleEditInputChange}
-                fullWidth
-                sx={{ marginBottom: "10px" }}
-              />
-              <TextField
-                label="Middle Name"
-                name="resident_mName"
-                value={editDoctor.resident_mName}
-                onChange={handleEditInputChange}
-                fullWidth
-                sx={{ marginBottom: "10px" }}
-              />
-              <TextField
-                label="Password"
-                name="resident_password"
-                value={editDoctor.resident_password}
-                onChange={handleEditInputChange}
-                fullWidth
-                sx={{ marginBottom: "10px" }}
-              />
-              {/* <TextField
-                label="Chief"
-                name="isChief"
-                value={editDoctor.isChief}
-                onChange={handleEditInputChange}
-                fullWidth
-                sx={{ marginBottom: "10px" }}
-              /> */}
-              <TextField
-                label="Department ID"
-                name="department_id"
-                value={editDoctor.department_id}
-                onChange={handleEditInputChange}
-                fullWidth
-                sx={{ marginBottom: "10px" }}
-              />
-
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleEditSubmit}
-              >
-                Save
-              </Button>
-            </Box>
-          </Collapse>
-
-          <TextField
-            label="Search"
-            InputProps={{
-              type: "search",
+          <Drawer
+            title={
+              isAddingDoctor ? "Add Chief Resident" : "Edit Chief Resident"
+            }
+            width={720}
+            onClose={() => {
+              setIsAddingDoctor(false);
+              setIsEditing(false);
+              setEditDoctor({
+                resident_id: "",
+                resident_userName: "",
+                resident_fName: "",
+                resident_lName: "",
+                resident_mName: "",
+                resident_password: "",
+                isChief: "",
+                department_id: "",
+              });
             }}
-          />
+            open={isAddingDoctor || isEditing}
+            bodyStyle={{ paddingBottom: 80 }}
+            extra={
+              <Space>
+                <Button onClick={handleAddDoctor}>Cancel</Button>
+                <Button onClick={handleSubmit} type="primary">
+                  Submit
+                </Button>
+              </Space>
+            }
+          >
+            {isAddingDoctor ? ( // Render add form
+              <Form layout="vertical" requiredMark>
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <Form.Item
+                      label="Resident ID"
+                      rules={[
+                        { required: true, message: "Please enter resident ID" },
+                      ]}
+                    >
+                      <Input
+                        name="resident_id"
+                        placeholder="Please enter resident ID"
+                        value={newDoctor.resident_id}
+                        onChange={handleInputChange}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                      label="Resident UserName"
+                      rules={[
+                        { required: true, message: "Please enter resident ID" },
+                      ]}
+                    >
+                      <Input
+                        name="resident_userName"
+                        placeholder="Please enter resident username"
+                        value={newDoctor.resident_userName}
+                        onChange={handleInputChange}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                      label="First Name"
+                      rules={[
+                        { required: true, message: "Please enter first name" },
+                      ]}
+                    >
+                      <Input
+                        name="resident_fName"
+                        placeholder="Please enter first name"
+                        value={newDoctor.resident_fName}
+                        onChange={handleInputChange}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                      label="Last Name"
+                      rules={[
+                        { required: true, message: "Please enter last name" },
+                      ]}
+                    >
+                      <Input
+                        name="resident_lName"
+                        placeholder="Please enter last name"
+                        value={newDoctor.resident_lName}
+                        onChange={handleInputChange}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                      label="Middle Name"
+                      rules={[
+                        { required: true, message: "Please enter middle name" },
+                      ]}
+                    >
+                      <Input
+                        name="resident_mName"
+                        placeholder="Please enter middle name"
+                        value={newDoctor.resident_mName}
+                        onChange={handleInputChange}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                      label="Password"
+                      rules={[
+                        { required: true, message: "Please enter password" },
+                      ]}
+                    >
+                      <Input
+                        name="resident_password"
+                        placeholder="Please enter password"
+                        value={newDoctor.resident_password}
+                        onChange={handleInputChange}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                      label="Department ID"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please enter Department ID",
+                        },
+                      ]}
+                    >
+                      <Input
+                        name="department_id"
+                        placeholder="Please enter Department ID"
+                        value={newDoctor.department_id}
+                        onChange={handleInputChange}
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+              </Form>
+            ) : isEditing ? ( // Render edit form
+              <Form layout="vertical" requiredMark>
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <Form.Item
+                      label="Username"
+                      name="resident_userName"
+                      rules={[
+                        { required: true, message: "Please enter username" },
+                      ]}
+                      initialValue={editDoctor.resident_userName}
+                    >
+                      <Input onChange={handleEditInputChange} />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                      label="First Name"
+                      name="resident_fName"
+                      rules={[
+                        { required: true, message: "Please enter first name" },
+                      ]}
+                      initialValue={editDoctor.resident_fName}
+                    >
+                      <Input onChange={handleEditInputChange} />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                      label="Last Name"
+                      name="resident_lName"
+                      rules={[
+                        { required: true, message: "Please enter last name" },
+                      ]}
+                      initialValue={editDoctor.resident_lName}
+                    >
+                      <Input onChange={handleEditInputChange} />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                      label="Middle Name"
+                      name="resident_mName"
+                      rules={[
+                        { required: true, message: "Please enter middle name" },
+                      ]}
+                      initialValue={editDoctor.resident_mName}
+                    >
+                      <Input onChange={handleEditInputChange} />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                      label="Password"
+                      name="resident_password"
+                      rules={[
+                        { required: true, message: "Please enter password" },
+                      ]}
+                      initialValue={editDoctor.resident_password}
+                    >
+                      <Input onChange={handleEditInputChange} />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                      label="Department ID"
+                      name="department_id"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please enter Department ID",
+                        },
+                      ]}
+                      initialValue={editDoctor.department_id}
+                    >
+                      <Input onChange={handleEditInputChange} />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleEditSubmit}
+                >
+                  Save
+                </Button>
+              </Form>
+            ) : null}{" "}
+            {/* Render nothing when neither adding nor editing */}
+          </Drawer>
+
           <Table
             aria-label="simple table"
             sx={{
@@ -405,7 +499,18 @@ const ChiefResident = () => {
             <TableBody>
               {doctors
                 .filter(
-                  (doctor) => doctor.isChief === 1 || doctor.role === "Chief"
+                  (doctor) =>
+                    (doctor.isChief === 1 || doctor.role === "Chief") && // Filter condition
+                    (searchQuery === "" ||
+                      doctor.resident_userName
+                        .toLowerCase()
+                        .includes(searchQuery.toLowerCase()) ||
+                      doctor.resident_fName
+                        .toLowerCase()
+                        .includes(searchQuery.toLowerCase()) ||
+                      doctor.resident_lName
+                        .toLowerCase()
+                        .includes(searchQuery.toLowerCase()))
                 ) // Filter doctors based on the condition
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((doctor) => (

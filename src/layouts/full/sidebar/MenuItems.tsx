@@ -70,9 +70,9 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: "Sample Page",
+    title: "Medicines",
     icon: IconAperture,
-    href: "/sample-page",
+    href: "/medicine",
   },
 ];
 

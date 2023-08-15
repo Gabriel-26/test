@@ -38,32 +38,32 @@ const RoomDrawer = ({ visible, onClose, floorId }: any) => {
 
   return (
     <>
-      <Drawer
+      {/* <Drawer
         title="Add a Room"
         width={360}
         open={visible}
         onClose={onClose}
         destroyOnClose={true}
-      >
-        <Form onFinish={addRoom}>
-          <Form.Item
-            label="Room Name"
-            name="room_name"
-            rules={[{ required: true, message: "Please enter room name" }]}
-          >
-            <Input
-              placeholder="Enter room name"
-              value={roomName}
-              onChange={(e) => setRoomName(e.target.value)}
-            />
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              Add Room
-            </Button>
-          </Form.Item>
-        </Form>
-      </Drawer>
+      > */}
+      <Form onFinish={addRoom}>
+        <Form.Item
+          label="Room Name"
+          name="room_name"
+          rules={[{ required: true, message: "Please enter room name" }]}
+        >
+          <Input
+            placeholder="Enter room name"
+            value={roomName}
+            onChange={(e) => setRoomName(e.target.value)}
+          />
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary" htmlType="submit">
+            Add Room
+          </Button>
+        </Form.Item>
+      </Form>
+      {/* </Drawer> */}
     </>
   );
 };

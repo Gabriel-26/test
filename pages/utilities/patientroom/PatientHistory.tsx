@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {Grid, Paper, Typography } from "@mui/material";
+import { Grid, Paper, Typography } from "@mui/material";
 import axiosInstance from "../../../src/components/utils/axiosInstance";
 import { useRouter } from "next/router";
 
@@ -206,28 +206,47 @@ const PatientHistory = () => {
   //   content = <p>No patient history data found.</p>;
   // }
 
- return (
+  return (
     <Paper elevation={3} style={{ padding: "20px", margin: "20px" }}>
       <Typography variant="h4" gutterBottom>
         Patient History
       </Typography>
-      {patientHistory.map((historyEntry: { [x: string]: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | React.PromiseLikeOfReactNode | null | undefined; }, index: React.Key | null | undefined) => (
-        <div key={index}>
-          <Typography variant="h6" gutterBottom>
-            Entry {index + 1}
-          </Typography>
-          <Grid container spacing={2}>
-            {fieldsToDisplay.map((field) => (
-              <Grid item xs={6} key={field}>
-                <Typography variant="body1">
-                  <strong>{field}:</strong> {historyEntry[field]}
-                </Typography>
-              </Grid>
-            ))}
-          </Grid>
-          <hr style={{ margin: "20px 0" }} />
-        </div>
-      ))}
+      {patientHistory.map(
+        (
+          historyEntry: {
+            [x: string]:
+              | string
+              | number
+              | boolean
+              | React.ReactElement<
+                  any,
+                  string | React.JSXElementConstructor<any>
+                >
+              | Iterable<React.ReactNode>
+              | React.ReactPortal
+              | React.PromiseLikeOfReactNode
+              | null
+              | undefined;
+          },
+          index: React.Key | null | undefined
+        ) => (
+          <div key={index}>
+            <Typography variant="h6" gutterBottom>
+              Entry {index + 1}
+            </Typography>
+            <Grid container spacing={4}>
+              {fieldsToDisplay.map((field) => (
+                <Grid item xs={6} key={field}>
+                  <Typography variant="body1">
+                    <strong>{field}:</strong> {historyEntry[field]}
+                  </Typography>
+                </Grid>
+              ))}
+            </Grid>
+            <hr style={{ margin: "20px 0" }} />
+          </div>
+        )
+      )}
     </Paper>
   );
 };

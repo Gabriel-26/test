@@ -15,6 +15,7 @@ import {
   Link as MuiLink,
   Button,
   Drawer,
+  TablePagination,
   Typography, // Rename the Link component to avoid conflict with next/link
 } from "@mui/material";
 import useFloorStore from "../../../src/components/utils/zustandStore";
@@ -28,6 +29,9 @@ const Rooms = () => {
   const { floor_name: queryFloorName, floor_id: queryFloorId } = router.query; // Get the floor_name and floor_id from the query parameters
   const [showDrawer, setShowDrawer] = useState(false);
   const [showRoomDrawer, setShowRoomDrawer] = useState(false); // New state for the room drawer
+
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
     if (queryFloorName) {
@@ -108,30 +112,44 @@ const Rooms = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rooms.map((room) => (
-                  // Step 3: Wrap the cells in a clickable element (e.g., Link)
-                  <TableRow key={room.room_id}>
-                    <TableCell>
-                      {/* Step 4: Use next/link for navigation */}
-                      <MuiLink
-                        href={`/utilities/patientroom/${room.room_name}?room_id=${room.room_id}`}
-                      >
-                        {/* The room_id is displayed as a link */}
-                        {room.room_id}
-                      </MuiLink>
-                    </TableCell>
-                    <TableCell>{room.room_name}</TableCell>
-                    <TableCell>{room.room_floor}</TableCell>
-                    <TableCell>{room.room_type}</TableCell>
-                    <TableCell>{room.floor_id}</TableCell>
-                    <TableCell>{room.room_price}</TableCell>
-                  </TableRow>
-                ))}
+                {rooms
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((room) => (
+                    // Step 3: Wrap the cells in a clickable element (e.g., Link)
+                    <TableRow key={room.room_id}>
+                      <TableCell>
+                        {/* Step 4: Use next/link for navigation */}
+                        <MuiLink
+                          href={`/utilities/patientroom/${room.room_name}?room_id=${room.room_id}`}
+                        >
+                          {/* The room_id is displayed as a link */}
+                          {room.room_id}
+                        </MuiLink>
+                      </TableCell>
+                      <TableCell>{room.room_name}</TableCell>
+                      <TableCell>{room.room_floor}</TableCell>
+                      <TableCell>{room.room_type}</TableCell>
+                      <TableCell>{room.floor_id}</TableCell>
+                      <TableCell>{room.room_price}</TableCell>
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
           </TableContainer>
         </DashboardCard>
       </PageContainer>
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25, 50]}
+        component="div"
+        count={rooms.length}
+        page={page}
+        onPageChange={(event, newPage) => setPage(newPage)}
+        rowsPerPage={rowsPerPage}
+        onRowsPerPageChange={(event) => {
+          setRowsPerPage(parseInt(event.target.value, 10));
+          setPage(0);
+        }}
+      />
     </div>
   );
 };
