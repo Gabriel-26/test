@@ -42,7 +42,7 @@ const RoomView = () => {
       description="this is Shadow"
     >
       <DashboardCard title={queryRoomName || "(Room Name)"}>
-        <Tabs defaultValue="account" className="w-[400px]">
+        <Tabs defaultValue="account" className="min-w-[600px] w-full md:w-[90%]">
           <TabsList>
             <TabsTrigger value="account">Patient Info</TabsTrigger>
             <TabsTrigger value="password">Patient History</TabsTrigger>
