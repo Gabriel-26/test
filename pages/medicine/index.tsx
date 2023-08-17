@@ -1,6 +1,14 @@
 import React, { useState, useEffect, ReactElement } from "react";
-import { Button, Form, Input, Drawer, DatePicker, InputNumber } from "antd";
 import axiosInstance from "../../src/components/utils/axiosInstance";
+import {
+  Button,
+  Drawer,
+  Form,
+  Input,
+  Select,
+  DatePicker,
+  InputNumber,
+} from "antd";
 import FullLayout from "../../src/layouts/full/FullLayout";
 import {
   Table,
@@ -10,60 +18,58 @@ import {
   TableHead,
   TableRow,
   Paper,
-} from "@mui/material"; // Import Material-UI Table components
+  TablePagination,
+} from "@mui/material";
 
-const columns = [
-  { field: "medicine_id", headerName: "Medicine ID" },
-  { field: "medicine_name", headerName: "Medicine Name" },
-  { field: "medicine_brand", headerName: "Medicine Brand" },
-  { field: "medicine_dosage", headerName: "Medicine Dosage" },
-  { field: "medicine_type", headerName: "Medicine Type" },
-  { field: "medicine_price", headerName: "Medicine Price" },
-  { field: "created_at", headerName: "Created At" },
-  { field: "updated_at", headerName: "Updated At" },
-  {
-    field: "actions",
-    headerName: "Actions",
-    renderCell: (params) => (
-      <Button onClick={() => handleEdit(params.row)}>Edit</Button>
-    ),
-  },
-];
+interface Medicine {
+  medicine_id: number;
+  medicine_name: string;
+  medicine_brand: string;
+  medicine_dosage: string;
+  medicine_type: string;
+  medicine_price: number;
+  created_at: string;
+  updated_at: string;
+}
 
-const Medicine = () => {
+const MedicineList = () => {
+  const [medicines, setMedicineData] = useState<Medicine[]>([]); // Renamed variable
   const [drawerVisible, setDrawerVisible] = useState(false);
-  const [editingMedicine, setEditingMedicine] = useState(null);
-  const [medicines, setMedicines] = useState([]); // Initialize medicines with an empty array
-
+  const [editingMedicine, setEditingMedicine] = useState<Medicine | null>(null);
   const [form] = Form.useForm();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    fetchMedicines();
+  }, [searchQuery]);
 
   const fetchMedicines = async () => {
     try {
-      const response = await axiosInstance.get(`/medicines`);
-      console.log("API response:", response.data); // Log the API response
-      setMedicines(response.data);
+      const response = await axiosInstance.get("/medicines");
+      console.log(response.data); // Add this line
+      // Update the API endpoint
+      const filteredMedicines = response.data.filter((medicine: Medicine) =>
+        Object.values(medicine).some(
+          (value) =>
+            value !== null &&
+            value.toString().toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      );
+      setMedicineData(filteredMedicines);
     } catch (error) {
       console.error("Error fetching medicines:", error);
     }
   };
 
-  useEffect(() => {
-    fetchMedicines(); // Fetch medicines data when the component mounts
-  }, []);
-
-  const showDrawer = (record: any) => {
+  const showDrawer = (medicine?: Medicine) => {
+    setEditingMedicine(medicine ?? null);
     setDrawerVisible(true);
-    setEditingMedicine(record);
-    if (record) {
-      form.setFieldsValue(record);
-    } else {
-      form.resetFields();
-    }
+    form.setFieldsValue(medicine ?? {});
   };
 
   const closeDrawer = () => {
-    setDrawerVisible(false);
     setEditingMedicine(null);
+    setDrawerVisible(false);
     form.resetFields();
   };
 
@@ -71,7 +77,10 @@ const Medicine = () => {
     try {
       if (editingMedicine) {
         // Edit existing medicine
-        await axiosInstance.put(`medicines/edit/${editingMedicine.id}`, values);
+        await axiosInstance.put(
+          `/medicines/edit/${editingMedicine.medicine_id}`,
+          values
+        );
       } else {
         // Add new medicine
         await axiosInstance.post(`/medicines`, values);
@@ -83,43 +92,91 @@ const Medicine = () => {
     }
   };
 
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
+  // Avoid a layout jump when reaching the last page with empty rows.
+
+  const handleChangePage = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number
+  ) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10)); // Change the base to 10
+    setPage(0);
+  };
+
   return (
     <div>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => showDrawer(null)}
-        style={{ marginBottom: 16 }}
-      >
+      <h1>Medicine Formulary</h1>
+      <Button variant="contained" color="primary" onClick={() => showDrawer()}>
         Add Medicine
       </Button>
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              {columns.map((column) => (
-                <TableCell key={column.id}>{column.label}</TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {medicines.map((row) => (
-              <TableRow key={row.medicine_id}>
-                {columns.map((column) => (
-                  <TableCell key={column.id}>
-                    {column.id === "actions" ? (
-                      <Button onClick={() => handleEdit(row)}>Edit</Button>
-                    ) : (
-                      row[column.id]
-                    )}
-                  </TableCell>
-                ))}
+      <Input
+        placeholder="Search"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+      />
+      {medicines.length > 0 ? (
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>ID</TableCell>
+                <TableCell>Name</TableCell>
+                <TableCell>Brand</TableCell>
+                <TableCell>Dosage</TableCell>
+                <TableCell>Type</TableCell>
+                <TableCell>Price</TableCell>
+                {/* <TableCell>Created At</TableCell>
+                <TableCell>Updated At</TableCell> */}
+                <TableCell>Action</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
+            </TableHead>
+            <TableBody>
+              {medicines
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((medicine) => (
+                  <TableRow key={medicine.medicine_id}>
+                    <TableCell>{medicine.medicine_id}</TableCell>
+                    <TableCell>{medicine.medicine_name}</TableCell>
+                    <TableCell>{medicine.medicine_brand}</TableCell>
+                    <TableCell>{medicine.medicine_dosage}</TableCell>
+                    <TableCell>{medicine.medicine_type}</TableCell>
+                    <TableCell>{medicine.medicine_price}</TableCell>
+                    {/* <TableCell>{medicine.created_at}</TableCell>
+                  <TableCell>{medicine.updated_at}</TableCell> */}
+                    <TableCell>
+                      <Button
+                        variant="text"
+                        color="primary"
+                        onClick={() => showDrawer(medicine)}
+                      >
+                        Edit
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25, 50, 100]}
+            component="div"
+            count={medicines.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </TableContainer>
+      ) : (
+        <p>No medicines available.</p>
+      )}
       <Drawer
         title={editingMedicine ? "Edit Medicine" : "Add Medicine"}
         width={720}
@@ -128,9 +185,6 @@ const Medicine = () => {
         bodyStyle={{ paddingBottom: 80 }}
       >
         <Form layout="vertical" form={form} onFinish={handleFormSubmit}>
-          <Form.Item name="medicine_id" label="Medicine ID">
-            <Input disabled />
-          </Form.Item>
           <Form.Item
             name="medicine_name"
             label="Medicine Name"
@@ -158,12 +212,7 @@ const Medicine = () => {
           >
             <InputNumber min={0} step={0.01} />
           </Form.Item>
-          <Form.Item name="created_at" label="Created At">
-            <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" disabled />
-          </Form.Item>
-          <Form.Item name="updated_at" label="Updated At">
-            <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" disabled />
-          </Form.Item>
+
           <Form.Item>
             <Button type="primary" htmlType="submit">
               {editingMedicine ? "Save Changes" : "Add Medicine"}
@@ -175,7 +224,7 @@ const Medicine = () => {
   );
 };
 
-export default Medicine;
-Medicine.getLayout = function getLayout(page: ReactElement) {
+export default MedicineList;
+MedicineList.getLayout = function getLayout(page: ReactElement) {
   return <FullLayout>{page}</FullLayout>;
 };

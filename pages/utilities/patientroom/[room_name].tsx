@@ -42,7 +42,10 @@ const RoomView = () => {
       description="this is Shadow"
     >
       <DashboardCard title={queryRoomName || "(Room Name)"}>
-        <Tabs defaultValue="account" className="min-w-[600px] w-full md:w-[90%]">
+        <Tabs
+          defaultValue="account"
+          className="min-w-[600px] w-full md:w-[90%]"
+        >
           <TabsList>
             <TabsTrigger value="account">Patient Info</TabsTrigger>
             <TabsTrigger value="password">Patient History</TabsTrigger>
@@ -54,14 +57,14 @@ const RoomView = () => {
             <PatientHistory />
           </TabsContent>
         </Tabs>
-        <Button variant="outlined" onClick={handleEditClick}>
+        {/* <Button variant="outlined" onClick={handleEditClick}>
           Edit Patient Data
         </Button>
         <Drawer anchor="right" open={isDrawerOpen} onClose={handleCloseDrawer}>
-          {/* Inside the drawer, display your editable form */}
+          {/* Inside the drawer, display your editable form 
           <EditForm2 />
-          {/* <EditForm onClose={handleCloseDrawer} /> */}
-        </Drawer>
+          {/* <EditForm onClose={handleCloseDrawer} /> 
+        </Drawer> */}
       </DashboardCard>
     </PageContainer>
   );
