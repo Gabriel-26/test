@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from "react";
-import {  Drawer, Form, Input, Button } from "antd"; // Import necessary components
+import { Drawer, Form, Input, Button } from "antd"; // Import necessary components
 import axiosInstance from "../../../src/components/utils/axiosInstance";
 import { useRouter } from "next/router";
 import { Paper } from "@mui/material";
 
-const PatientInfo = () => {
+const PatientInfo = (props: any) => {
   const router = useRouter();
   const { room_id } = router.query;
 
-  const [patientData, setPatientData] = useState([]);
+  const { patientData, updatePatientData } = props; // Destructure patientData and updatePatientData props
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const [editDrawerVisible, setEditDrawerVisible] = useState(false);
   const [editingPatient, setEditingPatient] = useState(null);
+  const { patient_id } = patientData;
 
   useEffect(() => {
     if (room_id) {
@@ -21,21 +22,30 @@ const PatientInfo = () => {
     }
   }, [room_id]);
 
-  const fetchPatientData = async (roomId) => {
+  useEffect(() => {
+    if (room_id) {
+      fetchPatientData(room_id);
+    }
+  }, [room_id]);
+
+  const fetchPatientData = async (roomId: string | string[] | undefined) => {
     try {
       const token = sessionStorage.getItem("authToken");
-      axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      axiosInstance.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${token}`;
 
       const response = await axiosInstance.get(
-        `/PatientHealthRecord/getPatientbyRoom/${roomId}`
+        `/patientHealthRecord/getPatientbyRoom/${roomId}`
       );
 
       const data = response.data;
 
       if (data && data.length > 0) {
-        setPatientData(data);
+        // Call the updatePatientData function to update the patientData in the parent component
+        updatePatientData(data);
       } else {
-        setPatientData([]);
+        // If no data is available, you can choose to handle it as needed
       }
       setLoading(false);
     } catch (error) {
@@ -44,8 +54,7 @@ const PatientInfo = () => {
       setLoading(false);
     }
   };
-
-  const showEditDrawer = (patient) => {
+  const showEditDrawer = (patient: React.SetStateAction<null>) => {
     setEditingPatient(patient);
     setEditDrawerVisible(true);
   };
@@ -55,14 +64,16 @@ const PatientInfo = () => {
     setEditDrawerVisible(false);
   };
 
-  const onFinish = async (values) => {
+  const onFinish = async (values: any) => {
     try {
       // Update patient information using API call
       const token = sessionStorage.getItem("authToken");
-      axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      axiosInstance.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${token}`;
 
       await axiosInstance.put(
-        `/PatientHealthRecord/updatePatient/${editingPatient.patient_id}`,
+        `/patientHealthRecord/updatePatient/${editingPatient.patient_id}`,
         values
       );
 
@@ -107,7 +118,7 @@ const PatientInfo = () => {
       {content}
       <Drawer
         title="Edit Patient Information"
-        visible={editDrawerVisible}
+        open={editDrawerVisible}
         onClose={closeEditDrawer}
       >
         {editingPatient && (
@@ -131,7 +142,10 @@ const PatientInfo = () => {
             <Form.Item label="Sex" name="patient_sex">
               <Input />
             </Form.Item>
-            <Form.Item label="Vaccination Status" name="patient_vaccination_stat">
+            <Form.Item
+              label="Vaccination Status"
+              name="patient_vaccination_stat"
+            >
               <Input />
             </Form.Item>
             <Form.Item>

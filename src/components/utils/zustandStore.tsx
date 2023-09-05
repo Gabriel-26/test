@@ -1,8 +1,8 @@
 // floorStore.ts
-import { create, useStore } from "zustand";
+import { create } from "zustand";
+import axiosInstance from "./axiosInstance"; // Import your Axios instance
 
 interface Floor {
-  // Define your floor data structure here
   id: string;
   name: string;
   // Add other properties as needed
@@ -13,11 +13,9 @@ interface FloorStoreState {
   setFloors: (floors: Floor[]) => void;
 }
 
-const useFloorStore = create<FloorStoreState>(
-  (set: (arg0: { floors: any }) => any) => ({
-    floors: [] as Floor[], // Initialize floors as an empty array of Floor type
-    setFloors: (floors: any) => set({ floors }),
-  })
-);
+const useFloorStore = create<FloorStoreState>((set) => ({
+  floors: [], // Initialize floors as an empty array of Floor type
+  setFloors: (floors) => set({ floors }),
+}));
 
 export default useFloorStore;

@@ -35,7 +35,7 @@ const ChiefResident = () => {
     resident_lName: "",
     resident_mName: "",
     resident_password: "",
-    isChief: "",
+    role: "",
     department_id: "",
   });
   const [searchQuery, setSearchQuery] = useState("");
@@ -48,7 +48,7 @@ const ChiefResident = () => {
     resident_lName: "",
     resident_mName: "",
     resident_password: "",
-    isChief: "",
+    role: "",
     department_id: "",
   });
 
@@ -58,10 +58,23 @@ const ChiefResident = () => {
 
   const fetchDoctors = async () => {
     try {
-      const response = await axios.get("/residents");
+      const token = sessionStorage.getItem("authToken");
+      const role = sessionStorage.getItem("userRole"); // Assuming user role is stored in sessionStorage
+
+      // Set the token in Axios headers for this request
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+      let endpoint = "/residents"; // Default endpoint
+
+      // Check the user's role and update the endpoint if it's "admin"
+      if (role === "admin") {
+        endpoint = "/admin/residents";
+      }
+
+      const response = await axios.get(endpoint);
       setDoctors(response.data);
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching doctors:", error);
     }
   };
 
@@ -77,7 +90,7 @@ const ChiefResident = () => {
       resident_lName: string;
       resident_mName: string;
       resident_password: string;
-      isChief: string;
+      role: string;
       department_id: string;
     }>
   ) => {
@@ -109,14 +122,17 @@ const ChiefResident = () => {
 
   const handleSubmit = async () => {
     try {
-      // Set isChief to 1, as all residents being added are Chiefs
-      const newDoctorWithIsChief = {
+      const token = sessionStorage.getItem("authToken");
+      // Set the token in Axios headers for this request
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      // Set role to 1, as all residents being added are Chiefs
+      const newDoctorWithrole = {
         ...newDoctor,
-        isChief: "1",
+        role: "chiefResident",
       };
 
       // Send a POST request to the API endpoint with the new doctor data
-      const response = await axios.post("/residents", newDoctorWithIsChief);
+      const response = await axios.post("/residents", newDoctorWithrole);
 
       // Handle the response as needed
       console.log("New doctor added successfully:", response.data);
@@ -132,7 +148,7 @@ const ChiefResident = () => {
         resident_lName: "",
         resident_mName: "",
         resident_password: "",
-        isChief: "1",
+        role: "1",
         department_id: "",
       });
       setIsAddingDoctor(false);
@@ -144,6 +160,9 @@ const ChiefResident = () => {
 
   const handleEditSubmit = async () => {
     try {
+      const token = sessionStorage.getItem("authToken");
+      // Set the token in Axios headers for this request
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       // Send a PUT request to the API endpoint with the updated doctor data
       const response = await axios.put(
         `/residents/${editDoctor.resident_id}`,
@@ -165,7 +184,7 @@ const ChiefResident = () => {
         resident_lName: "",
         resident_mName: "",
         resident_password: "",
-        isChief: "",
+        role: "",
         department_id: "",
       });
     } catch (error) {
@@ -230,7 +249,7 @@ const ChiefResident = () => {
                 resident_lName: "",
                 resident_mName: "",
                 resident_password: "",
-                isChief: "",
+                role: "",
                 department_id: "",
               });
             }}
@@ -500,7 +519,7 @@ const ChiefResident = () => {
               {doctors
                 .filter(
                   (doctor) =>
-                    (doctor.isChief === 1 || doctor.role === "Chief") && // Filter condition
+                    doctor.role === "chiefResident" && // Filter condition
                     (searchQuery === "" ||
                       doctor.resident_userName
                         .toLowerCase()

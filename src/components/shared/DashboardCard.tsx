@@ -18,6 +18,7 @@ type Props = {
   headsubtitle?: string | JSX.Element;
   children?: JSX.Element | JSX.Element[];
   middlecontent?: string | JSX.Element;
+  cardWidth?: number; // Add cardWidth prop here
 };
 
 const DashboardCard = ({
@@ -30,16 +31,17 @@ const DashboardCard = ({
   headtitle,
   headsubtitle,
   middlecontent,
+  cardWidth,
 }: Props) => {
   const isLargeScreen = useMediaQuery(
     (theme: { breakpoints: { up: (arg0: string) => string } }) =>
       theme.breakpoints.up("md")
   );
-  const cardWidth = isLargeScreen ? 1000 : 600;
+  const calculatedCardWidth = cardWidth ?? (isLargeScreen ? 1000 : 600);
   return (
     <>
       <Card
-        sx={{ marginTop: 5, minWidth: cardWidth, minHeight: 100 }}
+        sx={{ marginTop: 5, minWidth: calculatedCardWidth, minHeight: 100 }}
         elevation={9}
         variant={undefined}
       >

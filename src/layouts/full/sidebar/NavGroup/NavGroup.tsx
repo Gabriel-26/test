@@ -1,8 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { ListSubheader, styled, Theme, List } from "@mui/material";
-import ExpandableCard from "../../../../../pages/utilities/floors/ExpandableCard";
-import NavItem from "../NavItem"; // Import NavItem component
 
 type NavGroup = {
   navlabel?: boolean;
@@ -17,7 +15,7 @@ interface ItemType {
   navlabel?: boolean;
   subheader?: string;
   title?: string;
-  icon?: any;
+  // icon?: any;
   href?: any;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
 }

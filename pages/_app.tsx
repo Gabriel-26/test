@@ -8,7 +8,6 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { CacheProvider, EmotionCache } from "@emotion/react";
 import createEmotionCache from "../src/createEmotionCache";
 import { baselightTheme } from "../src/theme/DefaultColors";
-import useFloorStore from "../src/components/utils/zustandStore";
 import axiosInstance from "../src/components/utils/axiosInstance";
 
 // Client-side cache, shared for the whole session of the user in the browser.
@@ -28,22 +27,6 @@ const MyApp = (props: MyAppProps) => {
   const theme = baselightTheme;
 
   const getLayout = Component.getLayout ?? ((page) => page);
-
-  useEffect(() => {
-    // Fetch floors data during SSR and set it in the Zustand store
-    // Replace fetchFloors with your actual function to fetch the floors
-    const fetchFloors = async () => {
-      try {
-        const response = await axiosInstance.get("/floors"); // Replace with your API endpoint
-        const floorsData = response.data;
-        useFloorStore.getState().setFloors(floorsData); // Set the floors in the store
-      } catch (error) {
-        console.error("Error fetching floors:", error);
-      }
-    };
-
-    fetchFloors();
-  }, []);
 
   return (
     <CacheProvider value={emotionCache}>

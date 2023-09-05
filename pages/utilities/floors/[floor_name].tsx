@@ -16,11 +16,11 @@ import {
   Button,
   Drawer,
   TablePagination,
-  Typography, // Rename the Link component to avoid conflict with next/link
 } from "@mui/material";
 import useFloorStore from "../../../src/components/utils/zustandStore";
 import FloorList from "../../../src/components/dashboard/FloorsList";
 import RoomDrawer from "./RoomDrawer";
+import { getUserRole } from "../../../src/components/utils/roles";
 
 const Rooms = () => {
   const [rooms, setRooms] = useState([]);
@@ -32,6 +32,7 @@ const Rooms = () => {
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const userRole = getUserRole();
 
   useEffect(() => {
     if (queryFloorName) {
@@ -47,10 +48,10 @@ const Rooms = () => {
       // Set the token in Axios headers for this request
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-      let url = "/Rooms";
+      let url = "/rooms";
       if (floorId) {
         // If floor_id is provided, append it to the URL as a parameter
-        url = `/Rooms/getRoomsByfloor/${floorId}`;
+        url = `rooms/getRoomsByfloor/${floorId}`;
       }
 
       const response = await axios.get(url);
@@ -70,13 +71,15 @@ const Rooms = () => {
         <DashboardCard title={floorName || "Loading..."}>
           {/* Add the button or link beside the floorName */}
           <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => setShowDrawer(true)}
-            >
-              Add Floor
-            </Button>
+            {userRole === "chiefResident" && (
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={() => setShowDrawer(true)}
+              >
+                Add Floor
+              </Button>
+            )}
             <Drawer
               anchor="right"
               open={showDrawer}
@@ -84,13 +87,16 @@ const Rooms = () => {
             >
               <FloorList />
             </Drawer>
-            <Button
-              variant="contained"
-              color="secondary" // You can choose a different color
-              onClick={() => setShowRoomDrawer(true)} // Open the room drawer
-            >
-              Add Room
-            </Button>
+            {userRole === "chiefResident" && (
+              <Button
+                variant="contained"
+                color="secondary" // You can choose a different color
+                onClick={() => setShowRoomDrawer(true)} // Open the room drawer
+              >
+                Add Room
+              </Button>
+            )}
+
             <Drawer
               anchor="right"
               open={showRoomDrawer}

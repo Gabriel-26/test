@@ -40,7 +40,7 @@ const Doctors = () => {
     resident_lName: "",
     resident_mName: "",
     resident_password: "",
-    isChief: "",
+    role: "",
     department_id: "",
   });
   const [searchQuery, setSearchQuery] = useState("");
@@ -53,7 +53,7 @@ const Doctors = () => {
     resident_lName: "",
     resident_mName: "",
     resident_password: "",
-    isChief: "",
+    role: "",
     department_id: "",
   });
 
@@ -63,10 +63,23 @@ const Doctors = () => {
 
   const fetchDoctors = async () => {
     try {
-      const response = await axios.get("/residents");
+      const token = sessionStorage.getItem("authToken");
+      const role = sessionStorage.getItem("userRole"); // Assuming user role is stored in sessionStorage
+
+      // Set the token in Axios headers for this request
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+      let endpoint = "/residents"; // Default endpoint
+
+      // Check the user's role and update the endpoint if it's "admin"
+      if (role === "admin") {
+        endpoint = "/admin/residents";
+      }
+
+      const response = await axios.get(endpoint);
       setDoctors(response.data);
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching doctors:", error);
     }
   };
 
@@ -82,7 +95,7 @@ const Doctors = () => {
       resident_lName: string;
       resident_mName: string;
       resident_password: string;
-      isChief: string;
+      role: string;
       department_id: string;
     }>
   ) => {
@@ -114,13 +127,16 @@ const Doctors = () => {
 
   const handleSubmit = async () => {
     try {
-      const newDoctorWithIsChiefZero = {
+      const token = sessionStorage.getItem("authToken");
+      // Set the token in Axios headers for this request
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      const newDoctorWithroleZero = {
         ...newDoctor,
-        isChief: "0",
+        role: "resident",
       };
 
       // Send a POST request to the API endpoint with the new doctor data
-      const response = await axios.post("/residents", newDoctorWithIsChiefZero);
+      const response = await axios.post("/residents", newDoctorWithroleZero);
 
       // Handle the response as needed
       console.log("New doctor added successfully:", response.data);
@@ -136,7 +152,7 @@ const Doctors = () => {
         resident_lName: "",
         resident_mName: "",
         resident_password: "",
-        isChief: "0",
+        role: "resident",
         department_id: "",
       });
       setIsAddingDoctor(false);
@@ -148,6 +164,9 @@ const Doctors = () => {
 
   const handleEditSubmit = async () => {
     try {
+      const token = sessionStorage.getItem("authToken");
+      // Set the token in Axios headers for this request
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       // Send a PUT request to the API endpoint with the updated doctor data
       const response = await axios.put(
         `/residents/${editDoctor.resident_id}`,
@@ -169,7 +188,7 @@ const Doctors = () => {
         resident_lName: "",
         resident_mName: "",
         resident_password: "",
-        isChief: "",
+        role: "",
         department_id: "",
       });
     } catch (error) {
@@ -232,7 +251,7 @@ const Doctors = () => {
                 resident_lName: "",
                 resident_mName: "",
                 resident_password: "",
-                isChief: "",
+                role: "",
                 department_id: "",
               });
             }}
@@ -502,7 +521,7 @@ const Doctors = () => {
               {doctors
                 .filter(
                   (doctor) =>
-                    (doctor.isChief === 0 || doctor.role === "Resident") && // Filter condition
+                    doctor.role === "resident" && // Filter condition
                     (searchQuery === "" ||
                       doctor.resident_userName
                         .toLowerCase()

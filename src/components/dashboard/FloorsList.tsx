@@ -25,8 +25,6 @@ const FloorList = () => {
   const getFloors = async () => {
     try {
       const token = sessionStorage.getItem("authToken");
-
-      // Set the token in Axios headers for this request
       axiosInstance.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${token}`;
@@ -39,7 +37,7 @@ const FloorList = () => {
     }
   };
 
-  const addFloor = async (floorName: string, floorID: string) => {
+  const addFloor = async () => {
     try {
       const response = await axiosInstance.post("/floors", {
         floor_name: floorName,
@@ -54,6 +52,7 @@ const FloorList = () => {
   };
 
   useEffect(() => {
+    // Fetch floors and set them in the Zustand store
     getFloors().then((data) => setFloors(data));
   }, [setFloors]);
 
@@ -61,16 +60,21 @@ const FloorList = () => {
     setShowAddForm(!showAddForm);
   };
 
-  const handleAddFloor = () => {
-    addFloor(floorName, floorID).then(() => {
-      setShowAddForm(false);
+  const handleAddFloor = async () => {
+    // Add a new floor
+    const result = await addFloor();
+
+    if (result) {
+      // If adding is successful, update the floors in the Zustand store
+      getFloors().then((data) => {
+        setFloors(data);
+      });
+
+      // Clear input fields and hide the form
       setFloorName("");
       setFloorID("");
-      // After adding a new floor, update the floors in the Zustand store
-      getFloors().then((data) => {
-        setFloors(data); // Update the floors in the Zustand store
-      });
-    });
+      setShowAddForm(false);
+    }
   };
 
   return (
@@ -80,31 +84,14 @@ const FloorList = () => {
           <Typography variant="h5" gutterBottom paddingLeft={2}>
             Floors
           </Typography>
-          {floors.map(
-            (floor: {
-              floor_id: React.Key | null | undefined;
-              floor_name:
-                | string
-                | number
-                | boolean
-                | React.ReactElement<
-                    any,
-                    string | React.JSXElementConstructor<any>
-                  >
-                | Iterable<React.ReactNode>
-                | React.ReactPortal
-                | React.PromiseLikeOfReactNode
-                | null
-                | undefined;
-            }) => (
-              <ListItem key={floor.floor_id}>
-                <ListItemText
-                  primary={floor.floor_name}
-                  style={{ textAlign: "center" }}
-                />
-              </ListItem>
-            )
-          )}
+          {floors.map((floor) => (
+            <ListItem key={floor.floor_id}>
+              <ListItemText
+                primary={floor.floor_name}
+                style={{ textAlign: "center" }}
+              />
+            </ListItem>
+          ))}
         </List>
         <Button
           variant="contained"
@@ -132,7 +119,7 @@ const FloorList = () => {
             variant="contained"
             color="primary"
             onClick={handleAddFloor}
-            fullWidth // Set the width to 100%
+            fullWidth
             sx={{ color: "#03bdcc" }}
           >
             Add Floor

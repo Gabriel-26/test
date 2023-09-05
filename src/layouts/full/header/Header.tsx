@@ -21,21 +21,21 @@ interface ItemType {
 const Header = ({ toggleMobileSidebar }: ItemType) => {
   const [loggedInUserName, setLoggedInUserName] = useState("");
 
-  useEffect(() => {
-    fetchUserData();
-  }, []);
+  // useEffect(() => {
+  //   fetchUserData();
+  // }, []);
 
-  const fetchUserData = async () => {
-    try {
-      // Fetch user data from your Laravel API
-      const response = await axios.get("/residents"); // Replace '/api/user' with your API endpoint for getting user data
-      // Assuming the API response contains a property 'resident_userName'
-      const userName = response.data.resident_userName;
-      setLoggedInUserName(userName);
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-    }
-  };
+  // const fetchUserData = async () => {
+  //   try {
+  //     // Fetch user data from your Laravel API
+  //     const response = await axios.get("/residents"); // Replace '/api/user' with your API endpoint for getting user data
+  //     // Assuming the API response contains a property 'resident_userName'
+  //     const userName = response.data.resident_userName;
+  //     setLoggedInUserName(userName);
+  //   } catch (error) {
+  //     console.error("Error fetching user data:", error);
+  //   }
+  // };
 
   const AppBarStyled = styled(AppBar)(({ theme }) => ({
     boxShadow: "none",

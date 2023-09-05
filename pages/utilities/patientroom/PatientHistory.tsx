@@ -52,16 +52,18 @@ const fieldDisplayNames = {
   phr_hrRegular: "Heart Rate (Regular)",
   phr_hrIrregular: "Heart Rate (Irregular)",
   phr_rr: "Respiratory Rate",
-  'phr_T*': "Temperature",
-  'phr_Sp-02' : "Oxygen Saturation (SpO2)",
+  "phr_T*": "Temperature",
+  "phr_Sp-02": "Oxygen Saturation (SpO2)",
   phr_bodyHabitusWNL: "Body Habitus - Within Normal Limits",
   phr_bodyHabitusCathetic: "Body Habitus - Cachetic",
   phr_bodyHabitusObese: "Body Habitus - Obese",
   phr_heightCM: "Height (cm)",
   phr_weightKG: "Weight (kg)",
   phr_BMI: "Body Mass Index (BMI)",
-  phr_nasalMucosaSeptumTurbinatesWNL: "Nasal Mucosa/Septum/Turbinates - Within Normal Limits",
-  phr_nasalMucosaSeptumTurbinatesEdeOrEryPresent: "Nasal Mucosa/Septum/Turbinates - Edema or Erythema Present",
+  phr_nasalMucosaSeptumTurbinatesWNL:
+    "Nasal Mucosa/Septum/Turbinates - Within Normal Limits",
+  phr_nasalMucosaSeptumTurbinatesEdeOrEryPresent:
+    "Nasal Mucosa/Septum/Turbinates - Edema or Erythema Present",
   phr_dentionAndGumsWNL: "Dentition and Gums - Within Normal Limits",
   phr_dentionAndGumsDentalCanes: "Dentition and Gums - Dental Caries Present",
   phr_dentionAndGumsGingivitis: "Dentition and Gums - Gingivitis Present",
@@ -83,17 +85,23 @@ const fieldDisplayNames = {
   phr_jugularVeinsEngorged: "Jugular Veins - Engorged",
   phr_chestExpansionAndSymmetrical: "Chest Expansion - Symmetrical",
   phr_respiratoryEffortWNL: "Respiratory Effort - Within Normal Limits",
-  phr_respiratoryEffortAccessoryMuscleUse: "Respiratory Effort - Accessory Muscle Use Present",
-  phr_respiratoryEffortIntercostalRetractions: "Respiratory Effort - Intercostal Retractions Present",
-  phr_respiratoryEffortParadoxicMovements: "Respiratory Effort - Paradoxical Movements Present",
+  phr_respiratoryEffortAccessoryMuscleUse:
+    "Respiratory Effort - Accessory Muscle Use Present",
+  phr_respiratoryEffortIntercostalRetractions:
+    "Respiratory Effort - Intercostal Retractions Present",
+  phr_respiratoryEffortParadoxicMovements:
+    "Respiratory Effort - Paradoxical Movements Present",
   phr_chestPercussionWNL: "Chest Percussion - Within Normal Limits",
-  phr_chestPercussionDullnessToPercussion: "Chest Percussion - Dullness to Percussion Present",
-  phr_chestPercussionHyperResonance: "Chest Percussion - Hyperresonance Present",
+  phr_chestPercussionDullnessToPercussion:
+    "Chest Percussion - Dullness to Percussion Present",
+  phr_chestPercussionHyperResonance:
+    "Chest Percussion - Hyperresonance Present",
   phr_tactileFremitusWNL: "Tactile Fremitus - Within Normal Limits",
   phr_tactileFremitusIncreased: "Tactile Fremitus - Increased",
   phr_tactileFremitusDecreased: "Tactile Fremitus - Decreased",
   phr_AuscultationWNL: "Auscultation - Within Normal Limits",
-  phr_AuscultationBronchialBreathSounds: "Auscultation - Bronchial Breath Sounds Present",
+  phr_AuscultationBronchialBreathSounds:
+    "Auscultation - Bronchial Breath Sounds Present",
   phr_AuscultationEgophony: "Auscultation - Egophony Present",
   phr_AuscultationRales: "Auscultation - Rales Present",
   phr_AuscultationRhonchi: "Auscultation - Rhonchi Present",
@@ -136,7 +144,6 @@ const fieldDisplayNames = {
   phr_skinNodules: "Skin - Nodules Present",
   phr_skinUlcer: "Skin - Ulcer Present",
   phr_Assessment: "Assessment",
-
 };
 
 const PatientHistory = () => {
@@ -346,7 +353,6 @@ const PatientHistory = () => {
 
   const fieldsToDisplay = Object.values(categorizedFields).flat();
 
-
   // Step 2: Fetch patient history data from API
   useEffect(() => {
     if (room_id) {
@@ -357,10 +363,12 @@ const PatientHistory = () => {
   const fetchPatientHistory = async (roomId) => {
     try {
       const token = sessionStorage.getItem("authToken");
-      axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      axiosInstance.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${token}`;
 
       const response = await axiosInstance.get(
-        `/PatientHealthRecord/getPatientbyRoom/${roomId}`
+        `/patientHealthRecord/getPatientbyRoom/${roomId}`
       );
 
       const data = response.data;
@@ -388,23 +396,26 @@ const PatientHistory = () => {
           {/* <Typography variant="h6" gutterBottom>
             Entry {index + 1}
           </Typography> */}
-          {Object.entries(categorizedFields).map(([category, { title, fields }]) => (
-            <div key={category}>
-              <Typography variant="h6" gutterBottom>
-                {title}
-              </Typography>
-              <Row gutter={[100, 40]}>
-                {fields.map((field) => (
-                  <Col span={4} key={field}>
-                    <Typography variant="body2">
-                      <strong>{fieldDisplayNames[field]}:</strong> {historyEntry[field]}
-                    </Typography>
-                  </Col>
-                ))}
-              </Row>
-              <Divider style={{ margin: "10px 0" }} />
-            </div>
-          ))}
+          {Object.entries(categorizedFields).map(
+            ([category, { title, fields }]) => (
+              <div key={category}>
+                <Typography variant="h6" gutterBottom>
+                  {title}
+                </Typography>
+                <Row gutter={[100, 40]}>
+                  {fields.map((field) => (
+                    <Col span={4} key={field}>
+                      <Typography variant="body2">
+                        <strong>{fieldDisplayNames[field]}:</strong>{" "}
+                        {historyEntry[field]}
+                      </Typography>
+                    </Col>
+                  ))}
+                </Row>
+                <Divider style={{ margin: "10px 0" }} />
+              </div>
+            )
+          )}
         </div>
       ))}
     </div>

@@ -7,13 +7,18 @@ import {
   Button,
   Stack,
   Checkbox,
+  Radio,
+  RadioGroup,
+  FormControl,
+  FormLabel,
 } from "@mui/material";
+
 import Link from "next/link";
 import CustomTextField from "../../../src/components/forms/theme-elements/CustomTextField";
 import { JSX } from "@emotion/react/jsx-runtime";
 import { useRouter } from "next/router";
-import axios from "../../../src/components/utils/axiosInstance";
-import useAuth from "../../../src/components/utils/useAuth"; // Correct path to useAuth
+import useAdminAuth from "../../../src/components/utils/useAdminAuth";
+import useResidentAuth from "../../../src/components/utils/useResidentAuth";
 
 interface loginType {
   title?: string;
@@ -22,18 +27,20 @@ interface loginType {
 }
 
 const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
-  const [resident_userName, setResidentUserName] = useState("");
-  const [resident_password, setResidentPassword] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
+  const [loginType, setLoginType] = useState("admin"); // Default to admin login
 
-  const { login } = useAuth();
+  const adminAuth = useAdminAuth();
+  const residentAuth = useResidentAuth();
 
   const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setResidentUserName(event.target.value);
+    setUsername(event.target.value);
   };
 
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setResidentPassword(event.target.value);
+    setPassword(event.target.value);
   };
 
   const handleRememberMeChange = (
@@ -42,17 +49,23 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
     setRememberMe(event.target.checked);
   };
 
+  const handleLoginTypeChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setLoginType(event.target.value);
+  };
+
   const handleSignIn = async () => {
     try {
-      await login({
-        resident_userName,
-        resident_password,
-      });
+      if (loginType === "admin") {
+        await adminAuth.login({ username, password });
+      } else {
+        await residentAuth.login({ username, password });
+      }
 
       const token = sessionStorage.getItem("authToken");
       console.log("Token:", token);
     } catch (error) {
-      // Handle any login errors here, if needed
       console.error("Error occurred during login:", error);
     }
   };
@@ -66,22 +79,40 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
       ) : null}
       {subtext}
 
+      <FormControl component="fieldset">
+        <FormLabel component="legend">Login Type</FormLabel>
+        <RadioGroup
+          row
+          aria-label="login-type"
+          name="login-type"
+          value={loginType}
+          onChange={handleLoginTypeChange}
+        >
+          <FormControlLabel value="admin" control={<Radio />} label="Admin" />
+          <FormControlLabel
+            value="resident"
+            control={<Radio />}
+            label="Resident"
+          />
+        </RadioGroup>
+      </FormControl>
+
       <Stack>
         <Box>
           <Typography
             variant="subtitle1"
             fontWeight={600}
             component="label"
-            htmlFor="resident_userName"
+            htmlFor="username"
             mb="5px"
           >
-            Username
+            {loginType === "admin" ? "Email" : "Username"}
           </Typography>
           <CustomTextField
             variant="outlined"
             fullWidth
-            name="resident_userName"
-            value={resident_userName}
+            name="username"
+            value={username}
             onChange={handleUsernameChange}
           />
         </Box>
@@ -90,17 +121,17 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
             variant="subtitle1"
             fontWeight={600}
             component="label"
-            htmlFor="resident_password"
+            htmlFor="password"
             mb="5px"
           >
-            Password
+            {loginType === "admin" ? "Password" : "Resident Password"}
           </Typography>
           <CustomTextField
             type="password"
             variant="outlined"
             fullWidth
-            name="resident_password"
-            value={resident_password}
+            name="password"
+            value={password}
             onChange={handlePasswordChange}
           />
         </Box>

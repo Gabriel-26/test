@@ -10,69 +10,103 @@ import {
 
 import { uniqueId } from "lodash";
 
+// Define your menu items with a "role" property
 const Menuitems = [
   {
     navlabel: true,
+    id: uniqueId(),
+    title: "Home",
     subheader: "Home",
+    role: "all", // This item is visible to all roles
   },
   {
     id: uniqueId(),
     title: "Dashboard",
     icon: IconLayoutDashboard,
     href: "/",
+    role: "all", // This item is visible to all roles
   },
   {
     navlabel: true,
+    id: uniqueId(),
+    title: "Home",
+
     subheader: "Doctors",
+    role: "all", // This item is visible to all roles
   },
   {
     id: uniqueId(),
     title: "Residents",
     icon: IconLogin,
     href: "/doctors/residents",
+    role: "admin", // This item is visible to residents and admin
   },
   {
     id: uniqueId(),
     title: "Chief Resident",
     icon: IconLogin,
     href: "/doctors/chiefresident",
+    role: "admin", // This item is visible to residents and admin
+  },
+  {
+    id: uniqueId(),
+    title: "Assign Residents",
+    icon: IconLogin,
+    href: "/doctors/chiefresident/assignResident",
+    role: "chiefResident", // This item is visible to residents and admin
   },
   {
     navlabel: true,
+    id: uniqueId(),
+    title: "Home",
+
     type: "expandable-card", // Add the type property for the expandable-card
     children: [],
+    role: "all", // This item is visible to all roles
   },
   {
     navlabel: true,
+    id: uniqueId(),
+    title: "Home",
+
     subheader: "Auth",
+    role: "all", // This item is visible to all roles
   },
   {
     id: uniqueId(),
     title: "Login",
     icon: IconLogin,
     href: "/authentication/login",
+    role: "all", // This item is visible to all roles
   },
-  {
-    id: uniqueId(),
-    title: "Room/PatientView",
-    icon: IconLogin,
-    href: "/utilities/patientroom",
-  },
+  // {
+  //   id: uniqueId(),
+  //   title: "Room/PatientView",
+  //   icon: IconLogin,
+  //   href: "/utilities/patientroom",
+  //   role: "resident", // This item is visible to residents
+  // },
   {
     navlabel: true,
+    id: uniqueId(),
+    title: "Home",
+
     subheader: "Extra",
+    role: "all", // This item is visible to all roles
   },
   {
     id: uniqueId(),
     title: "EHR Form",
     icon: IconMoodHappy,
     href: "/EHR",
+    role: "all", // This item is visible to all roles
   },
   {
     id: uniqueId(),
     title: "Medicines",
     icon: IconAperture,
     href: "/medicine",
+    role: "all", // This item is visible to all roles
   },
 ];
 

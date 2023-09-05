@@ -2,7 +2,7 @@ import { ReactElement, useState } from "react";
 import PageContainer from "../../src/components/container/PageContainer";
 import DashboardCard from "../../src/components/shared/DashboardCard";
 import FullLayout from "../../src/layouts/full/FullLayout";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import axios from "../../src/components/utils/axiosInstance";
 
 export function EHRForm() {
@@ -11,6 +11,7 @@ export function EHRForm() {
     handleSubmit,
     control,
     watch,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
@@ -19,6 +20,7 @@ export function EHRForm() {
       patient_lName: "",
       patient_age: "",
       patient_sex: "",
+      date: "",
       room_name: "",
       patient_vaccination_stat: "",
       phr_chiefComaplaint: "",
@@ -276,9 +278,12 @@ export function EHRForm() {
       phr_skinNodules: data.phr_skinNodules ? 1 : 0,
       phr_skinUlcer: data.phr_skinUlcer ? 1 : 0,
     };
+    const token = sessionStorage.getItem("authToken");
+    // Set the token in Axios headers for this request
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     console.log(mappedData);
     axios
-      .post("/PatientHealthRecord", data)
+      .post("/patientHealthRecord", data)
       .then((response) => {
         console.log("Data sent successfully:", response.data);
         // Handle success or redirect to another page
@@ -411,7 +416,7 @@ export function EHRForm() {
                 />
               </label>
             </div>
-            {/* <div className="my-4">
+            <div className="my-4">
               <label className="flex flex-col">
                 <span className="mb-2">Date</span>
                 <input
@@ -420,7 +425,7 @@ export function EHRForm() {
                   type="date"
                 />
               </label>
-            </div> */}
+            </div>
 
             <div className="my-4">
               <label className="flex flex-col">
@@ -1693,6 +1698,36 @@ export function EHRForm() {
             >
               Submit
             </button>
+
+            {/* Dynamic custom fields */}
+            {/* <button
+              type="button"
+              onClick={() => {
+                // Dynamically add a custom field
+                const fieldName = prompt("Enter field name");
+                if (fieldName) {
+                  setValue(fieldName, ""); // Initialize the field
+                }
+              }}
+            >
+              Add Custom Field
+            </button> */}
+
+            {/* Render custom fields */}
+            {/* {Object.keys(control._fields).map((fieldName) => (
+              <div key={fieldName}>
+                <label>{fieldName}</label>
+                <Controller
+                  name={fieldName}
+                  control={control}
+                  render={({ field }) => (
+                    <input {...field} placeholder={fieldName} />
+                  )}
+                />
+              </div>
+            ))}
+
+            <button type="submit">Save</button> */}
           </form>
         </DashboardCard>
       </PageContainer>

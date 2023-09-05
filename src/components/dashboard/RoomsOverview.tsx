@@ -12,22 +12,35 @@ const roomsData = {
   vacantRooms: 10,
 };
 
+const centerContentStyle = {
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "center",
+  alignItems: "center",
+  textAlign: "center",
+  height: "100%",
+} as React.CSSProperties;
+
 const RoomsOverviewPage = () => {
   return (
-    <DashboardCard title="Rooms Overview">
-      <HotelIcon color="primary" sx={{ fontSize: 40 }} />
-      <Typography variant="body1">
-        Total Rooms: {roomsData.totalRooms}
-      </Typography>
-      <BathtubIcon color="success" sx={{ fontSize: 40 }} />
-      <Typography variant="body1">
-        Occupied Rooms: {roomsData.occupiedRooms}
-      </Typography>
-      <DoorFront color="error" sx={{ fontSize: 40 }} />
-      <Typography variant="body1">
-        Vacant Rooms: {roomsData.vacantRooms}
-      </Typography>
-    </DashboardCard>
+    <Grid item xs={10} sm={6}>
+      <DashboardCard cardWidth={60} title="Rooms Overview">
+        <div style={centerContentStyle}>
+          <HotelIcon color="primary" sx={{ fontSize: 40 }} />
+          <Typography variant="body1">
+            Total Rooms: {roomsData.totalRooms}
+          </Typography>
+          <BathtubIcon color="success" sx={{ fontSize: 40 }} />
+          <Typography variant="body1">
+            Occupied Rooms: {roomsData.occupiedRooms}
+          </Typography>
+          <DoorFront color="error" sx={{ fontSize: 40 }} />
+          <Typography variant="body1">
+            Vacant Rooms: {roomsData.vacantRooms}
+          </Typography>
+        </div>
+      </DashboardCard>
+    </Grid>
   );
 };
 

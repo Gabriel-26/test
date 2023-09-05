@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   Avatar,
@@ -11,10 +11,14 @@ import {
   ListItemText,
 } from "@mui/material";
 import { IconListCheck, IconMail, IconUser } from "@tabler/icons-react";
-import useAuth from "../../../components/utils/useAuth"; // Correct path to useAuth
+import useAuth from "../../../components/utils/useResidentAuth"; // Correct path to useAuth
+import useAdminAuth from "../../../components/utils/useAdminAuth";
+import useResidentAuth from "../../../components/utils/useResidentAuth";
 
 const Profile = () => {
   const [anchorEl2, setAnchorEl2] = useState(null);
+  const [userRole, setUserRole] = useState("");
+
   const handleClick2 = (event: any) => {
     setAnchorEl2(event.currentTarget);
   };
@@ -22,10 +26,21 @@ const Profile = () => {
     setAnchorEl2(null);
   };
 
-  const { logout } = useAuth(); // Use the logout function from useAuth
+  useEffect(() => {
+    // Access sessionStorage within a useEffect to ensure it's run on the client side
+    const storedUserRole = sessionStorage.getItem("userRole");
+
+    // Check if userRole is present in sessionStorage
+    if (storedUserRole) {
+      setUserRole(storedUserRole);
+    }
+  }, []); // Empty dependency array ensures it runs on
+
+  // Use the appropriate authentication module based on the user's role
+  const auth = userRole === "admin" ? useAdminAuth() : useResidentAuth();
 
   const handleLogout = async () => {
-    await logout(); // Call the logout function to log the user out
+    await auth.logout(); // Call the appropriate logout function based on the user's role
   };
 
   return (

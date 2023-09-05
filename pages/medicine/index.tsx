@@ -45,10 +45,25 @@ const MedicineList = () => {
 
   const fetchMedicines = async () => {
     try {
-      const response = await axiosInstance.get("/medicines");
-      console.log(response.data); // Add this line
-      // Update the API endpoint
-      const filteredMedicines = response.data.filter((medicine: Medicine) =>
+      const token = sessionStorage.getItem("authToken");
+      const role = sessionStorage.getItem("userRole"); // Assuming user role is stored in sessionStorage
+
+      // Set the token in Axios headers for this request
+      axiosInstance.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${token}`;
+
+      let endpoint = "/medicines"; // Default endpoint
+
+      // Check the user's role and update the endpoint if it's "admin"
+      if (role === "admin") {
+        endpoint = "/admin/medicines";
+      }
+
+      const response = await axiosInstance.get(endpoint);
+      console.log(response.data);
+
+      const filteredMedicines = response.data.filter((medicine) =>
         Object.values(medicine).some(
           (value) =>
             value !== null &&
@@ -75,6 +90,11 @@ const MedicineList = () => {
 
   const handleFormSubmit = async (values: any) => {
     try {
+      const token = sessionStorage.getItem("authToken");
+      // Set the token in Axios headers for this request
+      axiosInstance.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${token}`;
       if (editingMedicine) {
         // Edit existing medicine
         await axiosInstance.put(
@@ -83,7 +103,7 @@ const MedicineList = () => {
         );
       } else {
         // Add new medicine
-        await axiosInstance.post(`/medicines`, values);
+        await axiosInstance.post(`/admin/medicines`, values);
       }
       fetchMedicines();
       closeDrawer();
