@@ -38,7 +38,26 @@ const RoomView = () => {
   const [transferError, setTransferError] = useState("");
   const [transferSuccess, setTransferSuccess] = useState(false); // Add transferSuccess state
   const [isFilePickerOpen, setFilePickerOpen] = useState(false);
+  const [isCheckoutModalVisible, setIsCheckoutModalVisible] = useState(false);
 
+  const showCheckoutConfirmation = () => {
+    setIsCheckoutModalVisible(true);
+  };
+
+  // Function to handle the checkout when the user confirms
+  const handleCheckoutConfirmed = () => {
+    // Perform the checkout logic here
+    // ...
+
+    // Close the confirmation dialog
+    setIsCheckoutModalVisible(false);
+  };
+
+  // Function to handle cancellation of the confirmation
+  const handleCheckoutCancel = () => {
+    // Close the confirmation dialog
+    setIsCheckoutModalVisible(false);
+  };
   const updatePatientData = (updatedPatientData) => {
     setPatientData(updatedPatientData);
   };
@@ -193,7 +212,7 @@ const RoomView = () => {
         <div style={{ display: "flex", flexWrap: "wrap", gap: "16px" }}>
           <Button
             variant="outlined"
-            onClick={handleCheckoutPatient} // Add the checkout handler
+            onClick={showCheckoutConfirmation} // Add the checkout handler
             disabled={patientData.length === 0}
             style={{ flex: 1 }}
           >
@@ -276,6 +295,15 @@ const RoomView = () => {
         >
           Cancel
         </Button>
+      </Modal>
+
+      <Modal
+        title="Confirm Checkout"
+        open={isCheckoutModalVisible}
+        onOk={handleCheckoutPatient}
+        onCancel={handleCheckoutCancel}
+      >
+        Are you sure you want to checkout/remove this patient from the room?
       </Modal>
     </PageContainer>
   );

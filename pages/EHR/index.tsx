@@ -1,4 +1,4 @@
-import { ReactElement, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import PageContainer from "../../src/components/container/PageContainer";
 import DashboardCard from "../../src/components/shared/DashboardCard";
 import FullLayout from "../../src/layouts/full/FullLayout";
@@ -6,6 +6,32 @@ import { useForm, Controller } from "react-hook-form";
 import axios from "../../src/components/utils/axiosInstance";
 
 export function EHRForm() {
+  const [roomData, setRoomData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Step 2: Fetch room data from the API
+  useEffect(() => {
+    fetchRoomData();
+  }, []);
+
+  const fetchRoomData = async () => {
+    try {
+      const token = sessionStorage.getItem("authToken");
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+      const response = await axios.get("/rooms"); // Adjust the endpoint as per your API
+      const data = response.data;
+
+      if (data && data.length > 0) {
+        setRoomData(data);
+      }
+      setLoading(false);
+    } catch (error) {
+      setError(error);
+      setLoading(false);
+    }
+  };
   const {
     register,
     handleSubmit,
@@ -388,12 +414,17 @@ export function EHRForm() {
             <div className="my-4">
               <label className="flex flex-col">
                 <span className="mb-2">Room</span>
-                <input
+                <select
                   {...register("room_name")}
                   className="border border-gray-300 px-4 py-2 rounded-lg"
-                  placeholder="Room"
-                  type="text"
-                />
+                >
+                  <option value="">Select a room</option>
+                  {roomData.map((room) => (
+                    <option key={room.room_id} value={room.room_name}>
+                      {room.room_name}
+                    </option>
+                  ))}
+                </select>
               </label>
             </div>
 
