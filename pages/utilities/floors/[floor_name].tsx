@@ -1,5 +1,5 @@
-import { ReactElement, useEffect, useState } from "react";
-import axios from "../../../src/components/utils/axiosInstance";
+import React, { useEffect, useState } from "react";
+import axiosInstance from "../../../src/components/utils/axiosInstance";
 import PageContainer from "../../../src/components/container/PageContainer";
 import DashboardCard from "../../../src/components/shared/DashboardCard";
 import FullLayout from "../../../src/layouts/full/FullLayout";
@@ -13,26 +13,38 @@ import {
   TableCell,
   TableBody,
   Link as MuiLink,
-  Button,
-  Drawer,
   TablePagination,
 } from "@mui/material";
+import { Input, Form, Modal, Drawer } from "antd";
 import useFloorStore from "../../../src/components/utils/zustandStore";
-import FloorList from "../../../src/components/dashboard/FloorsList";
 import RoomDrawer from "./RoomDrawer";
 import { getUserRole } from "../../../src/components/utils/roles";
+import dynamic from "next/dynamic"; // Import the dynamic function
 
+const Button = dynamic(() => import("antd/lib/button"));
+// Dynamically import Button
 const Rooms = () => {
   const [rooms, setRooms] = useState([]);
   const [floorName, setFloorName] = useState("");
   const router = useRouter();
   const { floor_name: queryFloorName, floor_id: queryFloorId } = router.query; // Get the floor_name and floor_id from the query parameters
-  const [showDrawer, setShowDrawer] = useState(false);
+  const [showModal, setShowDrawer] = useState(false);
   const [showRoomDrawer, setShowRoomDrawer] = useState(false); // New state for the room drawer
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const userRole = getUserRole();
+
+  // State for the "Add Floor" form
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [floorNameInput, setFloorNameInput] = useState("");
+  const [floorIdInput, setFloorIdInput] = useState("");
+
+  const [showAddRoomForm, setShowAddRoomForm] = useState(false);
+  const [roomNameInput, setRoomNameInput] = useState("");
+  const [roomFloorInput, setRoomFloorInput] = useState("");
+  const [roomTypeInput, setRoomTypeInput] = useState("");
+  const [roomPriceInput, setRoomPriceInput] = useState("");
 
   useEffect(() => {
     if (queryFloorName) {
@@ -42,22 +54,101 @@ const Rooms = () => {
     fetchRooms(queryFloorId as string); // Fetch rooms after setting the floor_id
   }, [queryFloorName, queryFloorId]);
 
+  // Function to fetch rooms
   const fetchRooms = async (floorId?: string) => {
     try {
       const token = sessionStorage.getItem("authToken");
       // Set the token in Axios headers for this request
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      axiosInstance.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${token}`;
 
       let url = "/rooms";
-      if (floorId) {
-        // If floor_id is provided, append it to the URL as a parameter
-        url = `rooms/getRoomsByfloor/${floorId}`;
+
+      // Check the user role in sessionStorage and set the API endpoint accordingly
+      const userRole = sessionStorage.getItem("userRole");
+      if (userRole === "admin") {
+        url = "/admin/rooms"; // Set admin API endpoint
       }
 
-      const response = await axios.get(url);
+      if (floorId) {
+        // If floor_id is provided, append it to the URL as a parameter
+        url += `/getRoomsByfloor/${floorId}`;
+      }
+
+      const response = await axiosInstance.get(url);
       setRooms(response.data);
     } catch (error) {
       console.error("Error fetching rooms:", error);
+    }
+  };
+
+  // Function to handle adding a floor
+  const handleAddFloor = async () => {
+    try {
+      const token = sessionStorage.getItem("authToken");
+      // Set the token in Axios headers for this request
+      axiosInstance.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${token}`;
+
+      // Check the user role in sessionStorage and set the API endpoint accordingly
+      const userRole = sessionStorage.getItem("userRole");
+      let url = "/floors";
+      if (userRole === "admin") {
+        url = "/admin/floors"; // Set admin API endpoint
+      }
+
+      const response = await axiosInstance.post(url, {
+        floor_name: floorNameInput,
+        floor_id: floorIdInput,
+      });
+      console.log(response.data.message);
+      // Clear input fields and hide the form
+      setFloorNameInput("");
+      setFloorIdInput("");
+      setShowAddForm(false);
+      // Fetch rooms again
+      fetchRooms(queryFloorId as string);
+    } catch (error) {
+      console.error("Error adding floor:", error);
+    }
+  };
+
+  // Function to handle adding a room
+  const handleAddRoom = async () => {
+    try {
+      const token = sessionStorage.getItem("authToken");
+      // Set the token in Axios headers for this request
+      axiosInstance.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${token}`;
+
+      // Check the user role in sessionStorage and set the API endpoint accordingly
+      const userRole = sessionStorage.getItem("userRole");
+      let url = "/rooms";
+      if (userRole === "admin") {
+        url = "/admin/rooms"; // Set admin API endpoint
+      }
+
+      const response = await axiosInstance.post(url, {
+        room_name: roomNameInput,
+        room_floor: roomFloorInput,
+        room_type: roomTypeInput,
+        room_price: roomPriceInput,
+        floor_id: queryFloorId as string,
+      });
+      console.log(response.data.message);
+      // Clear input fields and hide the form
+      setRoomNameInput("");
+      setRoomFloorInput("");
+      setRoomTypeInput("");
+      setRoomPriceInput("");
+      setShowAddRoomForm(false);
+      // Fetch rooms again
+      fetchRooms(queryFloorId as string);
+    } catch (error) {
+      console.error("Error adding room:", error);
     }
   };
 
@@ -71,39 +162,25 @@ const Rooms = () => {
         <DashboardCard title={floorName || "Loading..."}>
           {/* Add the button or link beside the floorName */}
           <div style={{ display: "flex", justifyContent: "space-between" }}>
-            {userRole === "chiefResident" && (
+            {userRole === "admin" && (
               <Button
                 variant="contained"
                 color="secondary"
-                onClick={() => setShowDrawer(true)}
+                onClick={() => setShowAddForm(true)} // Show the "Add Floor" form
               >
                 Add Floor
               </Button>
             )}
-            <Drawer
-              anchor="right"
-              open={showDrawer}
-              onClose={() => setShowDrawer(false)}
-            >
-              <FloorList />
-            </Drawer>
-            {userRole === "chiefResident" && (
+
+            {userRole === "admin" && (
               <Button
                 variant="contained"
                 color="secondary" // You can choose a different color
-                onClick={() => setShowRoomDrawer(true)} // Open the room drawer
+                onClick={() => setShowAddRoomForm(true)} // Open the room drawer
               >
                 Add Room
               </Button>
             )}
-
-            <Drawer
-              anchor="right"
-              open={showRoomDrawer}
-              onClose={() => setShowRoomDrawer(false)} // Close the room drawer
-            >
-              <RoomDrawer />
-            </Drawer>
           </div>
           <TableContainer component={Paper}>
             <Table>
@@ -156,11 +233,78 @@ const Rooms = () => {
           setPage(0);
         }}
       />
+
+      {/* Add Floor Form */}
+      <Modal
+        title="Add Floor"
+        open={showAddForm}
+        onCancel={() => setShowAddForm(false)}
+        onOk={handleAddFloor}
+        destroyOnClose
+      >
+        <Form layout="vertical">
+          <Form.Item name="floor_name" label="Floor Name">
+            <Input
+              value={floorNameInput}
+              onChange={(e) => setFloorNameInput(e.target.value)}
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      {/* Add Room Form */}
+      <Drawer
+        title="Add Room"
+        width={720}
+        onClose={() => setShowAddRoomForm(false)}
+        open={showAddRoomForm}
+        destroyOnClose
+        footer={
+          <div style={{ textAlign: "right" }}>
+            <Button
+              onClick={() => setShowAddRoomForm(false)}
+              style={{ marginRight: 8 }}
+            >
+              Cancel
+            </Button>
+            <Button type="primary" onClick={handleAddRoom}>
+              Add Room
+            </Button>
+          </div>
+        }
+      >
+        <Form layout="vertical">
+          <Form.Item name="room_name" label="Room Name">
+            <Input
+              value={roomNameInput}
+              onChange={(e) => setRoomNameInput(e.target.value)}
+            />
+          </Form.Item>
+          <Form.Item name="room_floor" label="Room Floor">
+            <Input
+              value={roomFloorInput}
+              onChange={(e) => setRoomFloorInput(e.target.value)}
+            />
+          </Form.Item>
+          <Form.Item name="room_type" label="Room Type">
+            <Input
+              value={roomTypeInput}
+              onChange={(e) => setRoomTypeInput(e.target.value)}
+            />
+          </Form.Item>
+          <Form.Item name="room_price" label="Room Price">
+            <Input
+              value={roomPriceInput}
+              onChange={(e) => setRoomPriceInput(e.target.value)}
+            />
+          </Form.Item>
+        </Form>
+      </Drawer>
     </div>
   );
 };
 
 export default Rooms;
-Rooms.getLayout = function getLayout(page: ReactElement) {
+Rooms.getLayout = function getLayout(page) {
   return <FullLayout>{page}</FullLayout>;
 };

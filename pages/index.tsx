@@ -19,7 +19,7 @@ export default function Home() {
 
   useEffect(() => {
     // Check user role and conditionally render the button on the client side
-    if (userRole === "chiefResident") {
+    if (userRole === "resident") {
       setRenderButton(true);
     }
   }, [userRole]);

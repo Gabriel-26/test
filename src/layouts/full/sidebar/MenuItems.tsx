@@ -32,7 +32,7 @@ const Menuitems = [
     title: "Home",
 
     subheader: "Doctors",
-    role: "all", // This item is visible to all roles
+    role: ["chiefResident", "admin"], // This item is visible to both "chiefResident" and "admin"
   },
   {
     id: uniqueId(),
@@ -91,16 +91,16 @@ const Menuitems = [
     id: uniqueId(),
     title: "Home",
 
-    subheader: "Extra",
+    subheader: "Medicine",
     role: "all", // This item is visible to all roles
   },
-  {
-    id: uniqueId(),
-    title: "EHR Form",
-    icon: IconMoodHappy,
-    href: "/EHR",
-    role: "all", // This item is visible to all roles
-  },
+  // {
+  //   id: uniqueId(),
+  //   title: "EHR Form",
+  //   icon: IconMoodHappy,
+  //   href: "/EHR",
+  //   role: "all", // This item is visible to all roles
+  // },
   {
     id: uniqueId(),
     title: "Medicines",

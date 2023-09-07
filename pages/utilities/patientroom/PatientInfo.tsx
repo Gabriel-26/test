@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Drawer, Form, Input, Button } from "antd"; // Import necessary components
+import { Drawer, Form, Input, Button, Row, Col, Card } from "antd"; // Import necessary components
 import axiosInstance from "../../../src/components/utils/axiosInstance";
 import { useRouter } from "next/router";
 import { Paper } from "@mui/material";
@@ -15,12 +15,6 @@ const PatientInfo = (props: any) => {
   const [editDrawerVisible, setEditDrawerVisible] = useState(false);
   const [editingPatient, setEditingPatient] = useState(null);
   const { patient_id } = patientData;
-
-  useEffect(() => {
-    if (room_id) {
-      fetchPatientData(room_id);
-    }
-  }, [room_id]);
 
   useEffect(() => {
     if (room_id) {
@@ -54,6 +48,7 @@ const PatientInfo = (props: any) => {
       setLoading(false);
     }
   };
+
   const showEditDrawer = (patient: React.SetStateAction<null>) => {
     setEditingPatient(patient);
     setEditDrawerVisible(true);
@@ -95,17 +90,48 @@ const PatientInfo = (props: any) => {
       <>
         <h2>Patient Information</h2>
         {patientData.map((patient) => (
-          <div key={patient.patient_id}>
-            <p>Patient ID: {patient.patient_id}</p>
-            <p>First Name: {patient.patient_fName}</p>
-            <p>Last Name: {patient.patient_lName}</p>
-            <p>Middle Name: {patient.patient_mName}</p>
-            <p>Age: {patient.patient_age}</p>
-            <p>Sex: {patient.patient_sex}</p>
-            <p>Vaccination Status: {patient.patient_vaccination_stat}</p>
-            <Button onClick={() => showEditDrawer(patient)}>Edit</Button>
-            <hr />
-          </div>
+          <Card
+            key={patient.patient_id}
+            style={{ marginBottom: "16px" }}
+            title={`Patient ID: ${patient.patient_id}`}
+          >
+            <Row gutter={[16, 16]}>
+              <Col span={8}>
+                <p>
+                  <strong>First Name:</strong> {patient.patient_fName}
+                </p>
+              </Col>
+              <Col span={8}>
+                <p>
+                  <strong>Last Name:</strong> {patient.patient_lName}
+                </p>
+              </Col>
+              <Col span={8}>
+                <p>
+                  <strong>Middle Name:</strong> {patient.patient_mName}
+                </p>
+              </Col>
+              <Col span={8}>
+                <p>
+                  <strong>Age:</strong> {patient.patient_age}
+                </p>
+              </Col>
+              <Col span={8}>
+                <p>
+                  <strong>Sex:</strong> {patient.patient_sex}
+                </p>
+              </Col>
+              <Col span={8}>
+                <p>
+                  <strong>Vaccination Status:</strong>{" "}
+                  {patient.patient_vaccination_stat}
+                </p>
+              </Col>
+              <Col span={24}>
+                <Button onClick={() => showEditDrawer(patient)}>Edit</Button>
+              </Col>
+            </Row>
+          </Card>
         ))}
       </>
     );

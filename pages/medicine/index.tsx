@@ -20,6 +20,9 @@ import {
   Paper,
   TablePagination,
 } from "@mui/material";
+import { getUserRole } from "../../src/components/utils/roles";
+
+const userRole = getUserRole();
 
 interface Medicine {
   medicine_id: number;
@@ -134,7 +137,12 @@ const MedicineList = () => {
   return (
     <div>
       <h1>Medicine Formulary</h1>
-      <Button variant="contained" color="primary" onClick={() => showDrawer()}>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={() => showDrawer()}
+        style={{ display: userRole === "admin" ? "block" : "none" }}
+      >
         Add Medicine
       </Button>
       <Input
@@ -155,7 +163,7 @@ const MedicineList = () => {
                 <TableCell>Price</TableCell>
                 {/* <TableCell>Created At</TableCell>
                 <TableCell>Updated At</TableCell> */}
-                <TableCell>Action</TableCell>
+                {userRole === "admin" && <TableCell>Action</TableCell>}{" "}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -176,6 +184,9 @@ const MedicineList = () => {
                         variant="text"
                         color="primary"
                         onClick={() => showDrawer(medicine)}
+                        style={{
+                          display: userRole === "admin" ? "block" : "none",
+                        }}
                       >
                         Edit
                       </Button>
@@ -184,19 +195,19 @@ const MedicineList = () => {
                 ))}
             </TableBody>
           </Table>
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25, 50, 100]}
-            component="div"
-            count={medicines.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
         </TableContainer>
       ) : (
         <p>No medicines available.</p>
       )}
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25, 50, 100]}
+        component="div"
+        count={medicines.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
       <Drawer
         title={editingMedicine ? "Edit Medicine" : "Add Medicine"}
         width={720}

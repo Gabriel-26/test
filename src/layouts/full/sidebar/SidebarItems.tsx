@@ -17,9 +17,24 @@ const SidebarItems = ({ toggleMobileSidebar }: any) => {
   const userRole = getUserRole(); // Get the user's role
 
   // Filter menu items based on the user's role
-  const filteredMenuItems = Menuitems.filter(
-    (item) => item.role === "all" || item.role === userRole
-  );
+  const filteredMenuItems = Menuitems.filter((item) => {
+    if (item.role.includes("all")) {
+      return true; // This item is visible to all roles
+    }
+
+    if (item.role.includes(userRole)) {
+      return true; // This item is visible to the current user's role
+    }
+
+    if (
+      (userRole === "chiefResident" || userRole === "admin") &&
+      item.subheader === "Doctors"
+    ) {
+      return true; // This subHeader is visible to "chiefResident" or "admin"
+    }
+
+    return false;
+  });
 
   // State to store the fetched floor names
   // const [floorNames, setFloorNames] = useState([]);

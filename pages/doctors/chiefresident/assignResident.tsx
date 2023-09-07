@@ -28,8 +28,47 @@ const AssignResidentRoom = () => {
   const [residents, setResidents] = useState([]);
   const [selectedRoomId, setSelectedRoomId] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [expandedRowKeys, setExpandedRowKeys] = useState([]);
 
-  const columns = [
+  const assignedColumns = [
+    {
+      title: "Assigned Room ID",
+      dataIndex: "resAssRoom_id",
+      key: "resAssRoom_id",
+    },
+    {
+      title: "Room ID",
+      dataIndex: "room_id",
+      key: "room_id",
+    },
+    {
+      title: "Resident ID",
+      dataIndex: "resident_id",
+      key: "resident_id",
+    },
+    {
+      title: "Is Finished",
+      dataIndex: "isFinished",
+      key: "isFinished",
+      render: (text) => (text ? "Yes" : "No"), // You can format this as needed
+    },
+  ];
+
+  const mainTableColumns = [
+    {
+      title: "Resident ID",
+      dataIndex: "resident_id",
+      key: "resident_id",
+    },
+    {
+      title: "Is Finished",
+      dataIndex: "isFinished",
+      key: "isFinished",
+      render: (text) => (text ? "Yes" : "No"),
+    },
+  ];
+
+  const unassignedColumns = [
     {
       title: "Resident ID",
       dataIndex: "resident_id",
@@ -44,7 +83,6 @@ const AssignResidentRoom = () => {
             style={{ width: 120 }}
             placeholder="Select Room"
             onChange={(value) => setSelectedRoomId(value)}
-            // Set selectedRoomId here
           >
             {rooms.map((room) => (
               <Option key={room.room_id} value={room.room_id}>
@@ -55,7 +93,6 @@ const AssignResidentRoom = () => {
           <Button
             type="primary"
             onClick={() => {
-              // Set the selectedResidentId when the button is clicked
               setSelectedResidentId(record.resident_id);
               showConfirmationModal();
             }}
@@ -84,7 +121,6 @@ const AssignResidentRoom = () => {
   const handleRoomChange = async (selectedResidentId, selectedRoomId) => {
     try {
       const token = sessionStorage.getItem("authToken");
-      // Set the token in Axios headers for this request
       axiosInstance.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${token}`;
@@ -98,11 +134,9 @@ const AssignResidentRoom = () => {
 
       if (response.status === 200) {
         console.log("Resident assigned to room successfully.");
-        // You can show a success message or update the UI here
         message.success("Resident assigned to room successfully.");
         setSelectedRoomId(null);
-
-        fetchAssignedRooms(selectedResidentId);
+        fetchAssignedRooms();
       }
     } catch (error) {
       console.error("Error assigning resident to room:", error);
@@ -111,19 +145,16 @@ const AssignResidentRoom = () => {
     }
   };
 
-  const fetchAssignedRooms = async (selectedResidentId) => {
+  const fetchAssignedRooms = async () => {
     try {
       const token = sessionStorage.getItem("authToken");
-      // Set the token in Axios headers for this request
       axiosInstance.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${token}`;
 
       setLoading(true);
 
-      const response = await axiosInstance.get(
-        `/showResAssRoom/${selectedResidentId}`
-      );
+      const response = await axiosInstance.get(`/resAssRooms`);
 
       if (response.status === 200) {
         setAssignedRooms(response.data);
@@ -138,7 +169,6 @@ const AssignResidentRoom = () => {
   const fetchRooms = async () => {
     try {
       const token = sessionStorage.getItem("authToken");
-      // Set the token in Axios headers for this request
       axiosInstance.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${token}`;
@@ -162,7 +192,6 @@ const AssignResidentRoom = () => {
   const fetchResidents = async () => {
     try {
       const token = sessionStorage.getItem("authToken");
-      // Set the token in Axios headers for this request
       axiosInstance.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${token}`;
@@ -187,10 +216,8 @@ const AssignResidentRoom = () => {
   };
 
   useEffect(() => {
-    if (selectedResidentId) {
-      fetchAssignedRooms(selectedResidentId);
-    }
-  }, [selectedResidentId]);
+    fetchAssignedRooms();
+  }, []);
 
   useEffect(() => {
     fetchRooms();
@@ -198,18 +225,32 @@ const AssignResidentRoom = () => {
     // Fetch residents data when the component mounts
   }, []);
 
+  const renderAssignedRooms = (record) => {
+    const assignedRoomsForResident = assignedRooms.filter(
+      (room) => room.resident_id === record.resident_id
+    );
+
+    return (
+      <Table
+        dataSource={assignedRoomsForResident}
+        columns={assignedColumns}
+        rowKey={(record) => record.resAssRoom_id}
+        pagination={false}
+      />
+    );
+  };
+
   return (
     <PageContainer
       title="Assign Residents to Rooms"
       description="This is your description."
     >
       <DashboardCard title={"Assign Resident" || "Loading..."}>
-        {/* Add your content here */}
         <h1>Assign Residents to Rooms</h1>
         <Form form={form}>
           <Table
             dataSource={residents}
-            columns={columns}
+            columns={unassignedColumns}
             rowKey={(record) => record.resident_id}
             pagination={false}
           />
@@ -218,10 +259,17 @@ const AssignResidentRoom = () => {
           <Col span={12}>
             <DashboardCard title="Assigned Residents">
               <Table
-                dataSource={assignedRooms}
-                columns={columns}
+                dataSource={residents}
+                columns={mainTableColumns}
                 rowKey={(record) => record.resident_id}
                 pagination={false}
+                expandable={{
+                  expandedRowRender: renderAssignedRooms,
+                  rowExpandable: (record) =>
+                    assignedRooms.some(
+                      (room) => room.resident_id === record.resident_id
+                    ),
+                }}
               />
             </DashboardCard>
           </Col>
@@ -241,6 +289,7 @@ const AssignResidentRoom = () => {
 };
 
 export default AssignResidentRoom;
+
 AssignResidentRoom.getLayout = function getLayout(page: ReactElement) {
   return <FullLayout>{page}</FullLayout>;
 };
