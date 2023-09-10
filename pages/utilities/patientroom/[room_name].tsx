@@ -14,6 +14,8 @@ import PatientHistory from "./PatientHistory";
 import { uploadFile } from "../../../src/components/utils/fileUpload";
 import { Modal, Button, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons"; // Import Ant Design UploadOutlined
+// import FileViewer from "./FileViewer";
+import ImageDisplay from "./FileViewer";
 
 const Item = styled(Paper)(({ theme }) => ({
   ...theme.typography.body1,
@@ -198,6 +200,7 @@ const RoomView = () => {
           <TabsList>
             <TabsTrigger value="pninfo">Patient Info</TabsTrigger>
             <TabsTrigger value="phistory">Patient History</TabsTrigger>
+            <TabsTrigger value="fileviewer">File Viewer</TabsTrigger>{" "}
           </TabsList>
           <TabsContent value="pninfo">
             <PatientInfo
@@ -207,6 +210,9 @@ const RoomView = () => {
           </TabsContent>
           <TabsContent value="phistory">
             <PatientHistory />
+          </TabsContent>
+          <TabsContent value="fileviewer">
+            <ImageDisplay />
           </TabsContent>
         </Tabs>
         <div style={{ display: "flex", flexWrap: "wrap", gap: "16px" }}>

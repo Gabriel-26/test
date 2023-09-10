@@ -9,6 +9,7 @@ import { CacheProvider, EmotionCache } from "@emotion/react";
 import createEmotionCache from "../src/createEmotionCache";
 import { baselightTheme } from "../src/theme/DefaultColors";
 import axiosInstance from "../src/components/utils/axiosInstance";
+import { useRouter } from "next/router"; // Import useRouter
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -25,8 +26,19 @@ interface MyAppProps extends AppProps {
 const MyApp = (props: MyAppProps) => {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
   const theme = baselightTheme;
+  const router = useRouter(); // Initialize the router
 
   const getLayout = Component.getLayout ?? ((page) => page);
+
+  useEffect(() => {
+    // Check if there is a token in sessionStorage
+    const token = sessionStorage.getItem("token");
+
+    // If token is not found, redirect to the login page
+    if (!token) {
+      router.push("/authentication/login"); // Redirect to your login page
+    }
+  }, []); // The empty dependency array means this effect runs only once, on component mount
 
   return (
     <CacheProvider value={emotionCache}>

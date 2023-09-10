@@ -29,6 +29,7 @@ const AssignResidentRoom = () => {
   const [selectedRoomId, setSelectedRoomId] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [expandedRowKeys, setExpandedRowKeys] = useState([]);
+  const [residentNames, setResidentNames] = useState({});
 
   const assignedColumns = [
     {
@@ -56,9 +57,13 @@ const AssignResidentRoom = () => {
 
   const mainTableColumns = [
     {
-      title: "Resident ID",
+      title: "Resident Name/Last Name",
       dataIndex: "resident_id",
       key: "resident_id",
+      render: (residentId) => {
+        const residentName = residentNames[residentId];
+        return residentName ? residentName : "Loading...";
+      },
     },
     {
       title: "Is Finished",
@@ -70,9 +75,13 @@ const AssignResidentRoom = () => {
 
   const unassignedColumns = [
     {
-      title: "Resident ID",
+      title: "Resident", // Update the column title
       dataIndex: "resident_id",
       key: "resident_id",
+      render: (residentId) => {
+        const residentLastName = residentNames[residentId];
+        return residentLastName ? residentLastName : "Loading...";
+      },
     },
     {
       title: "Actions",
@@ -206,7 +215,16 @@ const AssignResidentRoom = () => {
           (resident) => resident.role === "resident"
         );
 
+        // Create a mapping of resident_id to resident names or last names
+        const namesMapping = {};
+        filteredResidents.forEach((resident) => {
+          const fullName = ` ${resident.resident_lName}`;
+          // Use fullName or last name, depending on your preference
+          namesMapping[resident.resident_id] = fullName;
+        });
+
         setResidents(filteredResidents);
+        setResidentNames(namesMapping); // Set the resident names
       }
     } catch (error) {
       console.error("Error fetching residents:", error);
