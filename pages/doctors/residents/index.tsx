@@ -26,13 +26,16 @@ import type { ReactElement } from "react";
 import PageContainer from "../../../src/components/container/PageContainer";
 import FullLayout from "../../../src/layouts/full/FullLayout";
 import { Button, Drawer, Form, Input, Select, Row, Col, Space } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import EditDoctorForm from "./editform";
+import AddDoctorForm from "./addform";
 
 const { Option } = Select;
 
 const Doctors = () => {
   const [doctors, setDoctors] = useState([]);
   const [isAddingDoctor, setIsAddingDoctor] = useState(false);
+  const [isUpdated, setIsUpdated] = useState(false); // State to track updates
+
   const [newDoctor, setNewDoctor] = useState({
     resident_id: "",
     resident_userName: "",
@@ -59,8 +62,12 @@ const Doctors = () => {
 
   useEffect(() => {
     fetchDoctors();
-  }, []);
+  }, [isUpdated]);
 
+  const handleUpdate = () => {
+    // Set isUpdated to true to trigger a re-fetch of data
+    setIsUpdated(true);
+  };
   const fetchDoctors = async () => {
     try {
       const token = sessionStorage.getItem("authToken");
@@ -85,6 +92,11 @@ const Doctors = () => {
 
   const handleAddDoctor = () => {
     setIsAddingDoctor(!isAddingDoctor);
+  };
+
+  const handleCancel = () => {
+    setIsAddingDoctor(false);
+    setIsEditing(false);
   };
 
   const handleEditDoctor = (
@@ -117,14 +129,6 @@ const Doctors = () => {
     }));
   };
 
-  const handleEditInputChange = (e: { target: { name: any; value: any } }) => {
-    const { name, value } = e.target;
-    setEditDoctor((prevDoctor) => ({
-      ...prevDoctor,
-      [name]: value,
-    }));
-  };
-
   const handleSubmit = async () => {
     try {
       const token = sessionStorage.getItem("authToken");
@@ -136,7 +140,10 @@ const Doctors = () => {
       };
 
       // Send a POST request to the API endpoint with the new doctor data
-      const response = await axios.post("/residents", newDoctorWithroleZero);
+      const response = await axios.post(
+        "admin/residents",
+        newDoctorWithroleZero
+      );
 
       // Handle the response as needed
       console.log("New doctor added successfully:", response.data);
@@ -158,41 +165,6 @@ const Doctors = () => {
       setIsAddingDoctor(false);
     } catch (error) {
       console.log("Error adding new doctor:", error);
-      // Handle any error that occurred during the request
-    }
-  };
-
-  const handleEditSubmit = async () => {
-    try {
-      const token = sessionStorage.getItem("authToken");
-      // Set the token in Axios headers for this request
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      // Send a PUT request to the API endpoint with the updated doctor data
-      const response = await axios.put(
-        `/residents/${editDoctor.resident_id}`,
-        editDoctor
-      );
-
-      // Handle the response as needed
-      console.log("Doctor updated successfully:", response.data);
-
-      // Fetch the updated list of doctors
-      fetchDoctors();
-
-      // Clear the form and close the edit form section
-      setIsEditing(false);
-      setEditDoctor({
-        resident_id: "",
-        resident_userName: "",
-        resident_fName: "",
-        resident_lName: "",
-        resident_mName: "",
-        resident_password: "",
-        role: "",
-        department_id: "",
-      });
-    } catch (error) {
-      console.log("Error updating doctor:", error);
       // Handle any error that occurred during the request
     }
   };
@@ -244,22 +216,12 @@ const Doctors = () => {
             onClose={() => {
               setIsAddingDoctor(false);
               setIsEditing(false);
-              setEditDoctor({
-                resident_id: "",
-                resident_userName: "",
-                resident_fName: "",
-                resident_lName: "",
-                resident_mName: "",
-                resident_password: "",
-                role: "",
-                department_id: "",
-              });
             }}
             open={isAddingDoctor || isEditing}
             bodyStyle={{ paddingBottom: 80 }}
             extra={
               <Space>
-                <Button onClick={handleAddDoctor}>Cancel</Button>
+                <Button onClick={handleCancel}>Cancel</Button>
                 <Button onClick={handleSubmit} type="primary">
                   Submit
                 </Button>
@@ -267,205 +229,18 @@ const Doctors = () => {
             }
           >
             {isAddingDoctor ? ( // Render add form
-              <Form layout="vertical" requiredMark>
-                <Row gutter={16}>
-                  <Col span={12}>
-                    <Form.Item
-                      label="Resident ID"
-                      rules={[
-                        { required: true, message: "Please enter resident ID" },
-                      ]}
-                    >
-                      <Input
-                        name="resident_id"
-                        placeholder="Please enter resident ID"
-                        value={newDoctor.resident_id}
-                        onChange={handleInputChange}
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item
-                      label="Resident UserName"
-                      rules={[
-                        { required: true, message: "Please enter resident ID" },
-                      ]}
-                    >
-                      <Input
-                        name="resident_userName"
-                        placeholder="Please enter resident username"
-                        value={newDoctor.resident_userName}
-                        onChange={handleInputChange}
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item
-                      label="First Name"
-                      rules={[
-                        { required: true, message: "Please enter first name" },
-                      ]}
-                    >
-                      <Input
-                        name="resident_fName"
-                        placeholder="Please enter first name"
-                        value={newDoctor.resident_fName}
-                        onChange={handleInputChange}
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item
-                      label="Last Name"
-                      rules={[
-                        { required: true, message: "Please enter last name" },
-                      ]}
-                    >
-                      <Input
-                        name="resident_lName"
-                        placeholder="Please enter last name"
-                        value={newDoctor.resident_lName}
-                        onChange={handleInputChange}
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item
-                      label="Middle Name"
-                      rules={[
-                        { required: true, message: "Please enter middle name" },
-                      ]}
-                    >
-                      <Input
-                        name="resident_mName"
-                        placeholder="Please enter middle name"
-                        value={newDoctor.resident_mName}
-                        onChange={handleInputChange}
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item
-                      label="Password"
-                      rules={[
-                        { required: true, message: "Please enter password" },
-                      ]}
-                    >
-                      <Input
-                        name="resident_password"
-                        placeholder="Please enter password"
-                        value={newDoctor.resident_password}
-                        onChange={handleInputChange}
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item
-                      label="Department ID"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Please enter Department ID",
-                        },
-                      ]}
-                    >
-                      <Input
-                        name="department_id"
-                        placeholder="Please enter Department ID"
-                        value={newDoctor.department_id}
-                        onChange={handleInputChange}
-                      />
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </Form>
+              <AddDoctorForm
+                onUpdate={handleUpdate}
+                newDoctor={newDoctor}
+                handleInputChange={handleInputChange}
+                handleSubmit={handleCancel}
+              />
             ) : isEditing ? ( // Render edit form
-              <Form layout="vertical" requiredMark>
-                <Row gutter={16}>
-                  <Col span={12}>
-                    <Form.Item
-                      label="Username"
-                      name="resident_userName"
-                      rules={[
-                        { required: true, message: "Please enter username" },
-                      ]}
-                      initialValue={editDoctor.resident_userName}
-                    >
-                      <Input onChange={handleEditInputChange} />
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item
-                      label="First Name"
-                      name="resident_fName"
-                      rules={[
-                        { required: true, message: "Please enter first name" },
-                      ]}
-                      initialValue={editDoctor.resident_fName}
-                    >
-                      <Input onChange={handleEditInputChange} />
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item
-                      label="Last Name"
-                      name="resident_lName"
-                      rules={[
-                        { required: true, message: "Please enter last name" },
-                      ]}
-                      initialValue={editDoctor.resident_lName}
-                    >
-                      <Input onChange={handleEditInputChange} />
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item
-                      label="Middle Name"
-                      name="resident_mName"
-                      rules={[
-                        { required: true, message: "Please enter middle name" },
-                      ]}
-                      initialValue={editDoctor.resident_mName}
-                    >
-                      <Input onChange={handleEditInputChange} />
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item
-                      label="Password"
-                      name="resident_password"
-                      rules={[
-                        { required: true, message: "Please enter password" },
-                      ]}
-                      initialValue={editDoctor.resident_password}
-                    >
-                      <Input onChange={handleEditInputChange} />
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item
-                      label="Department ID"
-                      name="department_id"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Please enter Department ID",
-                        },
-                      ]}
-                      initialValue={editDoctor.department_id}
-                    >
-                      <Input onChange={handleEditInputChange} />
-                    </Form.Item>
-                  </Col>
-                </Row>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleEditSubmit}
-                >
-                  Save
-                </Button>
-              </Form>
+              <EditDoctorForm
+                editDoctor={editDoctor}
+                onUpdate={handleUpdate}
+                onFinish={handleCancel}
+              />
             ) : null}{" "}
             {/* Render nothing when neither adding nor editing */}
           </Drawer>

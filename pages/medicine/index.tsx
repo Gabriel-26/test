@@ -101,7 +101,7 @@ const MedicineList = () => {
       if (editingMedicine) {
         // Edit existing medicine
         await axiosInstance.put(
-          `/medicines/edit/${editingMedicine.medicine_id}`,
+          `admin/medicines/${editingMedicine.medicine_id}`,
           values
         );
       } else {
