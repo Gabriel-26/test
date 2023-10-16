@@ -57,7 +57,7 @@ const AddDoctorForm = ({
   return (
     <Form
       onFinish={handleFinish} // Use handleSubmit if provided, or handleFinish if not
-      labelCol={{ span: 8 }}
+      labelCol={{ span: 4 }}
       wrapperCol={{ span: 16 }}
     >
       <Form.Item
@@ -109,7 +109,7 @@ const AddDoctorForm = ({
       >
         <Input />
       </Form.Item>
-      <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+      <Form.Item wrapperCol={{ offset: 9, span: 16 }}>
         <Space>
           <Button type="primary" htmlType="submit">
             Save

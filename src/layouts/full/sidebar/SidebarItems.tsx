@@ -87,11 +87,12 @@ const SidebarItems = ({ toggleMobileSidebar }: any) => {
     <Box sx={{ px: 3 }}>
       <List sx={{ pt: 0 }} className="sidebarNav" component="div">
         {updatedMenuitems.map((item) => {
-          // console.log("Item key:", item.id); // Add this line for debugging
+          // Use the `id` property as the `key` prop if available, otherwise, generate a unique key
+          const key = item.id || uniqueId();
 
           if (item.type === "expandable-card") {
             return (
-              <div key={item.subheader}>
+              <div key={key}>
                 <NavGroup item={item} />
                 {/* Use the ExpandableCard component directly */}
                 <ExpandableCard subheader="FLOORS">
@@ -112,7 +113,7 @@ const SidebarItems = ({ toggleMobileSidebar }: any) => {
             return (
               <NavItem
                 item={item}
-                key={item.id}
+                key={key} // Use the key here
                 pathDirect={pathDirect}
                 onClick={toggleMobileSidebar}
               />
@@ -123,7 +124,7 @@ const SidebarItems = ({ toggleMobileSidebar }: any) => {
                 item={item}
                 expanded={false}
                 toggleExpanded={() => {}}
-                key={item.subheader}
+                key={key} // Use the key here
               />
             );
           }

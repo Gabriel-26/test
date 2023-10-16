@@ -23,7 +23,17 @@ import axios from "../../../src/components/utils/axiosInstance";
 import type { ReactElement } from "react";
 import PageContainer from "../../../src/components/container/PageContainer";
 import FullLayout from "../../../src/layouts/full/FullLayout";
-import { Button, Drawer, Form, Input, Select, Row, Col, Space } from "antd";
+import {
+  Button,
+  Drawer,
+  Form,
+  Input,
+  Select,
+  Row,
+  Col,
+  Space,
+  Spin,
+} from "antd";
 import AddChiefResidentForm from "./addform";
 import EditChiefResidentForm from "./editform";
 
@@ -31,6 +41,7 @@ const ChiefResident = () => {
   const [doctors, setDoctors] = useState([]);
   const [isAddingDoctor, setIsAddingDoctor] = useState(false);
   const [isUpdated, setIsUpdated] = useState(false); // State to track updates
+  const [loading, setLoading] = useState(true); // Loading state
 
   const [newDoctor, setNewDoctor] = useState({
     resident_id: "",
@@ -67,6 +78,8 @@ const ChiefResident = () => {
 
   const fetchDoctors = async () => {
     try {
+      setLoading(true); // Set loading to true when starting data fetch
+
       const token = sessionStorage.getItem("authToken");
       const role = sessionStorage.getItem("userRole"); // Assuming user role is stored in sessionStorage
 
@@ -82,8 +95,10 @@ const ChiefResident = () => {
 
       const response = await axios.get(endpoint);
       setDoctors(response.data);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching doctors:", error);
+      setLoading(false);
     }
   };
 
@@ -231,197 +246,200 @@ const ChiefResident = () => {
   return (
     <PageContainer>
       <DashboardCard title="Chief Residents">
-        <Box sx={{ overflow: "auto", width: { xs: "600px", sm: "auto" } }}>
-          <Button
-            onClick={handleAddDoctor}
-            // icon={<PlusOutlined />}
-            // sx={{ marginBottom: "10px" }}
-          >
-            New Resident
-          </Button>
-          <Stack direction="column" spacing={2}>
-            <TextField
-              label="Search"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              InputProps={{
-                type: "search",
+        <Spin spinning={loading}>
+          <Box sx={{ overflow: "auto", width: { xs: "600px", sm: "auto" } }}>
+            <Button
+              onClick={handleAddDoctor}
+              // icon={<PlusOutlined />}
+              // sx={{ marginBottom: "10px" }}
+            >
+              New Resident
+            </Button>
+            <Stack direction="column" spacing={2}>
+              <TextField
+                label="Search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                InputProps={{
+                  type: "search",
+                }}
+              />
+            </Stack>
+
+            <Drawer
+              title={
+                isAddingDoctor ? "Add Chief Resident" : "Edit Chief Resident"
+              }
+              width={720}
+              onClose={() => {
+                setIsAddingDoctor(false);
+                setIsEditing(false);
               }}
-            />
-          </Stack>
+              open={isAddingDoctor || isEditing}
+              bodyStyle={{ paddingBottom: 80 }}
+              extra={
+                <Space>
+                  <Button onClick={handleCancel}>Cancel</Button>
+                  <Button onClick={handleSubmit} type="primary">
+                    Submit
+                  </Button>
+                </Space>
+              }
+            >
+              {isAddingDoctor ? ( // Render add form
+                <AddChiefResidentForm
+                  newChiefResident={newDoctor}
+                  onUpdate={handleUpdate}
+                  handleInputChange={handleInputChange}
+                  handleSubmit={handleSubmit}
+                />
+              ) : isEditing ? ( // Render edit form
+                <EditChiefResidentForm
+                  editChiefResident={editDoctor}
+                  onFinish={handleCancel}
+                  onUpdate={fetchDoctors}
+                />
+              ) : null}{" "}
+              {/* Render nothing when neither adding nor editing */}
+            </Drawer>
 
-          <Drawer
-            title={
-              isAddingDoctor ? "Add Chief Resident" : "Edit Chief Resident"
-            }
-            width={720}
-            onClose={() => {
-              setIsAddingDoctor(false);
-              setIsEditing(false);
-            }}
-            open={isAddingDoctor || isEditing}
-            bodyStyle={{ paddingBottom: 80 }}
-            extra={
-              <Space>
-                <Button onClick={handleCancel}>Cancel</Button>
-                <Button onClick={handleSubmit} type="primary">
-                  Submit
-                </Button>
-              </Space>
-            }
-          >
-            {isAddingDoctor ? ( // Render add form
-              <AddChiefResidentForm
-                newChiefResident={newDoctor}
-                onUpdate={handleUpdate}
-                handleInputChange={handleInputChange}
-                handleSubmit={handleSubmit}
-              />
-            ) : isEditing ? ( // Render edit form
-              <EditChiefResidentForm
-                editChiefResident={editDoctor}
-                onFinish={handleCancel}
-                onUpdate={fetchDoctors}
-              />
-            ) : null}{" "}
-            {/* Render nothing when neither adding nor editing */}
-          </Drawer>
-
-          <Table
-            aria-label="simple table"
-            sx={{
-              whiteSpace: "nowrap",
-              mt: 2,
-              minWidth: 600,
-            }}
-          >
-            <TableHead>
-              <TableRow>
-                <TableCell>
-                  <Typography variant="subtitle2" fontWeight={600}>
-                    Id
-                  </Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="subtitle2" fontWeight={600}>
-                    Username
-                  </Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="subtitle2" fontWeight={600}>
-                    First Name
-                  </Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="subtitle2" fontWeight={600}>
-                    Last Name
-                  </Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="subtitle2" fontWeight={600}>
-                    Middle Name
-                  </Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="subtitle2" fontWeight={600}>
-                    Department ID
-                  </Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="subtitle2" fontWeight={600}>
-                    Actions
-                  </Typography>
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {doctors
-                .filter(
-                  (doctor) =>
-                    doctor.role === "chiefResident" && // Filter condition
-                    (searchQuery === "" ||
-                      doctor.resident_userName
-                        .toLowerCase()
-                        .includes(searchQuery.toLowerCase()) ||
-                      doctor.resident_fName
-                        .toLowerCase()
-                        .includes(searchQuery.toLowerCase()) ||
-                      doctor.resident_lName
-                        .toLowerCase()
-                        .includes(searchQuery.toLowerCase()))
-                ) // Filter doctors based on the condition
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((doctor) => (
-                  <TableRow key={doctor.resident_id}>
-                    <TableCell>
-                      <Typography
-                        sx={{
-                          fontSize: "15px",
-                          fontWeight: "500",
-                        }}
-                      >
-                        {doctor.resident_id}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Box>
-                          <Typography variant="subtitle2" fontWeight={600}>
-                            {doctor.resident_userName}
-                          </Typography>
-                          <Typography
-                            color="textSecondary"
-                            sx={{
-                              fontSize: "13px",
-                            }}
-                          ></Typography>
+            <Table
+              aria-label="simple table"
+              sx={{
+                whiteSpace: "nowrap",
+                mt: 2,
+                minWidth: 600,
+              }}
+            >
+              <TableHead>
+                <TableRow>
+                  <TableCell>
+                    <Typography variant="subtitle2" fontWeight={600}>
+                      Id
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2" fontWeight={600}>
+                      Username
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2" fontWeight={600}>
+                      First Name
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2" fontWeight={600}>
+                      Last Name
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2" fontWeight={600}>
+                      Middle Name
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2" fontWeight={600}>
+                      Department ID
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2" fontWeight={600}>
+                      Actions
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {doctors
+                  .filter(
+                    (doctor) =>
+                      doctor.role === "chiefResident" && // Filter condition
+                      (searchQuery === "" ||
+                        doctor.resident_userName
+                          .toLowerCase()
+                          .includes(searchQuery.toLowerCase()) ||
+                        doctor.resident_fName
+                          .toLowerCase()
+                          .includes(searchQuery.toLowerCase()) ||
+                        doctor.resident_lName
+                          .toLowerCase()
+                          .includes(searchQuery.toLowerCase()))
+                  ) // Filter doctors based on the condition
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((doctor) => (
+                    <TableRow key={doctor.resident_id}>
+                      <TableCell>
+                        <Typography
+                          sx={{
+                            fontSize: "15px",
+                            fontWeight: "500",
+                          }}
+                        >
+                          {doctor.resident_id}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Box>
+                            <Typography variant="subtitle2" fontWeight={600}>
+                              {doctor.resident_userName}
+                            </Typography>
+                            <Typography
+                              color="textSecondary"
+                              sx={{
+                                fontSize: "13px",
+                              }}
+                            ></Typography>
+                          </Box>
                         </Box>
-                      </Box>
-                    </TableCell>
-                    <TableCell>
-                      <Typography
-                        color="textSecondary"
-                        variant="subtitle2"
-                        fontWeight={400}
-                      >
-                        {doctor.resident_fName}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography
-                        color="textSecondary"
-                        variant="subtitle2"
-                        fontWeight={400}
-                      >
-                        {doctor.resident_lName}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography>{doctor.resident_mName}</Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography className=" pl-8">
-                        {doctor.department_id}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <IconButton
-                        sx={{ marginX: 1 }}
-                        onClick={() => handleEditDoctor(doctor)}
-                      >
-                        <BorderColorIcon sx={{ color: green[400] }} />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-            </TableBody>
-          </Table>
-        </Box>
+                      </TableCell>
+                      <TableCell>
+                        <Typography
+                          color="textSecondary"
+                          variant="subtitle2"
+                          fontWeight={400}
+                        >
+                          {doctor.resident_fName}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography
+                          color="textSecondary"
+                          variant="subtitle2"
+                          fontWeight={400}
+                        >
+                          {doctor.resident_lName}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography>{doctor.resident_mName}</Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography className=" pl-8">
+                          {doctor.department_id}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <IconButton
+                          sx={{ marginX: 1 }}
+                          onClick={() => handleEditDoctor(doctor)}
+                        >
+                          <BorderColorIcon sx={{ color: green[400] }} />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+              </TableBody>
+            </Table>
+          </Box>
+        </Spin>
+
         <TablePagination
           rowsPerPageOptions={[5, 10, 25, 50, 100]}
           component="div"

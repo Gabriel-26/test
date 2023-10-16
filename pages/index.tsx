@@ -36,7 +36,7 @@ export default function Home() {
           </Grid>
           <Grid item xs={12} lg={10}>
             <Grid container spacing={3}>
-              <Grid item xs={12}>
+              <Grid item xs={15}>
                 <ResidentsOverview />
               </Grid>
               <Grid item xs={12}>

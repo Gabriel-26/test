@@ -12,12 +12,9 @@ import {
   TableRow,
   TableCell,
   TableBody,
-  Link as MuiLink,
   TablePagination,
 } from "@mui/material";
-import { Input, Form, Modal, Drawer } from "antd";
-import useFloorStore from "../../../src/components/utils/zustandStore";
-import RoomDrawer from "./RoomDrawer";
+import { Input, Form, Modal, Drawer, Spin } from "antd";
 import { getUserRole } from "../../../src/components/utils/roles";
 import dynamic from "next/dynamic"; // Import the dynamic function
 
@@ -30,7 +27,7 @@ const Rooms = () => {
   const { floor_name: queryFloorName, floor_id: queryFloorId } = router.query; // Get the floor_name and floor_id from the query parameters
   const [showModal, setShowDrawer] = useState(false);
   const [showRoomDrawer, setShowRoomDrawer] = useState(false); // New state for the room drawer
-
+  const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const userRole = getUserRole();
@@ -57,6 +54,8 @@ const Rooms = () => {
   // Function to fetch rooms
   const fetchRooms = async (floorId?: string) => {
     try {
+      setLoading(true); // Set loading to true when starting data fetch
+
       const token = sessionStorage.getItem("authToken");
       // Set the token in Axios headers for this request
       axiosInstance.defaults.headers.common[
@@ -78,8 +77,10 @@ const Rooms = () => {
 
       const response = await axiosInstance.get(url);
       setRooms(response.data);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching rooms:", error);
+      setLoading(false);
     }
   };
 
@@ -182,43 +183,51 @@ const Rooms = () => {
               </Button>
             )}
           </div>
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Room ID</TableCell>
-                  <TableCell>Room Name</TableCell>
-                  <TableCell>Floor</TableCell>
-                  <TableCell>Room Type</TableCell>
-                  <TableCell>Floor ID</TableCell>
-                  <TableCell>Room Price</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {rooms
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((room) => (
-                    // Step 3: Wrap the cells in a clickable element (e.g., Link)
-                    <TableRow key={room.room_id}>
-                      <TableCell>
-                        {/* Step 4: Use next/link for navigation */}
-                        <MuiLink
-                          href={`/utilities/patientroom/${room.room_name}?room_id=${room.room_id}`}
-                        >
-                          {/* The room_id is displayed as a link */}
-                          {room.room_id}
-                        </MuiLink>
-                      </TableCell>
-                      <TableCell>{room.room_name}</TableCell>
-                      <TableCell>{room.room_floor}</TableCell>
-                      <TableCell>{room.room_type}</TableCell>
-                      <TableCell>{room.floor_id}</TableCell>
-                      <TableCell>{room.room_price}</TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+          <Spin spinning={loading}>
+            {" "}
+            {/* Add the Spin component here */}
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Room ID</TableCell>
+                    <TableCell>Room Name</TableCell>
+                    <TableCell>Floor</TableCell>
+                    <TableCell>Room Type</TableCell>
+                    <TableCell>Floor ID</TableCell>
+                    <TableCell>Room Price</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {rooms
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((room) => (
+                      // Step 3: Wrap the cells in a clickable element (e.g., Link)
+                      <TableRow key={room.room_id}>
+                        <TableCell>
+                          {/* Step 4: Use next/link for navigation */}
+                          <span
+                            style={{ cursor: "pointer", color: "blue" }}
+                            onClick={() =>
+                              router.push(
+                                `/utilities/patientroom/${room.room_name}?room_id=${room.room_id}`
+                              )
+                            }
+                          >
+                            {room.room_id}
+                          </span>
+                        </TableCell>
+                        <TableCell>{room.room_name}</TableCell>
+                        <TableCell>{room.room_floor}</TableCell>
+                        <TableCell>{room.room_type}</TableCell>
+                        <TableCell>{room.floor_id}</TableCell>
+                        <TableCell>{room.room_price}</TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Spin>
         </DashboardCard>
       </PageContainer>
       <TablePagination

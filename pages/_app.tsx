@@ -30,15 +30,16 @@ const MyApp = (props: MyAppProps) => {
 
   const getLayout = Component.getLayout ?? ((page) => page);
 
-  // useEffect(() => {
-  //   // Check if there is a token in sessionStorage
-  //   const token = sessionStorage.getItem("token");
+  useEffect(() => {
+    // Check if the user is not logged in (no authToken or role in sessionStorage)
+    const authToken = sessionStorage.getItem("authToken");
+    const userRole = sessionStorage.getItem("userRole");
 
-  //   // If token is not found, redirect to the login page
-  //   if (!token) {
-  //     router.push("/authentication/login"); // Redirect to your login page
-  //   }
-  // }, []); // The empty dependency array means this effect runs only once, on component mount
+    if (!authToken || !userRole) {
+      // Redirect to the login page if not logged in
+      router.push("/authentication/login");
+    }
+  }, []); // This effect runs only once when the component mounts
 
   return (
     <CacheProvider value={emotionCache}>

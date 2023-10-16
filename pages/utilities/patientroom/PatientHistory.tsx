@@ -368,7 +368,7 @@ const PatientHistory = () => {
       ] = `Bearer ${token}`;
 
       const response = await axiosInstance.get(
-        `/patientHealthRecord/getPatientbyRoom/${roomId}`
+        `/patAssRooms/getPatientbyRoom/${roomId}`
       );
 
       const data = response.data;

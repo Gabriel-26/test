@@ -12,6 +12,7 @@ import {
   FormControl,
   FormLabel,
 } from "@mui/material";
+import { message } from "antd";
 
 import Link from "next/link";
 import CustomTextField from "../../../src/components/forms/theme-elements/CustomTextField";
@@ -57,16 +58,32 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
 
   const handleSignIn = async () => {
     try {
+      let loginResult;
+
       if (loginType === "admin") {
-        await adminAuth.login({ username, password });
+        loginResult = await adminAuth.login({ username, password });
       } else {
-        await residentAuth.login({ username, password });
+        loginResult = await residentAuth.login({ username, password });
       }
 
-      const token = sessionStorage.getItem("authToken");
-      console.log("Token:", token);
+      if (loginResult === "success") {
+        // If the login was successful, set the token and redirect
+        const token = sessionStorage.getItem("authToken");
+        console.log("Token:", token);
+
+        // Show a success message
+        message.success("Login successful");
+
+        // Redirect to the desired route (e.g., '/')
+      } else {
+        // Show an error message for unsuccessful login
+        message.error("Wrong credentials. Please try again.");
+      }
     } catch (error) {
       console.error("Error occurred during login:", error);
+
+      // Show an error message for unexpected errors
+      message.error("An error occurred during login. Please try again later.");
     }
   };
 
@@ -124,7 +141,7 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
             htmlFor="password"
             mb="5px"
           >
-            {loginType === "admin" ? "Password" : "Resident Password"}
+            {loginType === "admin" ? "Password" : "Password"}
           </Typography>
           <CustomTextField
             type="password"

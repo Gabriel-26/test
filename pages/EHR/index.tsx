@@ -47,7 +47,7 @@ export function EHRForm() {
       patient_age: "",
       patient_sex: "",
       date: "",
-      room_name: "",
+      room_id: "",
       patient_vaccination_stat: "",
       phr_chiefComaplaint: "",
       phr_startTime: "",
@@ -309,7 +309,7 @@ export function EHRForm() {
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     console.log(mappedData);
     axios
-      .post("/patientHealthRecord", data)
+      .post("/patients", data)
       .then((response) => {
         console.log("Data sent successfully:", response.data);
         // Handle success or redirect to another page
@@ -415,13 +415,13 @@ export function EHRForm() {
               <label className="flex flex-col">
                 <span className="mb-2">Room</span>
                 <select
-                  {...register("room_name")}
+                  {...register("room_id")}
                   className="border border-gray-300 px-4 py-2 rounded-lg"
                 >
                   <option value="">Select a room</option>
                   {roomData.map((room) => (
-                    <option key={room.room_id} value={room.room_name}>
-                      {room.room_name}
+                    <option key={room.room_id} value={room.room_id}>
+                      {room.room_id}
                     </option>
                   ))}
                 </select>

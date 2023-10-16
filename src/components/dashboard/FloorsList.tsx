@@ -14,7 +14,7 @@ const FloorList = () => {
         floor_name: floorName,
         floor_id: floorID,
       });
-      console.log(response.data.message);
+      // console.log(response.data.message);
       return response.data;
     } catch (error) {
       console.error("Error adding floor:", error);

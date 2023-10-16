@@ -2,32 +2,15 @@ import axiosInstance from "./axiosInstance";
 import router from "next/router";
 
 const useAdminAuth = () => {
-  const getCSRFToken = async () => {
-    try {
-      const response = await axiosInstance.get(
-        "http://192.168.1.9:8000/sanctum/csrf-cookie"
-      );
-      const csrfToken = response.headers["x-xsrf-token"]; // Change this to "X-XSRF-TOKEN"
-      console.log("Admin CSRF Token:", csrfToken);
-      return csrfToken;
-    } catch (error) {
-      console.error("Error getting Admin CSRF token:", error);
-      return null;
-    }
-  };
-
   const login = async ({ username, password }) => {
     try {
-      const xsrfToken = await getCSRFToken();
       const dataToSend = {
         email: username,
         password: password,
       };
 
       const response = await axiosInstance.post("/admin/Login", dataToSend, {
-        headers: {
-          "X-XSRF-TOKEN": xsrfToken,
-        },
+        headers: {},
       });
 
       const token = response.data.token;
@@ -37,8 +20,11 @@ const useAdminAuth = () => {
       sessionStorage.setItem("userRole", role); // Save the role in the session
 
       router.push("/");
+      return "success";
     } catch (error) {
       console.error("Admin login error:", error);
+      return "failure";
+
       // Handle authentication error here, e.g., show an error message to the user
     }
   };

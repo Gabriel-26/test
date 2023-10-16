@@ -8,6 +8,7 @@ import {
   Select,
   DatePicker,
   InputNumber,
+  Spin,
 } from "antd";
 import FullLayout from "../../src/layouts/full/FullLayout";
 import {
@@ -21,6 +22,7 @@ import {
   TablePagination,
 } from "@mui/material";
 import { getUserRole } from "../../src/components/utils/roles";
+import DashboardCard from "../../src/components/shared/DashboardCard";
 
 const userRole = getUserRole();
 
@@ -41,6 +43,7 @@ const MedicineList = () => {
   const [editingMedicine, setEditingMedicine] = useState<Medicine | null>(null);
   const [form] = Form.useForm();
   const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchMedicines();
@@ -48,6 +51,8 @@ const MedicineList = () => {
 
   const fetchMedicines = async () => {
     try {
+      setLoading(true); // Set loading to true when starting data fetch
+
       const token = sessionStorage.getItem("authToken");
       const role = sessionStorage.getItem("userRole"); // Assuming user role is stored in sessionStorage
 
@@ -65,6 +70,7 @@ const MedicineList = () => {
 
       const response = await axiosInstance.get(endpoint);
       console.log(response.data);
+      setLoading(false);
 
       const filteredMedicines = response.data.filter((medicine) =>
         Object.values(medicine).some(
@@ -76,6 +82,7 @@ const MedicineList = () => {
       setMedicineData(filteredMedicines);
     } catch (error) {
       console.error("Error fetching medicines:", error);
+      setLoading(false);
     }
   };
 
@@ -135,79 +142,84 @@ const MedicineList = () => {
   };
 
   return (
-    <div>
-      <h1>Medicine Formulary</h1>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => showDrawer()}
-        style={{ display: userRole === "admin" ? "block" : "none" }}
-      >
-        Add Medicine
-      </Button>
-      <Input
-        placeholder="Search"
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-      />
-      {medicines.length > 0 ? (
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>ID</TableCell>
-                <TableCell>Name</TableCell>
-                <TableCell>Brand</TableCell>
-                <TableCell>Dosage</TableCell>
-                <TableCell>Type</TableCell>
-                <TableCell>Price</TableCell>
-                {/* <TableCell>Created At</TableCell>
+    <>
+      <DashboardCard title="Medicines">
+        <Spin spinning={loading}>
+          <h1>Medicine Formulary</h1>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => showDrawer()}
+            style={{ display: userRole === "admin" ? "block" : "none" }}
+          >
+            Add Medicine
+          </Button>
+          <Input
+            placeholder="Search"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          {medicines.length > 0 ? (
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>ID</TableCell>
+                    <TableCell>Name</TableCell>
+                    <TableCell>Brand</TableCell>
+                    <TableCell>Dosage</TableCell>
+                    <TableCell>Type</TableCell>
+                    <TableCell>Price</TableCell>
+                    {/* <TableCell>Created At</TableCell>
                 <TableCell>Updated At</TableCell> */}
-                {userRole === "admin" && <TableCell>Action</TableCell>}{" "}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {medicines
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((medicine) => (
-                  <TableRow key={medicine.medicine_id}>
-                    <TableCell>{medicine.medicine_id}</TableCell>
-                    <TableCell>{medicine.medicine_name}</TableCell>
-                    <TableCell>{medicine.medicine_brand}</TableCell>
-                    <TableCell>{medicine.medicine_dosage}</TableCell>
-                    <TableCell>{medicine.medicine_type}</TableCell>
-                    <TableCell>{medicine.medicine_price}</TableCell>
-                    {/* <TableCell>{medicine.created_at}</TableCell>
-                  <TableCell>{medicine.updated_at}</TableCell> */}
-                    <TableCell>
-                      <Button
-                        variant="text"
-                        color="primary"
-                        onClick={() => showDrawer(medicine)}
-                        style={{
-                          display: userRole === "admin" ? "block" : "none",
-                        }}
-                      >
-                        Edit
-                      </Button>
-                    </TableCell>
+                    {userRole === "admin" && <TableCell>Action</TableCell>}{" "}
                   </TableRow>
-                ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      ) : (
-        <p>No medicines available.</p>
-      )}
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25, 50, 100]}
-        component="div"
-        count={medicines.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
+                </TableHead>
+                <TableBody>
+                  {medicines
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((medicine) => (
+                      <TableRow key={medicine.medicine_id}>
+                        <TableCell>{medicine.medicine_id}</TableCell>
+                        <TableCell>{medicine.medicine_name}</TableCell>
+                        <TableCell>{medicine.medicine_brand}</TableCell>
+                        <TableCell>{medicine.medicine_dosage}</TableCell>
+                        <TableCell>{medicine.medicine_type}</TableCell>
+                        <TableCell>{medicine.medicine_price}</TableCell>
+                        {/* <TableCell>{medicine.created_at}</TableCell>
+                  <TableCell>{medicine.updated_at}</TableCell> */}
+                        <TableCell>
+                          <Button
+                            variant="text"
+                            color="primary"
+                            onClick={() => showDrawer(medicine)}
+                            style={{
+                              display: userRole === "admin" ? "block" : "none",
+                            }}
+                          >
+                            Edit
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          ) : (
+            <p>No medicines available.</p>
+          )}
+        </Spin>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25, 50, 100]}
+          component="div"
+          count={medicines.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </DashboardCard>
+
       <Drawer
         title={editingMedicine ? "Edit Medicine" : "Add Medicine"}
         width={720}
@@ -251,7 +263,7 @@ const MedicineList = () => {
           </Form.Item>
         </Form>
       </Drawer>
-    </div>
+    </>
   );
 };
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axiosInstance from "../../../src/components/utils/axiosInstance";
 import { List, Button, Modal, message } from "antd";
 import { FileOutlined } from "@ant-design/icons";
+import Image from "next/image"; // Import the Image component
 
 const FileViewer = () => {
   const [files, setFiles] = useState([]);
@@ -17,6 +18,13 @@ const FileViewer = () => {
     axiosInstance.get("/fileUpload").then((response) => {
       setFiles(response.data);
     });
+  };
+
+  const handleImageClick = (imageUrl) => {
+    setSelectedFile({ file_name: "Image", file_id: null });
+    setViewerVisible(true);
+    // Set the image URL to state
+    setFileContentURL(imageUrl);
   };
 
   useEffect(() => {
@@ -111,7 +119,7 @@ const FileViewer = () => {
 
       <Modal
         title={`Viewing File: ${selectedFile?.file_name || "No file selected"}`}
-        visible={isViewerVisible}
+        open={isViewerVisible}
         onCancel={handleCloseFileViewer}
         footer={[
           <Button key="close" onClick={handleCloseFileViewer}>

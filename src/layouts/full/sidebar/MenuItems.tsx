@@ -30,7 +30,6 @@ const Menuitems = [
     navlabel: true,
     id: uniqueId(),
     title: "Home",
-
     subheader: "Doctors",
     role: ["chiefResident", "admin"], // This item is visible to both "chiefResident" and "admin"
   },
@@ -53,13 +52,26 @@ const Menuitems = [
     title: "Assign Residents",
     icon: IconLogin,
     href: "/doctors/chiefresident/assignResident",
-    role: "chiefResident", // This item is visible to residents and admin
+    role: ["chiefResident"], // This item is visible to residents and admin
+  },
+  {
+    navlabel: true,
+    id: uniqueId(),
+    title: "Patients",
+    subheader: "Patients",
+    role: ["chiefResident", "resident"],
+  },
+  {
+    id: uniqueId(),
+    title: "Patients",
+    icon: IconLogin,
+    href: "/patients",
+    role: ["chiefResident", "resident"], // This item is visible to residents and admin
   },
   {
     navlabel: true,
     id: uniqueId(),
     title: "Home",
-
     type: "expandable-card", // Add the type property for the expandable-card
     children: [],
     role: "all", // This item is visible to all roles

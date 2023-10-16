@@ -14,8 +14,9 @@ import PatientHistory from "./PatientHistory";
 import { uploadFile } from "../../../src/components/utils/fileUpload";
 import { Modal, Button, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons"; // Import Ant Design UploadOutlined
-// import FileViewer from "./FileViewer";
 import ImageDisplay from "./FileViewer";
+import PatientEvaluation from "./PhysicalExam";
+import Medication from "./Medications";
 
 const Item = styled(Paper)(({ theme }) => ({
   ...theme.typography.body1,
@@ -76,7 +77,7 @@ const RoomView = () => {
     setFilePickerOpen(false);
   };
 
-  const handleFileUpload = () => {
+  const handleFileUpload = async () => {
     if (!selectedFile) {
       return;
     }
@@ -92,30 +93,44 @@ const RoomView = () => {
 
     axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-    // Retrieve patient_id from patient data or wherever it's available
-    const patientID = patientData[0]?.patient_id || null;
+    try {
+      // Make an API request to retrieve patient data
+      const response = await axiosInstance.get("/patAssRooms");
+      const patientData = response.data;
 
-    if (!patientID) {
-      console.error("Patient ID not found");
-      message.error("Patient ID not found");
-      return;
+      // Check if patient data is available
+      if (patientData && patientData.length > 0) {
+        const patientID = patientData[0].patient_id;
+
+        if (patientID) {
+          // Upload the file with patientID and residentID
+          uploadFile(selectedFile, patientID, residentID)
+            .then((uploadResponse) => {
+              console.log("File uploaded successfully", uploadResponse.data);
+              setUploadSuccess(true);
+              setSelectedFile(null);
+            })
+            .catch((error) => {
+              console.error("File upload error", error);
+              message.error("File upload failed");
+            });
+        } else {
+          console.error("Patient ID not found in patient data");
+          message.error("Patient ID not found");
+        }
+      } else {
+        console.error("No patient data available");
+        message.error("Patient data not found");
+      }
+    } catch (error) {
+      console.error("Error fetching patient data", error);
+      message.error("Failed to fetch patient data");
     }
-
-    uploadFile(selectedFile, patientID, residentID) // Pass all three arguments
-      .then((response) => {
-        console.log("File uploaded successfully", response.data);
-        setUploadSuccess(true);
-        setSelectedFile(null);
-      })
-      .catch((error) => {
-        console.error("File upload error", error);
-        message.error("File upload failed"); // Display an error message
-      });
   };
 
   useEffect(() => {
     const token = sessionStorage.getItem("authToken");
-    const apiUrl = "/patientHealthRecord/get/AvailableRooms"; // Updated API route
+    const apiUrl = "/patAssRooms/get/AvailableRooms"; // Updated API route
 
     axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
@@ -200,7 +215,10 @@ const RoomView = () => {
           <TabsList>
             <TabsTrigger value="pninfo">Patient Info</TabsTrigger>
             <TabsTrigger value="phistory">Patient History</TabsTrigger>
-            <TabsTrigger value="fileviewer">File Viewer</TabsTrigger>{" "}
+            <TabsTrigger value="fileviewer">File Viewer</TabsTrigger>
+            <TabsTrigger value="evaluation">Evaluation</TabsTrigger>
+            <TabsTrigger value="medication">Medication</TabsTrigger>
+            {/* Add this line */}
           </TabsList>
           <TabsContent value="pninfo">
             <PatientInfo
@@ -213,6 +231,12 @@ const RoomView = () => {
           </TabsContent>
           <TabsContent value="fileviewer">
             <ImageDisplay />
+          </TabsContent>
+          <TabsContent value="evaluation">
+            <PatientEvaluation />
+          </TabsContent>
+          <TabsContent value="medication">
+            <Medication />
           </TabsContent>
         </Tabs>
         <div style={{ display: "flex", flexWrap: "wrap", gap: "16px" }}>

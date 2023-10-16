@@ -1,19 +1,33 @@
 import React, { useState, useEffect } from "react";
-import { Typography, Avatar, Fab } from "@mui/material";
-import { IconArrowDownRight, IconInbox } from "@tabler/icons-react";
-import DashboardCard from "../shared/DashboardCard";
+import { List, Typography, Pagination, Spin } from "antd";
 import axiosInstance from "../../../src/components/utils/axiosInstance"; // Import Axios instance
+import DashboardCard from "../shared/DashboardCard";
+
+const { Item } = List;
 
 const RoomUpdates = () => {
   const [roomUpdates, setRoomUpdates] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true); // Step 2: Initialize loading state to true
+  const pageSize = 5; // Adjust the page size as needed
+  const MAX_RETRIES = 5;
+  const INITIAL_DELAY = 1000; // 1 second
+  let retryCount = 0;
 
   const formatUpdateDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleString(); // You can adjust the formatting as needed
   };
 
-  // Function to fetch room updates from the API
-  const fetchRoomUpdates = () => {
+  // Function to paginate the room updates
+  const paginateRoomUpdates = () => {
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const paginatedData = roomUpdates.slice(startIndex, endIndex);
+    return paginatedData;
+  };
+
+  useEffect(() => {
     const token = sessionStorage.getItem("authToken");
     const userRole = sessionStorage.getItem("userRole"); // Get the user's role from sessionStorage
 
@@ -30,80 +44,110 @@ const RoomUpdates = () => {
       endpoint = "/admin" + endpoint;
     }
 
-    axiosInstance.get(endpoint).then(async (response) => {
-      // Map the room updates to include resident last name
-      const updatedRoomUpdates = await Promise.all(
-        response.data.map(async (update) => {
-          if (update.role === "resident" || update.role === "chiefResident") {
-            let residentEndpoint = `/resActLog/residentName/${update.user_id}`;
+    const fetchDataWithRetry = () => {
+      // Set loading to true when fetching data starts
+      setLoading(true); // Step 3: Set loading to true
 
-            // If the user is an admin, add the /admin prefix to the endpoint
-            if (userRole === "admin") {
-              residentEndpoint = `/admin${residentEndpoint}`;
-            }
+      axiosInstance
+        .get(endpoint)
+        .then(async (response) => {
+          // Map the room updates to include resident last name
+          const updatedRoomUpdates = await Promise.all(
+            response.data.map(async (update) => {
+              if (
+                update.role === "resident" ||
+                update.role === "chiefResident"
+              ) {
+                let residentEndpoint = `/resActLog/residentName/${update.user_id}`;
 
-            // Fetch the resident's last name using the modified endpoint
-            const residentResponse = await axiosInstance.get(residentEndpoint);
-            const residentLastName = residentResponse.data.lastName;
+                // If the user is an admin, add the /admin prefix to the endpoint
+                if (userRole === "admin") {
+                  residentEndpoint = `/admin${residentEndpoint}`;
+                }
 
-            return {
-              ...update,
-              residentLastName, // Add the resident's last name to the update object
-            };
-          }
-          return update;
+                // Fetch the resident's last name using the modified endpoint
+                const residentResponse = await axiosInstance.get(
+                  residentEndpoint
+                );
+                const residentLastName = residentResponse.data.lastName;
+
+                return {
+                  ...update,
+                  residentLastName, // Add the resident's last name to the update object
+                };
+              }
+              return update;
+            })
+          );
+
+          setRoomUpdates(updatedRoomUpdates);
+
+          // Set loading to false when data is fetched
+          setLoading(false); // Step 4: Set loading to false
         })
-      );
-
-      setRoomUpdates(updatedRoomUpdates);
-    });
-  };
-
-  useEffect(() => {
-    fetchRoomUpdates();
-
-    // Poll for room updates every 10 seconds (adjust the interval as needed)
-    const pollingInterval = setInterval(() => {
-      fetchRoomUpdates();
-    }, 10000);
-
-    // Clean up the interval when the component unmounts
-    return () => {
-      clearInterval(pollingInterval);
+        .catch((error) => {
+          if (
+            error.response &&
+            error.response.status === 429 &&
+            retryCount < MAX_RETRIES
+          ) {
+            // Retry the request after a delay
+            const delay = INITIAL_DELAY * Math.pow(2, retryCount);
+            setTimeout(() => {
+              fetchDataWithRetry();
+            }, delay);
+            retryCount++;
+          } else {
+            // Handle other errors or too many retries
+            // Set loading to false when an error occurs
+            setLoading(false); // Step 4: Set loading to false in case of an error
+            console.error(error);
+          }
+        });
     };
+
+    // Start the initial request
+    fetchDataWithRetry();
   }, []);
 
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
   return (
-    <DashboardCard
-      title="Room Updates"
-      action={
-        <Fab color="primary" size="medium" sx={{ color: "#03bdcc" }}>
-          <IconInbox width={24} />
-        </Fab>
-      }
-    >
-      <>
-        {roomUpdates.map((update, index) => (
-          <div key={index}>
-            <Typography variant="body1" fontWeight="600">
-              {`Resident/ Dr. ${
-                update.residentLastName || update.user_id
-              } has performed the action: ${update.action}`}
-            </Typography>
-            <Typography variant="body2" color="textSecondary">
-              {`Update Time: ${formatUpdateDate(update.created_at)}`}
-            </Typography>
-            {index !== roomUpdates.length - 1 && <hr />}{" "}
-            {/* Add horizontal line between updates */}
-          </div>
-        ))}
-        {roomUpdates.length === 0 && (
-          <Typography variant="body1" color="textSecondary">
-            No updates at the moment.
-          </Typography>
-        )}
-      </>
-    </DashboardCard>
+    <div>
+      <DashboardCard title="Updates">
+        <Spin spinning={loading}>
+          {" "}
+          {/* Step 5: Add Spin component */}
+          <List
+            header={<div>Room Updates</div>}
+            footer={<div></div>}
+            bordered
+            dataSource={paginateRoomUpdates()} // Use paginated data
+            renderItem={(update, index) => (
+              <Item>
+                <Typography.Text strong>
+                  {`Resident/ Dr. ${
+                    update.residentLastName || update.user_id
+                  } has performed the action: ${update.action}`}
+                </Typography.Text>
+                <br />
+                <Typography.Text type="secondary">
+                  {`Update Time: ${formatUpdateDate(update.created_at)}`}
+                </Typography.Text>
+              </Item>
+            )}
+          />
+        </Spin>
+        <Pagination
+          current={currentPage}
+          total={roomUpdates.length} // Provide the total number of items for pagination
+          pageSize={pageSize}
+          onChange={handlePageChange}
+        />
+      </DashboardCard>
+    </div>
   );
 };
 

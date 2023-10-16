@@ -30,7 +30,7 @@ const PatientInfo = (props: any) => {
       ] = `Bearer ${token}`;
 
       const response = await axiosInstance.get(
-        `/patientHealthRecord/getPatientbyRoom/${roomId}`
+        `/patAssRooms/getPatientbyRoom/${roomId}`
       );
 
       const data = response.data;
@@ -68,7 +68,7 @@ const PatientInfo = (props: any) => {
       ] = `Bearer ${token}`;
 
       await axiosInstance.put(
-        `/patientHealthRecord/updatePatient/${editingPatient.patient_id}`,
+        `/patients/updatePatient/${editingPatient.patient_id}`,
         values
       );
 
