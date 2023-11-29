@@ -1,4 +1,4 @@
-import { ReactElement, ReactNode, useEffect } from "react";
+import { ReactElement, ReactNode, useEffect, useState } from "react";
 import "/globals.css";
 import type { NextPage } from "next";
 import Head from "next/head";
@@ -9,7 +9,9 @@ import { CacheProvider, EmotionCache } from "@emotion/react";
 import createEmotionCache from "../src/createEmotionCache";
 import { baselightTheme } from "../src/theme/DefaultColors";
 import axiosInstance from "../src/components/utils/axiosInstance";
-import { useRouter } from "next/router"; // Import useRouter
+import { useRouter } from "next/router";
+
+import LoadingComponent from "./loading"; // Import your LoadingComponent
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -26,21 +28,28 @@ interface MyAppProps extends AppProps {
 const MyApp = (props: MyAppProps) => {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
   const theme = baselightTheme;
-  const router = useRouter(); // Initialize the router
-
+  const router = useRouter();
   const getLayout = Component.getLayout ?? ((page) => page);
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    // Check if the user is not logged in (no authToken or role in sessionStorage)
     const authToken = sessionStorage.getItem("authToken");
     const userRole = sessionStorage.getItem("userRole");
 
+    const simulateLoading = async () => {
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate a 5-second delay
+      setLoading(false); // Authentication check is complete
+    };
+
     if (!authToken || !userRole) {
-      // Redirect to the login page if not logged in
-      router.push("/authentication/login");
+      simulateLoading().then(() => router.push("/authentication/login"));
+    } else {
+      simulateLoading();
     }
   }, []); // This effect runs only once when the component mounts
 
+  // If loading is true, display the loading component; otherwise, display the actual content
   return (
     <CacheProvider value={emotionCache}>
       <Head>
@@ -48,9 +57,12 @@ const MyApp = (props: MyAppProps) => {
         <title>IPIMS</title>
       </Head>
       <ThemeProvider theme={theme}>
-        {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
         <CssBaseline />
-        {getLayout(<Component {...pageProps} />)}
+        {loading ? (
+          <LoadingComponent />
+        ) : (
+          getLayout(<Component {...pageProps} />)
+        )}
       </ThemeProvider>
     </CacheProvider>
   );

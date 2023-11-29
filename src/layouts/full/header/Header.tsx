@@ -23,7 +23,7 @@ const Header = ({ toggleMobileSidebar }: ItemType) => {
 
   const AppBarStyled = styled(AppBar)(({ theme }) => ({
     boxShadow: "none",
-    background: theme.palette.background.paper,
+    background: "#FFFFFF",
     justifyContent: "center",
     backdropFilter: "blur(4px)",
     [theme.breakpoints.up("lg")]: {
@@ -51,7 +51,6 @@ const Header = ({ toggleMobileSidebar }: ItemType) => {
         >
           <IconMenu width="20" height="20" />
         </IconButton>
-
         {/* <IconButton
           size="large"
           aria-label="show 11 new notifications"
@@ -64,8 +63,9 @@ const Header = ({ toggleMobileSidebar }: ItemType) => {
           </Badge>
         </IconButton> */}
         <NotificationDropdown />
-
         <Box flexGrow={1} />
+
+        {/* Adjust the height to your desired space */}
         <Stack spacing={1} direction="row" alignItems="center">
           <Profile loggedInUserName={loggedInUserName} />{" "}
           {/* Pass the username as prop */}

@@ -40,7 +40,7 @@ const EditChiefResidentForm = ({ editChiefResident, onFinish, onUpdate }) => {
     <Form
       form={form}
       onFinish={handleFinish}
-      labelCol={{ span: 8 }}
+      labelCol={{ span: 4 }}
       wrapperCol={{ span: 16 }}
     >
       <Form.Item
@@ -101,9 +101,17 @@ const EditChiefResidentForm = ({ editChiefResident, onFinish, onUpdate }) => {
       </Form.Item>
       <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
         <Space>
-          <Button type="primary" htmlType="submit">
+          <Button
+            type="primary"
+            htmlType="submit"
+            style={{
+              backgroundColor: "green",
+              "&:hover": { backgroundColor: "orange" },
+            }}
+          >
             Save
           </Button>
+
           <Button onClick={onFinish}>Cancel</Button>
         </Space>
       </Form.Item>

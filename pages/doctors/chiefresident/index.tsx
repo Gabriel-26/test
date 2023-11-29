@@ -7,10 +7,8 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  Chip,
   IconButton,
   TextField,
-  Collapse,
   TablePagination,
   Stack,
 } from "@mui/material";
@@ -23,24 +21,13 @@ import axios from "../../../src/components/utils/axiosInstance";
 import type { ReactElement } from "react";
 import PageContainer from "../../../src/components/container/PageContainer";
 import FullLayout from "../../../src/layouts/full/FullLayout";
-import {
-  Button,
-  Drawer,
-  Form,
-  Input,
-  Select,
-  Row,
-  Col,
-  Space,
-  Spin,
-} from "antd";
+import { Button, Drawer, Spin } from "antd";
 import AddChiefResidentForm from "./addform";
 import EditChiefResidentForm from "./editform";
 
 const ChiefResident = () => {
   const [doctors, setDoctors] = useState([]);
   const [isAddingDoctor, setIsAddingDoctor] = useState(false);
-  const [isUpdated, setIsUpdated] = useState(false); // State to track updates
   const [loading, setLoading] = useState(true); // Loading state
 
   const [newDoctor, setNewDoctor] = useState({
@@ -67,15 +54,6 @@ const ChiefResident = () => {
     department_id: "",
   });
 
-  const handleUpdate = () => {
-    // Set isUpdated to true to trigger a re-fetch of data
-    setIsUpdated(true);
-  };
-
-  useEffect(() => {
-    fetchDoctors();
-  }, [isUpdated]);
-
   const fetchDoctors = async () => {
     try {
       setLoading(true); // Set loading to true when starting data fetch
@@ -101,6 +79,14 @@ const ChiefResident = () => {
       setLoading(false);
     }
   };
+
+  const handleUpdate = () => {
+    fetchDoctors(); // Fetch data when an update is needed
+  };
+
+  useEffect(() => {
+    fetchDoctors(); // Initial data fetch when the component is mounted
+  }, []);
 
   const handleAddDoctor = () => {
     setIsAddingDoctor(!isAddingDoctor);
@@ -141,14 +127,6 @@ const ChiefResident = () => {
     }));
   };
 
-  const handleEditInputChange = (e: { target: { name: any; value: any } }) => {
-    const { name, value } = e.target;
-    setEditDoctor((prevDoctor) => ({
-      ...prevDoctor,
-      [name]: value,
-    }));
-  };
-
   const handleSubmit = async () => {
     try {
       const token = sessionStorage.getItem("authToken");
@@ -183,43 +161,6 @@ const ChiefResident = () => {
       setIsAddingDoctor(false);
     } catch (error) {
       console.log("Error adding new doctor:", error);
-      // Handle any error that occurred during the request
-    }
-  };
-
-  const handleEditSubmit = async () => {
-    try {
-      const token = sessionStorage.getItem("authToken");
-      // Set the token in Axios headers for this request
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      // Send a PUT request to the API endpoint with the updated doctor data
-      console.log("Editing doctor with resident_id:", editDoctor.resident_id); // Log the resident_id
-
-      const response = await axios.put(
-        `admin/residents/${editDoctor.resident_id}`,
-        editDoctor
-      );
-
-      // Handle the response as needed
-      console.log("Doctor updated successfully:", response.data);
-
-      // Fetch the updated list of doctors
-      fetchDoctors();
-
-      // Clear the form and close the edit form section
-      setIsEditing(false);
-      setEditDoctor({
-        resident_id: "",
-        resident_userName: "",
-        resident_fName: "",
-        resident_lName: "",
-        resident_mName: "",
-        resident_password: "",
-        role: "",
-        department_id: "",
-      });
-    } catch (error) {
-      console.log("Error updating doctor:", error);
       // Handle any error that occurred during the request
     }
   };
@@ -277,14 +218,6 @@ const ChiefResident = () => {
               }}
               open={isAddingDoctor || isEditing}
               bodyStyle={{ paddingBottom: 80 }}
-              extra={
-                <Space>
-                  <Button onClick={handleCancel}>Cancel</Button>
-                  <Button onClick={handleSubmit} type="primary">
-                    Submit
-                  </Button>
-                </Space>
-              }
             >
               {isAddingDoctor ? ( // Render add form
                 <AddChiefResidentForm
@@ -426,12 +359,13 @@ const ChiefResident = () => {
                         </Typography>
                       </TableCell>
                       <TableCell>
-                        <IconButton
-                          sx={{ marginX: 1 }}
+                        <Button
+                          variant="text"
+                          color="primary"
                           onClick={() => handleEditDoctor(doctor)}
                         >
-                          <BorderColorIcon sx={{ color: green[400] }} />
-                        </IconButton>
+                          Edit
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Typography, Grid } from "@mui/material";
 import DashboardCard from "../../../src/components/shared/DashboardCard";
 import PeopleIcon from "@mui/icons-material/People";
@@ -7,25 +7,8 @@ import FaceIcon from "@mui/icons-material/Face";
 import HotelIcon from "@mui/icons-material/Hotel";
 import BathtubIcon from "@mui/icons-material/Bathtub";
 import DoorFront from "@mui/icons-material/DoorFront";
-import PageContainer from "../container/PageContainer";
-
-const residentsData = {
-  totalResidents: 50,
-  activeResidents: 38,
-  inactiveResidents: 12,
-};
-
-const chiefResidentsData = {
-  totalChiefResidents: 5,
-  activeChiefResidents: 3,
-  inactiveChiefResidents: 2,
-};
-
-const roomsData = {
-  totalRooms: 30,
-  occupiedRooms: 20,
-  vacantRooms: 10,
-};
+import axiosInstance from "../../../src/components/utils/axiosInstance";
+import { getUserRole } from "../utils/roles";
 
 const centerContentStyle = {
   display: "flex",
@@ -37,6 +20,89 @@ const centerContentStyle = {
 } as React.CSSProperties;
 
 const ResidentsOverviewPage = () => {
+  const [residentsData, setResidentsData] = useState({
+    totalResidents: 0,
+    activeResidents: 0,
+    inactiveResidents: 0,
+  });
+
+  const [chiefResidentsData, setChiefResidentsData] = useState({
+    totalChiefResidents: 0,
+    activeChiefResidents: 0,
+    inactiveChiefResidents: 0,
+  });
+
+  const [roomsData, setRoomsData] = useState({
+    totalRooms: 0,
+    occupiedRooms: 0,
+    vacantRooms: 0,
+  });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = sessionStorage.getItem("authToken");
+        axiosInstance.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${token}`;
+        // Assuming you have a function to get the user's role
+        const userRole = getUserRole(); // Implement this function
+
+        let residentsEndpoint = "/residents";
+        let chiefResidentsEndpoint = "/residents";
+        let roomsEndpoint = "/your-rooms-api-endpoint";
+
+        // If the user is an admin, prefix the endpoints with /admin
+        if (userRole === "admin") {
+          residentsEndpoint = "/admin" + residentsEndpoint;
+          chiefResidentsEndpoint = "/admin" + chiefResidentsEndpoint;
+          roomsEndpoint = "/admin" + roomsEndpoint;
+        }
+
+        const residentsResponse = await axiosInstance.get(residentsEndpoint);
+        const activeResidents = residentsResponse.data.filter(
+          (resident) => resident.role === "resident" && resident.isActive
+        );
+        const inactiveResidents = residentsResponse.data.filter(
+          (resident) => resident.role === "resident" && !resident.isActive
+        );
+
+        setResidentsData({
+          totalResidents: residentsResponse.data.length,
+          activeResidents: activeResidents.length,
+          inactiveResidents: inactiveResidents.length,
+        });
+
+        const chiefResidents = residentsResponse.data.filter(
+          (resident) => resident.role === "chiefResident"
+        );
+        const activeChiefResidents = chiefResidents.filter(
+          (chiefResident) => chiefResident.isActive
+        );
+        const inactiveChiefResidents = chiefResidents.filter(
+          (chiefResident) => !chiefResident.isActive
+        );
+
+        setChiefResidentsData({
+          totalChiefResidents: chiefResidents.length,
+          activeChiefResidents: activeChiefResidents.length,
+          inactiveChiefResidents: inactiveChiefResidents.length,
+        });
+
+        const roomsResponse = await axiosInstance.get(roomsEndpoint);
+        setRoomsData({
+          totalRooms: roomsResponse.data.totalRooms,
+          occupiedRooms: roomsResponse.data.occupiedRooms,
+          vacantRooms: roomsResponse.data.vacantRooms,
+        });
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <Grid container spacing={3}>
       <Grid item xs={12} sm={4}>

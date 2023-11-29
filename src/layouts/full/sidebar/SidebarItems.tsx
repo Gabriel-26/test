@@ -103,6 +103,7 @@ const SidebarItems = ({ toggleMobileSidebar }: any) => {
                         key={subItem.id}
                         pathDirect={pathDirect}
                         onClick={toggleMobileSidebar}
+                        selected={subItem.href === pathDirect}
                       />
                     ))}
                   </List>

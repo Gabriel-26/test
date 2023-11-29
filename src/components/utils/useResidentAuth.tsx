@@ -16,6 +16,7 @@ const useResidentAuth = () => {
       const token = response.data.token;
       const role = response.data.role; // Get the role from the response
       const resident_id = response.data.resident_id;
+      console.log("Resident ID:", resident_id);
 
       sessionStorage.setItem("authToken", token);
       sessionStorage.setItem("userRole", role); // Save the role in the session

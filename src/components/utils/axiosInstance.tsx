@@ -11,7 +11,7 @@ const getXXsrfToken = (config: AxiosRequestConfig) => {
 
 // Create Axios instance with default configurations
 const axiosInstance: AxiosInstance = axios.create({
-  baseURL: "http://192.168.1.6:8000/api",
+  baseURL: "http://127.0.0.1:8000/api",
   headers: {
     "X-Requested-With": "XTMLHttpRequest",
     "Content-Type": "application/json",

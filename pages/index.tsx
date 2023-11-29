@@ -30,7 +30,9 @@ export default function Home() {
           <Grid item xs={12}>
             {renderButton && (
               <Link href="/EHR">
-                <button>Add New Patient</button>
+                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                  Add New Patient
+                </button>{" "}
               </Link>
             )}
           </Grid>

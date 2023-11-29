@@ -228,20 +228,20 @@ const Rooms = () => {
               </Table>
             </TableContainer>
           </Spin>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25, 50]}
+            component="div"
+            count={rooms.length}
+            page={page}
+            onPageChange={(event, newPage) => setPage(newPage)}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={(event) => {
+              setRowsPerPage(parseInt(event.target.value, 10));
+              setPage(0);
+            }}
+          />
         </DashboardCard>
       </PageContainer>
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25, 50]}
-        component="div"
-        count={rooms.length}
-        page={page}
-        onPageChange={(event, newPage) => setPage(newPage)}
-        rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={(event) => {
-          setRowsPerPage(parseInt(event.target.value, 10));
-          setPage(0);
-        }}
-      />
 
       {/* Add Floor Form */}
       <Modal
@@ -250,6 +250,7 @@ const Rooms = () => {
         onCancel={() => setShowAddForm(false)}
         onOk={handleAddFloor}
         destroyOnClose
+        okButtonProps={{ style: { backgroundColor: "green" } }} // Change '#YourColorCode' to the desired color
       >
         <Form layout="vertical">
           <Form.Item name="floor_name" label="Floor Name">
@@ -268,19 +269,7 @@ const Rooms = () => {
         onClose={() => setShowAddRoomForm(false)}
         open={showAddRoomForm}
         destroyOnClose
-        footer={
-          <div style={{ textAlign: "right" }}>
-            <Button
-              onClick={() => setShowAddRoomForm(false)}
-              style={{ marginRight: 8 }}
-            >
-              Cancel
-            </Button>
-            <Button type="primary" onClick={handleAddRoom}>
-              Add Room
-            </Button>
-          </div>
-        }
+        footer={null} // Remove the original footer
       >
         <Form layout="vertical">
           <Form.Item name="room_name" label="Room Name">
@@ -306,6 +295,21 @@ const Rooms = () => {
               value={roomPriceInput}
               onChange={(e) => setRoomPriceInput(e.target.value)}
             />
+            <div style={{ marginTop: "16px", textAlign: "center" }}>
+              <Button
+                onClick={() => setShowAddRoomForm(false)}
+                style={{ marginRight: "8px" }}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="primary"
+                onClick={handleAddRoom}
+                style={{ backgroundColor: "green", borderColor: "green" }}
+              >
+                Add Room
+              </Button>
+            </div>
           </Form.Item>
         </Form>
       </Drawer>

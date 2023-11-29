@@ -189,6 +189,9 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
           size="large"
           fullWidth
           onClick={handleSignIn}
+          style={{
+            backgroundColor: "blue",
+          }}
         >
           Sign In
         </Button>

@@ -1,12 +1,16 @@
-import React from "react";
-import { Select, Input } from "antd";
+import React, { useEffect, useState } from "react";
+import { Select, Input, Collapse } from "antd";
+import axiosInstance from "../../../src/components/utils/axiosInstance";
 
+const { Panel } = Collapse;
 const { Option } = Select;
 
 const StatusPage = ({
-  evaluationData,
+  patientId,
+  evaluationData, // Assuming you have patientId as a prop
   handleStatusChange,
   handleNoteChange,
+  setEvaluationData, // Add setEvaluationData as a prop
 }) => {
   // Define a list of body parts and their corresponding labels
   const bodyParts = [
@@ -52,34 +56,87 @@ const StatusPage = ({
     "patient_rightHand",
     "patient_leftHand",
   ];
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axiosInstance.get(
+          `/physicalExam/values/getPE/${patientId}`
+        );
+        console.log("Response data:", response.data);
+
+        // Process the response data to create a map of attribute names to values
+        const responseDataMap = response.data.reduce((acc, item) => {
+          const attributeName = item.attribute_Name;
+          const isSpecifyAttribute = attributeName.startsWith("specify_");
+
+          acc[attributeName] = isSpecifyAttribute
+            ? { note: item.value || "" } // Set the note based on the value from the API
+            : { status: item.value, note: item.specify_value || "" };
+
+          return acc;
+        }, {});
+
+        setEvaluationData(responseDataMap);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [patientId, setEvaluationData]);
+
+  useEffect(() => {
+    console.log("Evaluation Data:", evaluationData);
+  }, [evaluationData]);
 
   return (
     <div>
       <h1>Status and Notes Page</h1>
-      {bodyParts.map((bodyPart) => (
-        <div key={bodyPart}>
-          <h2>{bodyPart.replace("patient_", "")}</h2>
-          <Select
-            value={evaluationData[bodyPart]?.status}
-            onChange={(value) => handleStatusChange(bodyPart, value)}
-            style={{ width: "200px", marginBottom: "8px" }}
-          >
-            <Option value="none">None</Option> {/* Add "None" option */}
-            <Option value="normal">Normal</Option>
-            <Option value="abnormal">Abnormal</Option>
-            <Option value="needs_attention">Needs Attention</Option>
-          </Select>
-          <Input.TextArea
-            value={evaluationData[bodyPart]?.note}
-            onChange={(e) => handleNoteChange(bodyPart, e.target.value)}
-            placeholder={`Add a note for ${bodyPart.replace(
-              "patient_",
-              ""
-            )}...`}
-            rows={3}
-          />
-        </div>
-      ))}
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <Collapse accordion>
+          {bodyParts.map((bodyPart) => (
+            <Panel key={bodyPart} header={bodyPart.replace("patient_", "")}>
+              <Select
+                value={
+                  evaluationData[bodyPart] !== undefined &&
+                  evaluationData[bodyPart].status
+                    ? evaluationData[bodyPart].status
+                    : "none"
+                }
+                onChange={(value) => {
+                  console.log("Select Value:", value);
+                  handleStatusChange(bodyPart, value);
+                }}
+                style={{ width: "200px", marginBottom: "8px" }}
+              >
+                <Option value="none">None</Option>
+                <Option value="normal">Normal</Option>
+                <Option value="abnormal">Abnormal</Option>
+                <Option value="needs_attention">Needs Attention</Option>
+              </Select>
+              <Input.TextArea
+                value={evaluationData[`specify_${bodyPart}`]?.note || ""}
+                onChange={(e) => {
+                  console.log("TextArea Value:", e.target.value);
+                  // Updated handleNoteChange to remove the status from evaluationData
+                  handleNoteChange(bodyPart, e.target.value);
+                }}
+                placeholder={`Add a note for ${bodyPart.replace(
+                  "patient_",
+                  ""
+                )}...`}
+                rows={3}
+              />
+            </Panel>
+          ))}
+        </Collapse>
+      )}
     </div>
   );
 };

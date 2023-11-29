@@ -1,20 +1,30 @@
 import React, { useState, useEffect } from "react";
-import { Drawer, Form, Input, Button, Row, Col, Card } from "antd"; // Import necessary components
-import axiosInstance from "../../../src/components/utils/axiosInstance";
-import { useRouter } from "next/router";
+import {
+  Drawer,
+  Form,
+  Input,
+  Button,
+  Row,
+  Col,
+  Card,
+  Spin,
+  Typography,
+} from "antd";
 import { Paper } from "@mui/material";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import { useRouter } from "next/router";
+import axiosInstance from "../../../src/components/utils/axiosInstance";
+const { Title, Text } = Typography;
 
 const PatientInfo = (props: any) => {
   const router = useRouter();
   const { room_id } = router.query;
-
-  const { patientData, updatePatientData } = props; // Destructure patientData and updatePatientData props
+  const { patientData, updatePatientData } = props;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const [editDrawerVisible, setEditDrawerVisible] = useState(false);
   const [editingPatient, setEditingPatient] = useState(null);
-  const { patient_id } = patientData;
 
   useEffect(() => {
     if (room_id) {
@@ -36,10 +46,9 @@ const PatientInfo = (props: any) => {
       const data = response.data;
 
       if (data && data.length > 0) {
-        // Call the updatePatientData function to update the patientData in the parent component
         updatePatientData(data);
       } else {
-        // If no data is available, you can choose to handle it as needed
+        // Handle no data as needed
       }
       setLoading(false);
     } catch (error) {
@@ -61,7 +70,6 @@ const PatientInfo = (props: any) => {
 
   const onFinish = async (values: any) => {
     try {
-      // Update patient information using API call
       const token = sessionStorage.getItem("authToken");
       axiosInstance.defaults.headers.common[
         "Authorization"
@@ -72,7 +80,6 @@ const PatientInfo = (props: any) => {
         values
       );
 
-      // Close the edit drawer and fetch updated patient data
       closeEditDrawer();
       fetchPatientData(room_id);
     } catch (error) {
@@ -80,72 +87,69 @@ const PatientInfo = (props: any) => {
     }
   };
 
-  let content;
-  if (loading) {
-    content = <p>Loading patient data...</p>;
-  } else if (error) {
-    content = <p>Error fetching patient data: {error.message}</p>;
-  } else if (patientData.length > 0) {
-    content = (
-      <>
-        <h2>Patient Information</h2>
-        {patientData.map((patient) => (
-          <Card
-            key={patient.patient_id}
-            style={{ marginBottom: "16px" }}
-            title={`Patient ID: ${patient.patient_id}`}
-          >
-            <Row gutter={[16, 16]}>
-              <Col span={8}>
-                <p>
-                  <strong>First Name:</strong> {patient.patient_fName}
-                </p>
-              </Col>
-              <Col span={8}>
-                <p>
-                  <strong>Last Name:</strong> {patient.patient_lName}
-                </p>
-              </Col>
-              <Col span={8}>
-                <p>
-                  <strong>Middle Name:</strong> {patient.patient_mName}
-                </p>
-              </Col>
-              <Col span={8}>
-                <p>
-                  <strong>Age:</strong> {patient.patient_age}
-                </p>
-              </Col>
-              <Col span={8}>
-                <p>
-                  <strong>Sex:</strong> {patient.patient_sex}
-                </p>
-              </Col>
-              <Col span={8}>
-                <p>
-                  <strong>Vaccination Status:</strong>{" "}
-                  {patient.patient_vaccination_stat}
-                </p>
-              </Col>
-              <Col span={24}>
-                <Button onClick={() => showEditDrawer(patient)}>Edit</Button>
-              </Col>
-            </Row>
-          </Card>
-        ))}
-      </>
-    );
-  } else {
-    content = <p>No patients found for this room.</p>;
-  }
-
   return (
     <Paper elevation={3} style={{ padding: "20px", margin: "20px" }}>
-      {content}
+      {loading && <Spin size="large" />}
+      {!loading && error && (
+        <Typography.Text type="danger">
+          Error fetching patient data: {error.message}
+        </Typography.Text>
+      )}
+      {!loading && !error && patientData.length > 0 && (
+        <>
+          <Title level={3}>Patient Information</Title>
+          {patientData.map((patient) => (
+            <Card
+              key={patient.patient_id}
+              style={{ marginBottom: "16px" }}
+              title={`Patient ID: ${patient.patient_id}`}
+            >
+              <Row gutter={[16, 16]}>
+                <Col span={8}>
+                  <Text strong>First Name:</Text>{" "}
+                  <Text>{patient.patient_fName}</Text>
+                </Col>
+                <Col span={8}>
+                  <Text strong>Last Name:</Text>{" "}
+                  <Text>{patient.patient_lName}</Text>
+                </Col>
+                <Col span={8}>
+                  <Text strong>Middle Name:</Text>{" "}
+                  <Text>{patient.patient_mName}</Text>
+                </Col>
+                <Col span={8}>
+                  <Text strong>Age:</Text> <Text>{patient.patient_age}</Text>
+                </Col>
+                <Col span={8}>
+                  <Text strong>Sex:</Text> <Text>{patient.patient_sex}</Text>
+                </Col>
+                <Col span={8}>
+                  <Text strong>Vaccination History:</Text>{" "}
+                  <Text>{patient.phr_vaccinationHistory}</Text>
+                </Col>
+                <Col span={24}>
+                  <Button
+                    icon={<EditOutlinedIcon />}
+                    onClick={() => showEditDrawer(patient)}
+                    className="bg-skyblue hover:bg-lightblue active:bg-darkblue focus:outline-none border-skyblue"
+                  >
+                    Edit
+                  </Button>
+                </Col>
+              </Row>
+            </Card>
+          ))}
+        </>
+      )}
+      {!loading && !error && patientData.length === 0 && (
+        <Typography.Text>No patients found for this room.</Typography.Text>
+      )}
+
       <Drawer
         title="Edit Patient Information"
-        open={editDrawerVisible}
+        visible={editDrawerVisible}
         onClose={closeEditDrawer}
+        width={400}
       >
         {editingPatient && (
           <Form
@@ -169,8 +173,8 @@ const PatientInfo = (props: any) => {
               <Input />
             </Form.Item>
             <Form.Item
-              label="Vaccination Status"
-              name="patient_vaccination_stat"
+              label="Vaccination History"
+              name="phr_vaccinationHistory"
             >
               <Input />
             </Form.Item>

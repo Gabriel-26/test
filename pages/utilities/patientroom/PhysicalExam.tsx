@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import StatusPage from "./StatusPage";
 import ImagePage from "./ImagePage";
+import axiosInstance from "../../../src/components/utils/axiosInstance";
 
-const HumanFigureEvaluation = () => {
+const HumanFigureEvaluation = (props: any) => {
+  const { patientData, updatePatientData, patientId } = props;
   const [evaluationData, setEvaluationData] = useState({
     // Add the new body parts without specify_patient_ as needed
     patient_head: { status: "none", note: "" },
@@ -36,8 +38,8 @@ const HumanFigureEvaluation = () => {
     patient_leftAnkle: { status: "none", note: "" },
     patient_rightCalf: { status: "none", note: "" },
     patient_leftCalf: { status: "none", note: "" },
-    patient_rightShoudler: { status: "none", note: "" },
-    patient_leftShoudler: { status: "none", note: "" },
+    patient_rightShoulder: { status: "none", note: "" },
+    patient_leftShoulder: { status: "none", note: "" },
     patient_rightArm: { status: "none", note: "" },
     patient_leftArm: { status: "none", note: "" },
     patient_rightForearm: { status: "none", note: "" },
@@ -49,27 +51,72 @@ const HumanFigureEvaluation = () => {
   });
 
   const handleStatusChange = (bodyPart, newStatus) => {
-    setEvaluationData({
-      ...evaluationData,
-      [bodyPart]: { ...evaluationData[bodyPart], status: newStatus },
+    setEvaluationData((prevData) => {
+      const updatedData = { ...prevData };
+      updatedData[bodyPart].status = newStatus;
+
+      // If the status is "none," set the note to an empty string
+      if (newStatus === "none") {
+        updatedData[bodyPart].note = "";
+      }
+
+      return updatedData;
     });
   };
 
   const handleNoteChange = (bodyPart, newNote) => {
-    setEvaluationData({
-      ...evaluationData,
-      [bodyPart]: { ...evaluationData[bodyPart], note: newNote },
+    setEvaluationData((prevData) => {
+      const updatedData = { ...prevData };
+
+      // Remove the status from specify_patient_bodypart
+      const specifyBodyPart = `specify_${bodyPart}`;
+      updatedData[specifyBodyPart] = { note: newNote }; // Remove status
+
+      return updatedData;
     });
+  };
+
+  const handleSave = async () => {
+    try {
+      // Transform the local state into the structure expected by the server
+      const transformedData = Object.entries(evaluationData).reduce(
+        (acc, [bodyPart, { status, note }]) => {
+          const statusKey = `${bodyPart}`;
+          return {
+            ...acc,
+            [statusKey]: "", // Set status to an empty string
+            [`specify_${statusKey}`]: note,
+          };
+        },
+        { patient_id: patientId }
+      );
+
+      const response = await axiosInstance.post(
+        "/physicalExam/values",
+        transformedData
+      );
+
+      if (response.status === 200) {
+        console.log("Data saved successfully");
+      } else {
+        console.error("Failed to save data");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
   return (
     <div>
       <StatusPage
+        patientId={patientId}
+        setEvaluationData={setEvaluationData}
         evaluationData={evaluationData}
         handleStatusChange={handleStatusChange}
         handleNoteChange={handleNoteChange}
       />
       <ImagePage evaluationData={evaluationData} />
+      <button onClick={handleSave}>Save</button>
     </div>
   );
 };

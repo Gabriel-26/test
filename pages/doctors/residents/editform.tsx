@@ -101,9 +101,17 @@ const EditDoctorForm = ({ editDoctor, onFinish, onUpdate }) => {
       </Form.Item>
       <Form.Item wrapperCol={{ offset: 9, span: 16 }}>
         <Space>
-          <Button type="primary" htmlType="submit">
+          <Button
+            type="primary"
+            htmlType="submit"
+            style={{
+              backgroundColor: "green",
+              "&:hover": { backgroundColor: "orange" },
+            }}
+          >
             Save
           </Button>
+
           <Button onClick={onFinish}>Cancel</Button>
         </Space>
       </Form.Item>

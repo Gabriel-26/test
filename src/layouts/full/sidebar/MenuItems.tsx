@@ -26,6 +26,15 @@ const Menuitems = [
     href: "/",
     role: "all", // This item is visible to all roles
   },
+
+  {
+    id: uniqueId(),
+    title: "Chat",
+    icon: IconLayoutDashboard,
+    href: "/chat",
+    role: "all", // This item is visible to all roles
+  },
+
   {
     navlabel: true,
     id: uniqueId(),

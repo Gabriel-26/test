@@ -256,8 +256,12 @@ const MedicineList = () => {
             <InputNumber min={0} step={0.01} />
           </Form.Item>
 
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
+          <Form.Item style={{ textAlign: "center" }}>
+            <Button
+              type="primary"
+              htmlType="submit"
+              style={{ backgroundColor: "green", borderColor: "green" }}
+            >
               {editingMedicine ? "Save Changes" : "Add Medicine"}
             </Button>
           </Form.Item>

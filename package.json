@@ -31,6 +31,7 @@
     "csurf": "^1.11.0",
     "lodash": "^4.17.21",
     "lucide-react": "^0.260.0",
+    "moment-timezone": "^0.5.43",
     "next": "latest",
     "next-images": "^1.8.5",
     "react": "latest",

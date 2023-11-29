@@ -7,10 +7,8 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  Chip,
   IconButton,
   TextField,
-  Collapse,
   TablePagination,
   Stack,
 } from "@mui/material";
@@ -21,17 +19,7 @@ import axios from "../../../src/components/utils/axiosInstance";
 import type { ReactElement } from "react";
 import PageContainer from "../../../src/components/container/PageContainer";
 import FullLayout from "../../../src/layouts/full/FullLayout";
-import {
-  Button,
-  Drawer,
-  Form,
-  Input,
-  Select,
-  Row,
-  Col,
-  Space,
-  Spin,
-} from "antd";
+import { Button, Drawer, Select, Spin } from "antd";
 import EditDoctorForm from "./editform";
 import AddDoctorForm from "./addform";
 
@@ -40,7 +28,6 @@ const { Option } = Select;
 const Doctors = () => {
   const [doctors, setDoctors] = useState([]);
   const [isAddingDoctor, setIsAddingDoctor] = useState(false);
-  const [isUpdated, setIsUpdated] = useState(false); // State to track updates
   const [loading, setLoading] = useState(true); // Loading state
 
   const [newDoctor, setNewDoctor] = useState({
@@ -67,17 +54,9 @@ const Doctors = () => {
     department_id: "",
   });
 
-  useEffect(() => {
-    fetchDoctors();
-  }, [isUpdated]);
-
-  const handleUpdate = () => {
-    // Set isUpdated to true to trigger a re-fetch of data
-    setIsUpdated(true);
-  };
   const fetchDoctors = async () => {
     try {
-      setLoading(true); // Set loading to true when starting data fetch
+      setLoading(true);
 
       const token = sessionStorage.getItem("authToken");
       const role = sessionStorage.getItem("userRole");
@@ -93,14 +72,20 @@ const Doctors = () => {
       const response = await axios.get(endpoint);
       setDoctors(response.data);
 
-      // Data fetch is complete, set loading to false
       setLoading(false);
     } catch (error) {
       console.error("Error fetching doctors:", error);
-      // Handle the error, and make sure to set loading to false here if needed
       setLoading(false);
     }
   };
+
+  const handleUpdate = () => {
+    fetchDoctors(); // Fetch data when an update is needed
+  };
+
+  useEffect(() => {
+    fetchDoctors(); // Initial data fetch when the component is mounted
+  }, []);
 
   const handleAddDoctor = () => {
     setIsAddingDoctor(!isAddingDoctor);
@@ -111,19 +96,8 @@ const Doctors = () => {
     setIsEditing(false);
   };
 
-  const handleEditDoctor = (
-    doctor: React.SetStateAction<{
-      resident_id: string;
-      resident_userName: string;
-      resident_fName: string;
-      resident_lName: string;
-      resident_mName: string;
-      resident_password: string;
-      role: string;
-      department_id: string;
-    }>
-  ) => {
-    if (isEditing && editDoctor.resident_id) {
+  const handleEditDoctor = (doctor) => {
+    if (isEditing && editDoctor.resident_id === doctor.resident_id) {
       // If the edit form is already open for the same doctor, close it
       setIsEditing(false);
     } else {
@@ -139,46 +113,6 @@ const Doctors = () => {
       ...prevDoctor,
       [name]: value,
     }));
-  };
-
-  const handleSubmit = async () => {
-    try {
-      const token = sessionStorage.getItem("authToken");
-      // Set the token in Axios headers for this request
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      const newDoctorWithroleZero = {
-        ...newDoctor,
-        role: "resident",
-      };
-
-      // Send a POST request to the API endpoint with the new doctor data
-      const response = await axios.post(
-        "admin/residents",
-        newDoctorWithroleZero
-      );
-
-      // Handle the response as needed
-      console.log("New doctor added successfully:", response.data);
-
-      // Fetch the updated list of doctors
-      fetchDoctors();
-
-      // Clear the form and close the collapsible form section
-      setNewDoctor({
-        resident_id: "",
-        resident_userName: "",
-        resident_fName: "",
-        resident_lName: "",
-        resident_mName: "",
-        resident_password: "",
-        role: "resident",
-        department_id: "",
-      });
-      setIsAddingDoctor(false);
-    } catch (error) {
-      console.log("Error adding new doctor:", error);
-      // Handle any error that occurred during the request
-    }
   };
 
   const [page, setPage] = React.useState(0);
@@ -381,12 +315,13 @@ const Doctors = () => {
                         </Typography>
                       </TableCell>
                       <TableCell>
-                        <IconButton
-                          sx={{ marginX: 1 }}
+                        <Button
+                          variant="text"
+                          color="primary"
                           onClick={() => handleEditDoctor(doctor)}
                         >
-                          <BorderColorIcon sx={{ color: green[400] }} />
-                        </IconButton>
+                          Edit
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}

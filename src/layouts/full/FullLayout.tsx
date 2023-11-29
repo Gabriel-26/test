@@ -16,7 +16,7 @@ const PageWrapper = styled("div")(() => ({
   paddingBottom: "60px",
   flexDirection: "column",
   zIndex: 1,
-  backgroundColor: "#e8eaf6",
+  backgroundColor: "white",
 }));
 
 interface Props {
@@ -51,6 +51,7 @@ const FullLayout: React.FC<Props> = ({ children }) => {
         <Container
           sx={{
             maxWidth: "1200px",
+            backgroundColor: "white",
           }}
         >
           {/* ------------------------------------------- */}

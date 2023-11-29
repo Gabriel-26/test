@@ -139,7 +139,7 @@ const FileViewer = () => {
           <div className="iframe-container">
             <iframe
               title="File Viewer"
-              src={`http://192.168.1.7:8000/api/fileUpload/viewFile/${selectedFile.file_id}`}
+              src={`http://192.168.1.5:8000/api/fileUpload/viewFile/${selectedFile.file_id}`}
               className="iframe-content w-full h-auto max-h-screen"
               style={{ aspectRatio: "16/9" }}
             />

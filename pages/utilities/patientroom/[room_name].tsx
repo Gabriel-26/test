@@ -8,15 +8,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";
 import axiosInstance from "../../../src/components/utils/axiosInstance";
 import PatientInfo from "./PatientInfo";
 import { useRouter } from "next/router";
-import { Drawer } from "@mui/material";
-import EditForm2 from "./EditForm2";
 import PatientHistory from "./PatientHistory";
 import { uploadFile } from "../../../src/components/utils/fileUpload";
 import { Modal, Button, message } from "antd";
-import { UploadOutlined } from "@ant-design/icons"; // Import Ant Design UploadOutlined
 import ImageDisplay from "./FileViewer";
 import PatientEvaluation from "./PhysicalExam";
 import Medication from "./Medications";
+import HumanFigureEvaluationPage from "./HumanFigureEvaluationPage";
+import HumanFigureEvaluation from "./PhysicalExam";
 
 const Item = styled(Paper)(({ theme }) => ({
   ...theme.typography.body1,
@@ -151,7 +150,7 @@ const RoomView = () => {
     }
 
     const token = sessionStorage.getItem("authToken");
-    const apiUrl = `/patientHealthRecord/transferPatient/${patientData[0].patient_id}`;
+    const apiUrl = `/patAssRooms/transferPatient/${patientData[0].patient_id}`;
 
     const requestBody = {
       room_id: selectedRoomId, // Corrected to 'room_id'
@@ -186,7 +185,7 @@ const RoomView = () => {
     }
 
     const token = sessionStorage.getItem("authToken");
-    const apiUrl = `/patientHealthRecord/checkoutPatient/${patientData[0].patient_id}`;
+    const apiUrl = `/patAssRooms/checkout/${patientData[0].patient_id}`;
 
     axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
@@ -212,13 +211,57 @@ const RoomView = () => {
     >
       <DashboardCard title={queryRoomName || "(Room Name)"}>
         <Tabs defaultValue="pninfo" className="min-w-[600px] w-full md:w-[90%]">
-          <TabsList>
-            <TabsTrigger value="pninfo">Patient Info</TabsTrigger>
-            <TabsTrigger value="phistory">Patient History</TabsTrigger>
-            <TabsTrigger value="fileviewer">File Viewer</TabsTrigger>
-            <TabsTrigger value="evaluation">Evaluation</TabsTrigger>
-            <TabsTrigger value="medication">Medication</TabsTrigger>
-            {/* Add this line */}
+          <TabsList className="flex">
+            <TabsTrigger
+              value="pninfo"
+              className="tab-trigger relative group cursor-pointer"
+            >
+              <span className="inline-block py-2 px-4">Patient Info</span>
+              <span
+                className="absolute bottom-0 left-0 h-1 transition-transform duration-300 transform scale-x-0 group-hover:scale-x-100 group-focus:scale-x-100 group-active:scale-x-100 bg-blue-500"
+                style={{ width: "100%" }}
+              />
+            </TabsTrigger>
+            <TabsTrigger
+              value="phistory"
+              className="tab-trigger relative group cursor-pointer"
+            >
+              <span className="inline-block py-2 px-4">Patient History</span>
+              <span
+                className="absolute bottom-0 left-0 h-1 transition-transform duration-300 transform scale-x-0 group-hover:scale-x-100 group-focus:scale-x-100 group-active:scale-x-100 bg-blue-500"
+                style={{ width: "100%" }}
+              />
+            </TabsTrigger>
+            <TabsTrigger
+              value="fileviewer"
+              className="tab-trigger relative group cursor-pointer"
+            >
+              <span className="inline-block py-2 px-4">File Viewer</span>
+              <span
+                className="absolute bottom-0 left-0 h-1 transition-transform duration-300 transform scale-x-0 group-hover:scale-x-100 group-focus:scale-x-100 group-active:scale-x-100 bg-blue-500"
+                style={{ width: "100%" }}
+              />
+            </TabsTrigger>
+            <TabsTrigger
+              value="evaluation"
+              className="tab-trigger relative group cursor-pointer"
+            >
+              <span className="inline-block py-2 px-4">Evaluation</span>
+              <span
+                className="absolute bottom-0 left-0 h-1 transition-transform duration-300 transform scale-x-0 group-hover:scale-x-100 group-focus:scale-x-100 group-active:scale-x-100 bg-blue-500"
+                style={{ width: "100%" }}
+              />
+            </TabsTrigger>
+            <TabsTrigger
+              value="medication"
+              className="tab-trigger relative group cursor-pointer"
+            >
+              <span className="inline-block py-2 px-4">Medication</span>
+              <span
+                className="absolute bottom-0 left-0 h-1 transition-transform duration-300 transform scale-x-0 group-hover:scale-x-100 group-focus:scale-x-100 group-active:scale-x-100 bg-blue-500"
+                style={{ width: "100%" }}
+              />
+            </TabsTrigger>
           </TabsList>
           <TabsContent value="pninfo">
             <PatientInfo
@@ -227,16 +270,22 @@ const RoomView = () => {
             />
           </TabsContent>
           <TabsContent value="phistory">
-            <PatientHistory />
+            <PatientHistory
+              patientData={{ patient_id: patientData[0]?.patient_id }}
+            />
           </TabsContent>
           <TabsContent value="fileviewer">
             <ImageDisplay />
           </TabsContent>
           <TabsContent value="evaluation">
-            <PatientEvaluation />
+            <HumanFigureEvaluation
+              patientData={patientData}
+              updatePatientData={updatePatientData}
+              patientId={patientData[0]?.patient_id}
+            />
           </TabsContent>
           <TabsContent value="medication">
-            <Medication />
+            <Medication patientId={patientData[0]?.patient_id} />
           </TabsContent>
         </Tabs>
         <div style={{ display: "flex", flexWrap: "wrap", gap: "16px" }}>

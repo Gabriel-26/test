@@ -1,7 +1,6 @@
 import { useMediaQuery, Box, Drawer } from "@mui/material";
-import Logo from "../shared/logo/Logo";
 import SidebarItems from "./SidebarItems";
-
+import HomeLogo from "../shared/logo/HomeLogo";
 interface ItemType {
   isMobileSidebarOpen: boolean;
   onSidebarClose: (event: React.MouseEvent<HTMLElement>) => void;
@@ -44,14 +43,15 @@ const Sidebar = ({
           {/* ------------------------------------------- */}
           <Box
             sx={{
-              height: "100%",
+              height: "400%",
+              backgroundColor: "#FFFFFF",
             }}
           >
             {/* ------------------------------------------- */}
             {/* Logo */}
             {/* ------------------------------------------- */}
-            <Box px={5} py={2}>
-              <Logo />
+            <Box px={2} py={4}>
+              <HomeLogo />
             </Box>
             <Box>
               {/* ------------------------------------------- */}
@@ -76,6 +76,7 @@ const Sidebar = ({
         sx: {
           width: sidebarWidth,
           boxShadow: (theme: { shadows: any[] }) => theme.shadows[8],
+          backgroundColor: "#FFFFFF",
         },
       }}
     >
@@ -83,7 +84,7 @@ const Sidebar = ({
       {/* Logo */}
       {/* ------------------------------------------- */}
       <Box px={2}>
-        <Logo />
+        <HomeLogo />
       </Box>
       {/* ------------------------------------------- */}
       {/* Sidebar For Mobile */}
