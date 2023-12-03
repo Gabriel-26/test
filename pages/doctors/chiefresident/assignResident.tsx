@@ -16,6 +16,11 @@ import axiosInstance from "../../../src/components/utils/axiosInstance";
 import FullLayout from "../../../src/layouts/full/FullLayout";
 import PageContainer from "../../../src/components/container/PageContainer";
 import DashboardCard from "../../../src/components/shared/DashboardCard";
+import {
+  UserOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+} from "@ant-design/icons";
 
 const { Option } = Select;
 
@@ -148,7 +153,13 @@ const AssignResidentRoom = () => {
         fetchAssignedRooms();
       }
     } catch (error) {
-      console.error("Error assigning resident to room:", error);
+      if (error.response && error.response.status === 429) {
+        // Handle 429 Too Many Requests error
+        console.error("Too Many Requests. Please try again later.");
+        message.error("Too Many Requests. Please try again later.");
+      } else {
+        console.error("Error assigning resident to room:", error);
+      }
     } finally {
       setLoading(false);
     }
@@ -264,8 +275,8 @@ const AssignResidentRoom = () => {
       description="This is your description."
     >
       <DashboardCard title={"Assign Resident" || "Loading..."}>
-        <h1>Assign Residents to Rooms</h1>
-        <Form form={form}>
+        <h1 className="text-3xl font-bold mb-4">Assign Residents to Rooms</h1>
+        <Form form={form} className="mb-4">
           <Table
             dataSource={residents}
             columns={unassignedColumns}
@@ -273,7 +284,7 @@ const AssignResidentRoom = () => {
             pagination={false}
           />
         </Form>
-        <Row gutter={16}>
+        <Row gutter={16} className="mb-4">
           <Col span={12}>
             <DashboardCard title="Assigned Residents">
               <Table
@@ -291,7 +302,7 @@ const AssignResidentRoom = () => {
               />
             </DashboardCard>
           </Col>
-          <Col span={12}></Col>
+          <Col span={12}>{/* Additional content for the right column */}</Col>
         </Row>
         <Modal
           title="Confirm Assignment"
@@ -299,7 +310,9 @@ const AssignResidentRoom = () => {
           onOk={handleAssignmentConfirm}
           onCancel={handleAssignmentCancel}
         >
-          Are you sure you want to assign this resident to the selected room?
+          <p className="text-lg">
+            Are you sure you want to assign this resident to the selected room?
+          </p>
         </Modal>
       </DashboardCard>
     </PageContainer>

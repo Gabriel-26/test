@@ -89,12 +89,12 @@ const ResidentsOverviewPage = () => {
           inactiveChiefResidents: inactiveChiefResidents.length,
         });
 
-        const roomsResponse = await axiosInstance.get(roomsEndpoint);
-        setRoomsData({
-          totalRooms: roomsResponse.data.totalRooms,
-          occupiedRooms: roomsResponse.data.occupiedRooms,
-          vacantRooms: roomsResponse.data.vacantRooms,
-        });
+        // const roomsResponse = await axiosInstance.get(roomsEndpoint);
+        // setRoomsData({
+        //   totalRooms: roomsResponse.data.totalRooms,
+        //   occupiedRooms: roomsResponse.data.occupiedRooms,
+        //   vacantRooms: roomsResponse.data.vacantRooms,
+        // });
       } catch (error) {
         console.error("Error fetching data:", error);
       }

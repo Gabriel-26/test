@@ -49,7 +49,7 @@ export function EHRForm() {
       date: "",
       room_id: "",
       patient_vaccination_stat: "",
-      phr_chiefComaplaint: "",
+      phr_chiefComplaint: "",
       phr_startTime: "",
       phr_endTime: "",
       phr_historyOfPresentIllness: "",
@@ -419,7 +419,7 @@ export function EHRForm() {
             <label className="flex flex-col">
               <span className="mb-2">Chief Complaint</span>
               <textarea
-                {...register("phr_chiefComaplaint")}
+                {...register("phr_chiefComplaint")}
                 className="border border-gray-300 px-4 py-2 rounded-lg"
                 placeholder="Input"
               />

@@ -8,7 +8,7 @@ const AddChiefResidentForm = ({
   newChiefResident,
   handleInputChange,
   onUpdate,
-  handleSubmit,
+  onFinish,
 }) => {
   useEffect(() => {
     // Reset the form fields when a new chief resident is added
@@ -122,15 +122,7 @@ const AddChiefResidentForm = ({
             Save
           </Button>
 
-          <Button
-            onClick={() =>
-              handleInputChange({
-                target: { name: "resident_userName", value: "" },
-              })
-            }
-          >
-            Cancel
-          </Button>
+          <Button onClick={onFinish}>Cancel</Button>
         </Space>
       </Form.Item>
     </Form>

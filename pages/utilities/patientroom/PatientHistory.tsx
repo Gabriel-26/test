@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Divider, Typography, Card, Grid, Box } from "@mui/material";
+import {
+  Divider,
+  Typography,
+  Card,
+  Grid,
+  Box,
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+} from "@mui/material";
 import axiosInstance from "../../../src/components/utils/axiosInstance";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 const PatientHistory = ({ patientData }) => {
   const { patient_id = "" } = patientData;
@@ -8,6 +18,8 @@ const PatientHistory = ({ patientData }) => {
   const [patientHistory, setPatientHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5; // Number of items to display per page
 
   useEffect(() => {
     const fetchPatientHistory = async (patientID) => {
@@ -48,8 +60,97 @@ const PatientHistory = ({ patientData }) => {
     return acc;
   }, {});
 
-  const formatAttributeName = (categoryAtt_name) => {
+  const booleanAttributes = [
+    "malignancy",
+    "surgeries",
+    "tobacco",
+    "recDrugs",
+    "alcohol",
+    "nasalMucosaSeptumTurbinatesWNL",
+    "nasalMucosaSeptumTurbinatesEdeOrEryPresent",
+    "mallampati1",
+    "mallampati2",
+    "mallampati3",
+    "mallampati4",
+    "dentionAndGumsWNL",
+    "dentionAndGumsDentalCanes",
+    "dentionAndGumsGingivitis",
+    "oropharynxWNL",
+    "oropharynxEdeOrEryPresent",
+    "oropharynxOralUlcers",
+    "oropharynxOralPetachie",
+    "neckWNL",
+    "neckLymphadenopathy",
+    "thyroidWNL",
+    "thyroidThyromegaly",
+    "thyroidNodulesPalpable",
+    "thyroidNeckMass",
+    "jugularVeinsWNL",
+    "jugularVeinsEngorged",
+    "chestExpansionAndSymmetrical",
+    "respiratoryEffortWNL",
+    "chestPercussionHyperResonance",
+    "AuscultationWNL",
+    "AuscultationBronchialBreathSounds",
+    "AuscultationEgophony",
+    "AuscultationRhonchi",
+    "AuscultationRales",
+    "AuscultationWheezes",
+    "AuscultationRub",
+    "respiratoryEffortAccessoryMuscleUse",
+    "respiratoryEffortIntercostalRetractions",
+    "respiratoryEffortParadoxicMovements",
+    "tactileFremitusWNL",
+    "tactileFremitusIncreased",
+    "tactileFremitusDecreased",
+    "chestPercussionWNL",
+    "chestPercussionDullnessToPercussion",
+    "heartSoundsClearS1",
+    "heartSoundsClearS2",
+    "heartSoundsNoMurmur",
+    "heartSoundsGallopAudible",
+    "heartSoundsRubAudible",
+    "heartSoundsMurmursPresent",
+    "heartSoundsSystolic",
+    "heartSoundsDiastolic",
+    "abdomenWNL",
+    "massPresent",
+    "organomegalySpleen",
+    "bowelSoundsNormaoactive",
+    "bowelSoundsUp",
+    "bowelSoundsDown",
+    "unableToPalpateLiver",
+    "unableToPalpateSpleen",
+    "organomegalyLiver",
+    "kidneyPunchSignNegative",
+    "kidneyPunchSignPositive",
+    "IfPositiveR",
+    "IfPositiveL",
+    "extremitiesWNL",
+    "extremitiesClubbing",
+    "extremitiesCyanosis",
+    "extremitiesPetachiae",
+    "skinWNL",
+    "skinRash",
+    "skinEccymosis",
+    "skinNodules",
+    "skinUlcer",
+    "allergies",
+    "PMH_CHF",
+    "PMH_otherIllness",
+    "PMH_Asthma",
+    "PMH_HTN",
+    "PMH_Thyroid",
+    "PMH_Diabetes",
+    "PMH_HepaticRenal",
+    "PMH_Tuberculosis",
+    "PMH_Psychiatric",
+    "PMH_CAD",
+  ];
+
+  const formatAttributeName = (categoryAtt_name, attributeVal_values) => {
     // Hardcoded attribute names for a more professional appearance
+
     const attributeNames = {
       bpSitting: "Blood Pressure (Sitting)",
       bpStanding: "Blood Pressure (Standing)",
@@ -60,22 +161,22 @@ const PatientHistory = ({ patientData }) => {
       "T*": "Temperature",
       "Sp-02": "Oxygen Saturation",
       malignancy: "Malignancy",
-      specifyMalignancy: "Specify Malignancy",
+      specifyMalignancy: "Additional Information on Malignancy",
       surgeries: "Surgeries",
-      specifySurgeries: "Specify Surgeries",
+      specifySurgeries: "Additional Information on Surgeries",
       tobacco: "Tobacco Use",
       tobaccoPacks: "Packs of Tobacco per Day",
       vaccinationHistory: "Vaccination History",
       tobaccoQuit: "Tobacco Quit",
       recDrugs: "Recreational Drugs",
-      specifyRecDrugs: "Specify Recreational Drugs",
+      specifyRecDrugs: "Additional Information on Recreational Drugs",
       alcohol: "Alcohol Consumption",
       alcoholDrinksFrequencyDay: "Alcohol Drinks per Day",
       alcoholDrinksFrequencyWeek: "Alcohol Drinks per Week",
       noOfAlcoholDrinks: "Number of Alcohol Drinks",
-      specifyFamilialDisease: "Specify Familial Disease",
-      specifyCivilStatus: "Specify Civil Status",
-      specifyPertinentHistory: "Specify Pertinent History",
+      specifyFamilialDisease: "Additional Information on Familial Disease",
+      specifyCivilStatus: "Additional Information on Civil Status",
+      specifyPertinentHistory: "Additional Information on Pertinent History",
       nasalMucosaSeptumTurbinatesWNL:
         "Nasal Mucosa, Septum, Turbinates - Within Normal Limits",
       nasalMucosaSeptumTurbinatesEdeOrEryPresent:
@@ -137,7 +238,7 @@ const PatientHistory = ({ patientData }) => {
       massPresent: "Mass Present",
       organomegalySpleen: "Organomegaly - Spleen",
       DREFindings: "DRE Findings",
-      specifyMassPresent: "Specify Mass Present",
+      specifyMassPresent: "Additional Information on Mass Present",
       bowelSoundsNormaoactive: "Bowel Sounds - Normoactive",
       bowelSoundsUp: "Bowel Sounds - Up",
       bowelSoundsDown: "Bowel Sounds - Down",
@@ -159,13 +260,15 @@ const PatientHistory = ({ patientData }) => {
       skinNodules: "Skin - Nodules Present",
       skinUlcer: "Skin - Ulcer Present",
       allergies: "Allergies",
-      specifyAllergies: "Specify Allergies",
+      specifyAllergies: "Additional Information on Allergies",
       PMH_CHF: "PMH - Congestive Heart Failure",
       PMH_otherIllness: "PMH - Other Illness",
       PMH_specifyOtherIllness: "PMH - Specify Other Illness",
-      specifyPrevHospitalization: "Specify Previous Hospitalization",
+      specifyPrevHospitalization:
+        "Additional Information on Previous Hospitalization",
       maintenanceMeds: "Maintenance Medications",
-      specifyMaintenanceMeds: "Specify Maintenance Medications",
+      specifyMaintenanceMeds:
+        "Additional Information on Maintenance Medications",
       PMH_Asthma: "PMH - Asthma",
       PMH_HTN: "PMH - Hypertension",
       PMH_Thyroid: "PMH - Thyroid Disorders",
@@ -178,7 +281,15 @@ const PatientHistory = ({ patientData }) => {
     };
 
     // Extracting the relevant part from categoryAtt_name
+
+    // Extracting the relevant part from categoryAtt_name
     const attributeName = categoryAtt_name.replace(/^phr_/, "");
+
+    // Check if the attribute is in the list of boolean attributes
+    // if (booleanAttributes.includes(attributeName)) {
+    //   // Map the attribute value to "Yes" or "No"
+    //   return `${attributeName}: ${attributeVal_values === "1" ? "Yes" : "No"}`;
+    // }
 
     // Use the hardcoded name if available, otherwise use the original name
     return attributeNames[attributeName] || attributeName;
@@ -187,31 +298,46 @@ const PatientHistory = ({ patientData }) => {
   return (
     <Card style={{ padding: "20px", margin: "20px", borderRadius: "15px" }}>
       {Object.keys(groupedHistory).map((formCatName, index) => (
-        <div key={index}>
-          <Typography variant="h6" gutterBottom style={{ color: "#007bff" }}>
-            {formCatName}
-          </Typography>
-          <Grid container spacing={2}>
-            {groupedHistory[formCatName].map((historyEntry, idx) => (
-              <Grid item xs={12} key={idx}>
-                <Box
-                  p={2}
-                  bgcolor="#f7f7f7"
-                  borderRadius="8px"
-                  boxShadow="0 2px 4px rgba(0, 0, 0, 0.1)"
-                >
-                  <Typography variant="body2">
-                    <strong>
-                      {formatAttributeName(historyEntry.categoryAtt_name)}:
-                    </strong>{" "}
-                    {historyEntry.attributeVal_values}
-                  </Typography>
-                </Box>
-              </Grid>
-            ))}
-          </Grid>
+        <Accordion key={index}>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography variant="h6" style={{ color: "#007bff" }}>
+              {formCatName}
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Grid container spacing={2}>
+              {groupedHistory[formCatName].map((historyEntry, idx) => (
+                <Grid item xs={12} key={idx}>
+                  <Box
+                    p={2}
+                    bgcolor="#f7f7f7"
+                    borderRadius="8px"
+                    boxShadow="0 2px 4px rgba(0, 0, 0, 0.1)"
+                  >
+                    <Typography variant="body2">
+                      <strong>
+                        {formatAttributeName(
+                          historyEntry.categoryAtt_name,
+                          historyEntry.attributeVal_values
+                        )}
+                        :
+                      </strong>{" "}
+                      {/* Display "Yes" or "No" for boolean attributes */}
+                      {booleanAttributes.includes(
+                        historyEntry.categoryAtt_name.replace(/^phr_/, "")
+                      )
+                        ? historyEntry.attributeVal_values === "1"
+                          ? "Yes"
+                          : "No"
+                        : historyEntry.attributeVal_values}
+                    </Typography>
+                  </Box>
+                </Grid>
+              ))}
+            </Grid>
+          </AccordionDetails>
           <Divider style={{ margin: "15px 0", backgroundColor: "#e0e0e0" }} />
-        </div>
+        </Accordion>
       ))}
     </Card>
   );

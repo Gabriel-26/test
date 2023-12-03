@@ -16,11 +16,16 @@ const useResidentAuth = () => {
       const token = response.data.token;
       const role = response.data.role; // Get the role from the response
       const resident_id = response.data.resident_id;
+      const resident_fName = response.data.resident_fName;
+      const resident_lName = response.data.resident_lName;
+
       console.log("Resident ID:", resident_id);
 
       sessionStorage.setItem("authToken", token);
       sessionStorage.setItem("userRole", role); // Save the role in the session
       sessionStorage.setItem("resID", resident_id);
+      sessionStorage.setItem("resFirstName", resident_fName);
+      sessionStorage.setItem("resLastname", resident_lName);
 
       router.push("/");
       return "success";
@@ -40,6 +45,8 @@ const useResidentAuth = () => {
     sessionStorage.removeItem("authToken");
     sessionStorage.removeItem("userRole");
     sessionStorage.removeItem("resID");
+    sessionStorage.removeItem("resFirstName");
+    sessionStorage.removeItem("resLastname");
     await axiosInstance.get("/logout");
     router.push("/authentication/login");
   };

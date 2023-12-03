@@ -1,7 +1,7 @@
 import React, { useState, useEffect, ReactElement } from "react";
+import { useRouter } from "next/router";
 import axiosInstance from "../../src/components/utils/axiosInstance";
 import FullLayout from "../../src/layouts/full/FullLayout";
-import { getUserRole } from "../../src/components/utils/roles";
 import PageContainer from "../../src/components/container/PageContainer";
 import DashboardCard from "../../src/components/shared/DashboardCard";
 import {
@@ -14,13 +14,14 @@ import {
   TextField,
   TablePagination,
 } from "@mui/material";
+import { getUserRole } from "../../src/components/utils/roles";
 
-// Define props interface
 interface PatientSearchProps {
   getLayout: (page: React.ReactNode) => React.ReactNode;
 }
 
 const PatientSearch: React.FC<PatientSearchProps> = ({ getLayout }) => {
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [patients, setPatients] = useState([]);
   const [filteredPatients, setFilteredPatients] = useState([]);
@@ -31,7 +32,9 @@ const PatientSearch: React.FC<PatientSearchProps> = ({ getLayout }) => {
   useEffect(() => {
     // Fetch user role using the getUserRole function
     const role = getUserRole();
-
+    const token = sessionStorage.getItem("authToken");
+    // Set the token in Axios headers for this request
+    axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     // Dynamically construct the API route based on user role
     if (role === "admin") {
       setApiRoute("/admin/patients");
@@ -93,7 +96,7 @@ const PatientSearch: React.FC<PatientSearchProps> = ({ getLayout }) => {
             placeholder="Search by name or ID"
             value={searchTerm}
             onChange={handleInputChange}
-            fullWidth // Make the search bar longer
+            fullWidth
           />
         </div>
         <TableContainer>
@@ -113,7 +116,17 @@ const PatientSearch: React.FC<PatientSearchProps> = ({ getLayout }) => {
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((patient) => (
                   <TableRow key={patient.patient_id}>
-                    <TableCell>{patient.patient_id}</TableCell>
+                    <TableCell>
+                      {/* Use router.push to navigate to patient history page */}
+                      <span
+                        style={{ cursor: "pointer", color: "blue" }}
+                        onClick={() =>
+                          router.push(`patients/${patient.patient_id}`)
+                        }
+                      >
+                        {patient.patient_id}
+                      </span>
+                    </TableCell>
                     <TableCell>{patient.patient_fName}</TableCell>
                     <TableCell>{patient.patient_lName}</TableCell>
                     <TableCell>{patient.patient_mName}</TableCell>

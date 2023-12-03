@@ -18,76 +18,87 @@ const RoomUpdates = () => {
     return date.toLocaleString(); // You can adjust the formatting as needed
   };
 
-  useEffect(() => {
-    const fetchDataWithRetry = async (retryCount = 0) => {
-      try {
-        const token = sessionStorage.getItem("authToken");
-        const userRole = sessionStorage.getItem("userRole");
+  const fetchDataWithRetry = async (retryCount = 0) => {
+    try {
+      const token = sessionStorage.getItem("authToken");
+      const userRole = sessionStorage.getItem("userRole");
 
-        axiosInstance.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${token}`;
+      axiosInstance.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${token}`;
 
-        let endpoint = "/resActLog";
+      let endpoint = "/resActLog";
 
-        if (userRole === "chiefResident" || userRole === "resident") {
-          endpoint = "/resActLog/logs/department";
-        } else if (userRole === "admin") {
-          endpoint = "/admin" + endpoint;
-        }
-
-        const response = await axiosInstance.get(endpoint);
-
-        const updatedRoomUpdates = await Promise.all(
-          response.data.map(async (update) => {
-            if (update.role === "resident" || update.role === "chiefResident") {
-              let residentEndpoint = `/resActLog/residentName/${update.user_id}`;
-
-              if (userRole === "admin") {
-                residentEndpoint = `/admin${residentEndpoint}`;
-              }
-
-              const residentResponse = await axiosInstance.get(
-                residentEndpoint
-              );
-              const residentLastName = residentResponse.data.lastName;
-
-              return {
-                ...update,
-                residentLastName,
-              };
-            }
-            return update;
-          })
-        );
-
-        setRoomUpdates(updatedRoomUpdates);
-        setLoading(false);
-      } catch (error) {
-        if (
-          error.response &&
-          error.response.status === 429 &&
-          retryCount < MAX_RETRIES
-        ) {
-          // Retry the request after a delay
-          const delay = INITIAL_DELAY * Math.pow(2, retryCount);
-          setTimeout(() => {
-            fetchDataWithRetry(retryCount + 1);
-          }, delay);
-        } else {
-          // Handle other errors or too many retries
-          setLoading(false);
-          console.error(error);
-          notification.error({
-            message: "Error",
-            description: "Failed to fetch room updates.",
-          });
-        }
+      if (userRole === "chiefResident" || userRole === "resident") {
+        endpoint = "/resActLog/logs/department";
+      } else if (userRole === "admin") {
+        endpoint = "/admin" + endpoint;
       }
-    };
 
-    fetchDataWithRetry();
-  }, []);
+      const response = await axiosInstance.get(endpoint);
+
+      const updatedRoomUpdates = await Promise.all(
+        response.data.map(async (update) => {
+          if (update.role === "resident" || update.role === "chiefResident") {
+            let residentEndpoint = `/resActLog/residentName/${update.user_id}`;
+
+            if (userRole === "admin") {
+              residentEndpoint = `/admin${residentEndpoint}`;
+            }
+
+            const residentResponse = await axiosInstance.get(residentEndpoint);
+            const residentLastName = residentResponse.data.lastName;
+
+            return {
+              ...update,
+              residentLastName,
+            };
+          }
+          return update;
+        })
+      );
+
+      setRoomUpdates(updatedRoomUpdates);
+      setLoading(false);
+    } catch (error) {
+      handleFetchError(error, retryCount);
+    }
+  };
+
+  const handleFetchError = (error, retryCount) => {
+    if (
+      error.response &&
+      error.response.status === 429 &&
+      retryCount < MAX_RETRIES
+    ) {
+      const retryAfterHeader = error.response.headers["retry-after"];
+      const delay = retryAfterHeader
+        ? parseInt(retryAfterHeader) * 1000
+        : Math.pow(2, retryCount) * INITIAL_DELAY;
+
+      // Retry the request after the calculated delay
+      setTimeout(() => {
+        fetchDataWithRetry(retryCount + 1);
+      }, delay);
+    } else {
+      // Handle other errors or too many retries
+      setLoading(false);
+      console.error(error);
+      notification.error({
+        message: "Error",
+        description: `Failed to fetch room updates. Retry count: ${
+          retryCount + 1
+        }`,
+      });
+    }
+  };
+
+  useEffect(() => {
+    // Fetch data only if it's not already in the cache
+    if (roomUpdates.length === 0) {
+      fetchDataWithRetry();
+    }
+  }, [roomUpdates]);
 
   const paginateRoomUpdates = () => {
     const startIndex = (currentPage - 1) * pageSize;

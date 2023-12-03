@@ -8,7 +8,7 @@ const AddDoctorForm = ({
   newDoctor,
   handleInputChange,
   onUpdate,
-  handleSubmit,
+  onFinish,
 }) => {
   useEffect(() => {
     // Reset the form fields when a new doctor is added
@@ -122,15 +122,7 @@ const AddDoctorForm = ({
             Save
           </Button>
 
-          <Button
-            onClick={() =>
-              handleInputChange({
-                target: { name: "resident_userName", value: "" },
-              })
-            }
-          >
-            Cancel
-          </Button>
+          <Button onClick={onFinish}>Cancel</Button>
         </Space>
       </Form.Item>
     </Form>

@@ -224,7 +224,7 @@ const ChiefResident = () => {
                   newChiefResident={newDoctor}
                   onUpdate={handleUpdate}
                   handleInputChange={handleInputChange}
-                  handleSubmit={handleSubmit}
+                  onFinish={handleCancel}
                 />
               ) : isEditing ? ( // Render edit form
                 <EditChiefResidentForm

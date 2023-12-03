@@ -180,7 +180,7 @@ const Doctors = () => {
                   onUpdate={handleUpdate}
                   newDoctor={newDoctor}
                   handleInputChange={handleInputChange}
-                  handleSubmit={handleCancel}
+                  onFinish={handleCancel}
                 />
               ) : isEditing ? ( // Render edit form
                 <EditDoctorForm
