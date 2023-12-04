@@ -3,10 +3,15 @@ import { Input, List, Avatar } from "antd";
 import FullLayout from "../../src/layouts/full/FullLayout";
 import axiosInstance from "../../src/components/utils/axiosInstance";
 import ResidentsList from "./residentsList";
+
 interface Message {
+  chatGroupMessages_id: string;
   message: string;
+  sender: {
+    resident_fName: string;
+    resident_lName: string;
+  };
   resident_id: string;
-  currentUser: string;
 }
 
 interface Conversation {
@@ -22,16 +27,16 @@ const ChatPage: React.FC = () => {
   >(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState("");
-  const [currentUser, setCurrentUser] = useState("");
+  const [Sender, setSender] = useState("");
   const [showResidentsList, setShowResidentsList] = useState(false);
+  const [selectedResidents, setSelectedResidents] = useState<string[]>([]);
 
   const handleSelectResidents = (selectedResidents: string[]) => {
-    const residentId = sessionStorage.getItem("resID");
+    setSelectedResidents(selectedResidents);
 
     axiosInstance
       .post("/chatGroupUsers", {
-        residents: selectedResidents,
-        resident_id: residentId,
+        resident_id: selectedResidents[0],
       })
       .then((response) => {
         console.log("Chat Group Created:", response.data);
@@ -57,17 +62,7 @@ const ChatPage: React.FC = () => {
     setShowResidentsList(!showResidentsList);
   };
 
-  useEffect(() => {
-    // Retrieve first name and last name from session storage
-    const firstName = sessionStorage.getItem("resFirstName") || "";
-    const lastName = sessionStorage.getItem("resLastname") || "";
-
-    // Combine first name and last name to form the full name
-    const fullName = `${firstName} ${lastName}`.trim();
-
-    // Set the full name as the current user
-    setCurrentUser(fullName);
-  }, []);
+ 
 
   const token = sessionStorage.getItem("authToken");
   // Set the token in Axios headers for this request
@@ -90,7 +85,7 @@ const ChatPage: React.FC = () => {
         console.log("Message sent successfully:", response.data);
         setMessages([
           ...messages,
-          { message: inputMessage, resident_id: currentUser },
+          { message: inputMessage, resident_id: Sender },
         ]);
         setInputMessage("");
       })
@@ -100,23 +95,36 @@ const ChatPage: React.FC = () => {
   };
 
   const fetchMessages = () => {
-    const residentId = sessionStorage.getItem("resID");
-
-    // Fetch messages
+    // Fetch messages with sender information
     axiosInstance
-      .get(`/chatGroupMessages/get/GroupMessages/${selectedConversation}`, {
-        params: {
-          chatGroup_id: selectedConversation,
-          resident_id: residentId,
-        },
-      })
+      .get(`/chatGroupMessages/get/GroupMessages/${selectedConversation}`)
       .then((response) => {
-        setMessages(response.data);
+        console.log("Response:", response.data); // Log the entire response
+  
+        const messagesWithSender = response.data.map((message) => ({
+          message: message.message,
+          sender: {
+            resident_id: message.sender.resident_id,
+            resident_fName: message.sender.resident_fName,
+            resident_lName: message.sender.resident_lName,
+          },
+          created_at: message.created_at,
+        }));
+  
+        // Update the Sender state with the sender of the latest message
+        if (messagesWithSender.length > 0) {
+          setSender(messagesWithSender[messagesWithSender.length - 1].sender.resident_id);
+        }
+  
+        setMessages(messagesWithSender);
       })
       .catch((error) => {
         console.error("Error fetching messages:", error);
       });
   };
+  
+  
+  
 
   useEffect(() => {
     // Fetch messages when the conversation is selected
@@ -179,16 +187,16 @@ const ChatPage: React.FC = () => {
           </button>
         </div>
         <div className="w-2/3">
-          {selectedConversation ? (
-            <ChatWithChatmate
-              selectedConversation={selectedConversation}
-              messages={messages}
-              currentUser={currentUser}
-              inputMessage={inputMessage}
-              handleSendMessage={handleSendMessage}
-              setInputMessage={setInputMessage}
-            />
-          ) : (
+        {selectedConversation ? (
+          <ChatWithChatmate
+            selectedConversation={selectedConversation}
+            messages={messages}
+            Sender={Sender}
+            inputMessage={inputMessage}
+            handleSendMessage={handleSendMessage}
+            setInputMessage={setInputMessage}
+          />
+        ) : (
             <div className="flex items-center justify-center h-full">
               Select a conversation to start chatting.
             </div>
@@ -211,14 +219,14 @@ const ChatPage: React.FC = () => {
 const ChatWithChatmate: React.FC<{
   selectedConversation: string;
   messages: Message[];
-  currentUser: string;
+  Sender: string;
   inputMessage: string;
   handleSendMessage: () => void;
   setInputMessage: (value: string) => void;
 }> = ({
   selectedConversation,
   messages,
-  currentUser,
+  Sender,
   inputMessage,
   handleSendMessage,
   setInputMessage,
@@ -237,13 +245,21 @@ const ChatWithChatmate: React.FC<{
                 avatar={
                   <Avatar
                     src={
-                      message.resident_id === currentUser
+                      message.sender && message.sender.resident_id === Sender
                         ? "your-avatar-url"
                         : "chatmate-avatar-url"
                     }
                   />
                 }
-                title={currentUser}
+                title={
+                  message.sender
+                    ? message.sender.resident_id === Sender
+                      ? "You"
+                      : `${message.sender.resident_fName} ${message.sender.resident_lName}`
+                    : "You"
+                }
+                
+                
                 description={message.message}
               />
             </List.Item>
@@ -273,6 +289,7 @@ const ChatWithChatmate: React.FC<{
     </div>
   );
 };
+
 
 export default ChatPage;
 ChatPage.getLayout = function getLayout(page: ReactElement) {
