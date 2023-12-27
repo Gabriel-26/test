@@ -85,21 +85,21 @@ const Menuitems = [
     children: [],
     role: "all", // This item is visible to all roles
   },
-  {
-    navlabel: true,
-    id: uniqueId(),
-    title: "Home",
+  // {
+  //   navlabel: true,
+  //   id: uniqueId(),
+  //   title: "Home",
 
-    subheader: "Auth",
-    role: "all", // This item is visible to all roles
-  },
-  {
-    id: uniqueId(),
-    title: "Login",
-    icon: IconLogin,
-    href: "/authentication/login",
-    role: "all", // This item is visible to all roles
-  },
+  //   subheader: "Auth",
+  //   role: "all", // This item is visible to all roles
+  // },
+  // {
+  //   id: uniqueId(),
+  //   title: "Login",
+  //   icon: IconLogin,
+  //   href: "/authentication/login",
+  //   role: "all", // This item is visible to all roles
+  // },
   // {
   //   id: uniqueId(),
   //   title: "Room/PatientView",
