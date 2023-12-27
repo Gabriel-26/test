@@ -56,6 +56,15 @@ const StatusPage = ({
     "patient_rightHand",
     "patient_leftHand",
   ];
+
+  const formatBodyPart = (bodyPart) => {
+    const formattedPart = bodyPart.replace("patient_", "");
+    const spacedPart = formattedPart
+      .replace(/([a-z])([A-Z])/g, "$1 $2") // Add space before capital letters
+      .toLowerCase(); // Convert to lowercase
+    return spacedPart.charAt(0).toUpperCase() + spacedPart.slice(1);
+  };
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -64,15 +73,13 @@ const StatusPage = ({
         const response = await axiosInstance.get(
           `/physicalExam/values/getPE/${patientId}`
         );
-        console.log("Response data:", response.data);
 
-        // Process the response data to create a map of attribute names to values
         const responseDataMap = response.data.reduce((acc, item) => {
           const attributeName = item.attribute_Name;
           const isSpecifyAttribute = attributeName.startsWith("specify_");
 
           acc[attributeName] = isSpecifyAttribute
-            ? { note: item.value || "" } // Set the note based on the value from the API
+            ? { note: item.value || "" }
             : { status: item.value, note: item.specify_value || "" };
 
           return acc;
@@ -89,10 +96,6 @@ const StatusPage = ({
     fetchData();
   }, [patientId, setEvaluationData]);
 
-  useEffect(() => {
-    console.log("Evaluation Data:", evaluationData);
-  }, [evaluationData]);
-
   return (
     <div>
       <h1>Status and Notes Page</h1>
@@ -101,36 +104,29 @@ const StatusPage = ({
       ) : (
         <Collapse accordion>
           {bodyParts.map((bodyPart) => (
-            <Panel key={bodyPart} header={bodyPart.replace("patient_", "")}>
+            <Panel key={bodyPart} header={formatBodyPart(bodyPart)}>
               <Select
                 value={
-                  evaluationData[bodyPart] !== undefined &&
-                  evaluationData[bodyPart].status
+                  evaluationData[bodyPart]?.status !== undefined
                     ? evaluationData[bodyPart].status
                     : "none"
                 }
                 onChange={(value) => {
-                  console.log("Select Value:", value);
                   handleStatusChange(bodyPart, value);
                 }}
                 style={{ width: "200px", marginBottom: "8px" }}
               >
-                <Option value="none">None</Option>
-                <Option value="normal">Normal</Option>
-                <Option value="abnormal">Abnormal</Option>
-                <Option value="needs_attention">Needs Attention</Option>
+                <Option value="None">None</Option>
+                <Option value="Normal">Normal</Option>
+                <Option value="Abnormal">Abnormal</Option>
+                <Option value="Needs Attention">Needs Attention</Option>
               </Select>
               <Input.TextArea
                 value={evaluationData[`specify_${bodyPart}`]?.note || ""}
                 onChange={(e) => {
-                  console.log("TextArea Value:", e.target.value);
-                  // Updated handleNoteChange to remove the status from evaluationData
                   handleNoteChange(bodyPart, e.target.value);
                 }}
-                placeholder={`Add a note for ${bodyPart.replace(
-                  "patient_",
-                  ""
-                )}...`}
+                placeholder={`Add a note for ${formatBodyPart(bodyPart)}...`}
                 rows={3}
               />
             </Panel>

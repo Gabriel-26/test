@@ -75,10 +75,7 @@ const PatientInfo = (props: any) => {
         "Authorization"
       ] = `Bearer ${token}`;
 
-      await axiosInstance.put(
-        `/patients/updatePatient/${editingPatient.patient_id}`,
-        values
-      );
+      await axiosInstance.put(`/patients/${editingPatient.patient_id}`, values);
 
       closeEditDrawer();
       fetchPatientData(room_id);
@@ -123,10 +120,10 @@ const PatientInfo = (props: any) => {
                 <Col span={8}>
                   <Text strong>Sex:</Text> <Text>{patient.patient_sex}</Text>
                 </Col>
-                <Col span={8}>
+                {/* <Col span={8}>
                   <Text strong>Vaccination History:</Text>{" "}
                   <Text>{patient.phr_vaccinationHistory}</Text>
-                </Col>
+                </Col> */}
                 <Col span={24}>
                   <Button
                     icon={<EditOutlinedIcon />}
@@ -147,7 +144,7 @@ const PatientInfo = (props: any) => {
 
       <Drawer
         title="Edit Patient Information"
-        visible={editDrawerVisible}
+        open={editDrawerVisible}
         onClose={closeEditDrawer}
         width={400}
       >
@@ -172,14 +169,18 @@ const PatientInfo = (props: any) => {
             <Form.Item label="Sex" name="patient_sex">
               <Input />
             </Form.Item>
-            <Form.Item
+            {/* <Form.Item
               label="Vaccination History"
               name="phr_vaccinationHistory"
             >
               <Input />
-            </Form.Item>
+            </Form.Item> */}
             <Form.Item>
-              <Button type="primary" htmlType="submit">
+              <Button
+                // type="primary"
+                htmlType="submit"
+                style={{ backgroundColor: "#1890ff", color: "white" }}
+              >
                 Save
               </Button>
             </Form.Item>

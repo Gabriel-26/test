@@ -35,6 +35,7 @@ const AssignResidentRoom = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [expandedRowKeys, setExpandedRowKeys] = useState([]);
   const [residentNames, setResidentNames] = useState({});
+  const [selectKey, setSelectKey] = useState(Date.now());
 
   const assignedColumns = [
     {
@@ -56,7 +57,23 @@ const AssignResidentRoom = () => {
       title: "Is Finished",
       dataIndex: "isFinished",
       key: "isFinished",
-      render: (text) => (text ? "Yes" : "No"), // You can format this as needed
+      render: (text) => (text ? "Yes" : "No"),
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (text, record) => (
+        <Button
+          type="default"
+          onClick={() => {
+            console.log("Delete button clicked");
+            handleDeleteAssignment(record.resAssRoom_id);
+          }}
+          style={{ zIndex: 1 }} // Set a higher z-index
+        >
+          Delete
+        </Button>
+      ),
     },
   ];
 
@@ -94,6 +111,7 @@ const AssignResidentRoom = () => {
       render: (text, record) => (
         <Space size="middle">
           <Select
+            key={selectKey}
             style={{ width: 120 }}
             placeholder="Select Room"
             onChange={(value) => setSelectedRoomId(value)}
@@ -106,6 +124,7 @@ const AssignResidentRoom = () => {
           </Select>
           <Button
             type="primary"
+            className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded flex items-center justify-center"
             onClick={() => {
               setSelectedResidentId(record.resident_id);
               showConfirmationModal();
@@ -117,6 +136,33 @@ const AssignResidentRoom = () => {
       ),
     },
   ];
+
+  const handleDeleteAssignment = async (resAssRoomId) => {
+    try {
+      console.log("Delete button clicked");
+
+      const token = sessionStorage.getItem("authToken");
+      axiosInstance.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${token}`;
+
+      setLoading(true);
+      const response = await axiosInstance.delete(
+        `/resAssRooms/${resAssRoomId}`
+      );
+
+      if (response.status === 200) {
+        console.log("Assignment deleted successfully.");
+        message.success("Assignment deleted successfully.");
+        fetchAssignedRooms();
+      }
+    } catch (error) {
+      console.error("Error deleting assignment:", error);
+      message.error("Error deleting assignment.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const showConfirmationModal = () => {
     setIsModalVisible(true);
@@ -130,6 +176,8 @@ const AssignResidentRoom = () => {
     // Perform the assignment logic here
     handleRoomChange(selectedResidentId, selectedRoomId);
     setIsModalVisible(false); // Close the modal
+    setSelectedRoomId(null); // Clear selected room
+    setSelectKey(Date.now()); // Change the key to force re-render
   };
 
   const handleRoomChange = async (selectedResidentId, selectedRoomId) => {

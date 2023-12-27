@@ -14,25 +14,26 @@ import {
   TableBody,
   TablePagination,
 } from "@mui/material";
-import { Input, Form, Modal, Drawer, Spin } from "antd";
+import { Input, Form, Modal, Drawer, Spin, Select } from "antd";
 import { getUserRole } from "../../../src/components/utils/roles";
-import dynamic from "next/dynamic"; // Import the dynamic function
+import dynamic from "next/dynamic";
 
 const Button = dynamic(() => import("antd/lib/button"));
-// Dynamically import Button
+const { Option } = Select;
+
 const Rooms = () => {
   const [rooms, setRooms] = useState([]);
+  const [floors, setFloors] = useState([]);
   const [floorName, setFloorName] = useState("");
   const router = useRouter();
-  const { floor_name: queryFloorName, floor_id: queryFloorId } = router.query; // Get the floor_name and floor_id from the query parameters
+  const { floor_name: queryFloorName, floor_id: queryFloorId } = router.query;
   const [showModal, setShowDrawer] = useState(false);
-  const [showRoomDrawer, setShowRoomDrawer] = useState(false); // New state for the room drawer
+  const [showRoomDrawer, setShowRoomDrawer] = useState(false);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const userRole = getUserRole();
 
-  // State for the "Add Floor" form
   const [showAddForm, setShowAddForm] = useState(false);
   const [floorNameInput, setFloorNameInput] = useState("");
   const [floorIdInput, setFloorIdInput] = useState("");
@@ -43,35 +44,55 @@ const Rooms = () => {
   const [roomTypeInput, setRoomTypeInput] = useState("");
   const [roomPriceInput, setRoomPriceInput] = useState("");
 
+  const [showEditFloorModal, setShowEditFloorModal] = useState(false);
+  const [editFloorName, setEditFloorName] = useState("");
+  const [editFloorId, setEditFloorId] = useState("");
+
+  const [showEditRoomModal, setShowEditRoomModal] = useState(false);
+  const [editRoomId, setEditRoomId] = useState("");
+  const [editRoomName, setEditRoomName] = useState("");
+  const [editRoomFloor, setEditRoomFloor] = useState("");
+  const [editRoomType, setEditRoomType] = useState("");
+  const [editRoomPrice, setEditRoomPrice] = useState("");
+
+  const [showDeleteFloorModal, setShowDeleteFloorModal] = useState(false);
+  const [deleteFloorId, setDeleteFloorId] = useState("");
+
+  const [showDeleteRoomModal, setShowDeleteRoomModal] = useState(false);
+  const [deleteRoomId, setDeleteRoomId] = useState([]);
+
   useEffect(() => {
     if (queryFloorName) {
-      // If the query parameter 'floor_name' is present in the URL, set the floorName state accordingly
       setFloorName(queryFloorName as string);
     }
-    fetchRooms(queryFloorId as string); // Fetch rooms after setting the floor_id
+    fetchRooms(queryFloorId as string);
+    fetchFloors();
   }, [queryFloorName, queryFloorId]);
 
-  // Function to fetch rooms
-  const fetchRooms = async (floorId?: string) => {
+  const fetchFloors = async () => {
     try {
-      setLoading(true); // Set loading to true when starting data fetch
+      const response = await axiosInstance.get("admin/floors");
+      setFloors(response.data);
+    } catch (error) {
+      console.error("Error fetching floors:", error);
+    }
+  };
 
+  const fetchRooms = async (floorId) => {
+    try {
+      setLoading(true);
       const token = sessionStorage.getItem("authToken");
-      // Set the token in Axios headers for this request
       axiosInstance.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${token}`;
 
       let url = "/rooms";
-
-      // Check the user role in sessionStorage and set the API endpoint accordingly
       const userRole = sessionStorage.getItem("userRole");
       if (userRole === "admin") {
-        url = "/admin/rooms"; // Set admin API endpoint
+        url = "/admin/rooms";
       }
 
       if (floorId) {
-        // If floor_id is provided, append it to the URL as a parameter
         url += `/getRoomsByfloor/${floorId}`;
       }
 
@@ -84,52 +105,168 @@ const Rooms = () => {
     }
   };
 
-  // Function to handle adding a floor
+  const handleEditFloor = (floorId, floorName) => {
+    setEditFloorId(floorId);
+    setEditFloorName(floorName);
+    setShowEditFloorModal(true);
+  };
+
+  const handleDeleteFloor = (floorId) => {
+    setDeleteFloorId(floorId);
+    setShowDeleteFloorModal(true);
+  };
+
+  const handleEditRoom = (roomId, roomName, roomFloor, roomType, roomPrice) => {
+    setEditRoomId(roomId);
+    setEditRoomName(roomName);
+    setEditRoomFloor(roomFloor);
+    setEditRoomType(roomType);
+    setEditRoomPrice(roomPrice);
+    setShowEditRoomModal(true);
+  };
+
+  const handleDeleteRoom = (roomId) => {
+    setDeleteRoomId(roomId);
+    setShowDeleteRoomModal(true);
+  };
+
+  // Updated function to handle floor selection in the dropdown
+  const handleEditFloorSelect = (value) => {
+    setEditFloorId(value);
+
+    // Fetch the floor_name based on the selected floor_id
+    const selectedFloor = floors.find((floor) => floor.floor_id === value);
+    if (selectedFloor) {
+      setEditFloorName(selectedFloor.floor_name);
+    }
+  };
+
+  const handleConfirmEditFloor = async () => {
+    try {
+      const response = await axiosInstance.put(
+        `admin/floors/updateFloor/${editFloorId}`,
+        {
+          floor_name: editFloorName,
+          floor_id: editFloorId, // Include the floor_id in the update
+        }
+      );
+
+      // Fetch floors again after the edit is completed
+      fetchFloors();
+    } catch (error) {
+      console.error("Error updating floor:", error);
+    }
+
+    // Reset state
+    setEditFloorId("");
+    setEditFloorName("");
+    setShowEditFloorModal(false);
+  };
+
+  const handleConfirmDeleteFloor = async () => {
+    try {
+      const response = await axiosInstance.delete(
+        `admin/floors/${deleteFloorId}`
+      );
+
+      // Fetch floors again after the delete is completed
+      fetchFloors();
+      fetchRooms(queryFloorId as string);
+    } catch (error) {
+      console.error("Error deleting floor:", error);
+    }
+
+    // Reset state
+    setDeleteFloorId("");
+    setShowDeleteFloorModal(false);
+  };
+
+  const handleConfirmEditRoom = async () => {
+    try {
+      const response = await axiosInstance.put(
+        `admin/rooms/updateRoom/${editRoomId}`,
+        {
+          room_name: editRoomName,
+          room_floor: editRoomFloor,
+          room_type: editRoomType,
+          room_price: editRoomPrice,
+        }
+      );
+
+      // Fetch rooms again after the edit is completed
+      fetchRooms(queryFloorId as string);
+    } catch (error) {
+      console.error("Error updating room:", error);
+    }
+
+    // Reset state
+    setEditRoomId("");
+    setEditRoomName("");
+    setEditRoomFloor("");
+    setEditRoomType("");
+    setEditRoomPrice("");
+    setShowEditRoomModal(false);
+  };
+
+  const handleConfirmDeleteRoom = async () => {
+    try {
+      const response = await axiosInstance.delete(
+        `admin/rooms/${deleteRoomId}`
+      );
+
+      // Fetch rooms again after the delete is completed
+      fetchRooms(queryFloorId as string);
+    } catch (error) {
+      console.error("Error deleting room:", error);
+    }
+
+    // Reset state
+    // setDeleteRoomId("");
+    setShowDeleteRoomModal(false);
+  };
+
   const handleAddFloor = async () => {
     try {
       const token = sessionStorage.getItem("authToken");
-      // Set the token in Axios headers for this request
       axiosInstance.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${token}`;
 
-      // Check the user role in sessionStorage and set the API endpoint accordingly
       const userRole = sessionStorage.getItem("userRole");
       let url = "/floors";
       if (userRole === "admin") {
-        url = "/admin/floors"; // Set admin API endpoint
+        url = "/admin/floors";
       }
 
       const response = await axiosInstance.post(url, {
         floor_name: floorNameInput,
         floor_id: floorIdInput,
       });
-      console.log(response.data.message);
-      // Clear input fields and hide the form
-      setFloorNameInput("");
-      setFloorIdInput("");
-      setShowAddForm(false);
-      // Fetch rooms again
+
+      // Fetch floors again after the add is completed
+      fetchFloors();
       fetchRooms(queryFloorId as string);
     } catch (error) {
       console.error("Error adding floor:", error);
     }
+
+    // Reset state
+    setFloorNameInput("");
+    setFloorIdInput("");
+    setShowAddForm(false);
   };
 
-  // Function to handle adding a room
   const handleAddRoom = async () => {
     try {
       const token = sessionStorage.getItem("authToken");
-      // Set the token in Axios headers for this request
       axiosInstance.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${token}`;
 
-      // Check the user role in sessionStorage and set the API endpoint accordingly
       const userRole = sessionStorage.getItem("userRole");
       let url = "/rooms";
       if (userRole === "admin") {
-        url = "/admin/rooms"; // Set admin API endpoint
+        url = "/admin/rooms";
       }
 
       const response = await axiosInstance.post(url, {
@@ -139,18 +276,19 @@ const Rooms = () => {
         room_price: roomPriceInput,
         floor_id: queryFloorId as string,
       });
-      console.log(response.data.message);
-      // Clear input fields and hide the form
-      setRoomNameInput("");
-      setRoomFloorInput("");
-      setRoomTypeInput("");
-      setRoomPriceInput("");
-      setShowAddRoomForm(false);
-      // Fetch rooms again
+
+      // Fetch rooms again after the add is completed
       fetchRooms(queryFloorId as string);
     } catch (error) {
       console.error("Error adding room:", error);
     }
+
+    // Reset state
+    setRoomNameInput("");
+    setRoomFloorInput("");
+    setRoomTypeInput("");
+    setRoomPriceInput("");
+    setShowAddRoomForm(false);
   };
 
   // Step 2: Define a function to handle navigation to another page
@@ -161,31 +299,47 @@ const Rooms = () => {
         description="This is Sample page"
       >
         <DashboardCard title={floorName || "Loading..."}>
-          {/* Add the button or link beside the floorName */}
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             {userRole === "admin" && (
               <Button
                 variant="contained"
                 color="secondary"
-                onClick={() => setShowAddForm(true)} // Show the "Add Floor" form
+                onClick={() => setShowAddForm(true)}
               >
                 Add Floor
               </Button>
+            )}
+            {userRole === "admin" && (
+              <div>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => handleEditFloor()}
+                >
+                  Edit Floor
+                </Button>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  style={{ marginLeft: "10px" }}
+                  onClick={() => handleDeleteFloor()}
+                >
+                  Delete Floor
+                </Button>
+              </div>
             )}
 
             {userRole === "admin" && (
               <Button
                 variant="contained"
-                color="secondary" // You can choose a different color
-                onClick={() => setShowAddRoomForm(true)} // Open the room drawer
+                color="secondary"
+                onClick={() => setShowAddRoomForm(true)}
               >
                 Add Room
               </Button>
             )}
           </div>
           <Spin spinning={loading}>
-            {" "}
-            {/* Add the Spin component here */}
             <TableContainer component={Paper}>
               <Table>
                 <TableHead>
@@ -196,16 +350,17 @@ const Rooms = () => {
                     <TableCell>Room Type</TableCell>
                     <TableCell>Floor ID</TableCell>
                     <TableCell>Room Price</TableCell>
+                    {userRole === "admin" && ( // Only render Actions column for admin role
+                      <TableCell>Actions</TableCell>
+                    )}
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {rooms
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((room) => (
-                      // Step 3: Wrap the cells in a clickable element (e.g., Link)
                       <TableRow key={room.room_id}>
                         <TableCell>
-                          {/* Step 4: Use next/link for navigation */}
                           <span
                             style={{ cursor: "pointer", color: "blue" }}
                             onClick={() =>
@@ -222,6 +377,28 @@ const Rooms = () => {
                         <TableCell>{room.room_type}</TableCell>
                         <TableCell>{room.floor_id}</TableCell>
                         <TableCell>{room.room_price}</TableCell>
+                        {userRole === "admin" && ( // Only render Actions for admin role
+                          <TableCell>
+                            <Button
+                              onClick={() =>
+                                handleEditRoom(
+                                  room.room_id,
+                                  room.room_name,
+                                  room.room_floor,
+                                  room.room_type,
+                                  room.room_price
+                                )
+                              }
+                            >
+                              Edit
+                            </Button>
+                            <Button
+                              onClick={() => handleDeleteRoom(room.room_id)}
+                            >
+                              Delete
+                            </Button>
+                          </TableCell>
+                        )}
                       </TableRow>
                     ))}
                 </TableBody>
@@ -242,15 +419,13 @@ const Rooms = () => {
           />
         </DashboardCard>
       </PageContainer>
-
-      {/* Add Floor Form */}
       <Modal
         title="Add Floor"
         open={showAddForm}
         onCancel={() => setShowAddForm(false)}
         onOk={handleAddFloor}
         destroyOnClose
-        okButtonProps={{ style: { backgroundColor: "green" } }} // Change '#YourColorCode' to the desired color
+        okButtonProps={{ style: { backgroundColor: "green" } }}
       >
         <Form layout="vertical">
           <Form.Item name="floor_name" label="Floor Name">
@@ -261,15 +436,13 @@ const Rooms = () => {
           </Form.Item>
         </Form>
       </Modal>
-
-      {/* Add Room Form */}
       <Drawer
         title="Add Room"
         width={720}
         onClose={() => setShowAddRoomForm(false)}
         open={showAddRoomForm}
         destroyOnClose
-        footer={null} // Remove the original footer
+        footer={null}
       >
         <Form layout="vertical">
           <Form.Item name="room_name" label="Room Name">
@@ -313,6 +486,107 @@ const Rooms = () => {
           </Form.Item>
         </Form>
       </Drawer>
+      {/* Edit Floor Modal */}
+      <Modal
+        title="Edit Floor"
+        visible={showEditFloorModal}
+        onCancel={() => setShowEditFloorModal(false)}
+        onOk={handleConfirmEditFloor}
+      >
+        <Form layout="vertical">
+          {/* Dropdown to select floor */}
+          <Form.Item label="Select Floor" name="editFloor">
+            <Select
+              placeholder="Select a floor"
+              onChange={(value) => handleEditFloorSelect(value)}
+              value={editFloorId}
+            >
+              {floors.map((floor) => (
+                <Option key={floor.floor_id} value={floor.floor_id}>
+                  {floor.floor_name}
+                </Option>
+              ))}
+            </Select>
+          </Form.Item>
+
+          {/* Input field for editing floor_name */}
+          <Form.Item label="Edit Floor Name" name="editFloorName">
+            <Input
+              value={editFloorName}
+              onChange={(e) => setEditFloorName(e.target.value)}
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
+      ;{/* Delete Floor Modal */}
+      <Modal
+        title="Delete Floor"
+        visible={showDeleteFloorModal}
+        onCancel={() => setShowDeleteFloorModal(false)}
+        onOk={handleConfirmDeleteFloor}
+        okButtonProps={{
+          style: { backgroundColor: "red", borderColor: "red" },
+        }}
+      >
+        <Form.Item label="Select Floor" name="deleteFloor">
+          <Select
+            placeholder="Select a floor"
+            onChange={(value) => setDeleteFloorId(value)}
+          >
+            {floors.map((floor) => (
+              <Option key={floor.floor_id} value={floor.floor_id}>
+                {floor.floor_name}
+              </Option>
+            ))}
+          </Select>
+        </Form.Item>{" "}
+      </Modal>
+      {/* Edit Room Modal */}
+      <Modal
+        title="Edit Room"
+        visible={showEditRoomModal}
+        onCancel={() => setShowEditRoomModal(false)}
+        onOk={handleConfirmEditRoom}
+      >
+        <Form>
+          <Form.Item label="Room Name">
+            <Input
+              value={editRoomName}
+              onChange={(e) => setEditRoomName(e.target.value)}
+            />
+          </Form.Item>
+          <Form.Item label="Room Floor">
+            <Input
+              value={editRoomFloor}
+              onChange={(e) => setEditRoomFloor(e.target.value)}
+            />
+          </Form.Item>
+          <Form.Item label="Room Type">
+            <Input
+              value={editRoomType}
+              onChange={(e) => setEditRoomType(e.target.value)}
+            />
+          </Form.Item>
+          <Form.Item label="Room Price">
+            <Input
+              value={editRoomPrice}
+              onChange={(e) => setEditRoomPrice(e.target.value)}
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
+      {/* Delete Room Modal */}
+      <Modal
+        title="Delete Room"
+        visible={showDeleteRoomModal}
+        onCancel={() => setShowDeleteRoomModal(false)}
+        onOk={handleConfirmDeleteRoom}
+        okButtonProps={{
+          style: { backgroundColor: "red", borderColor: "red" },
+        }}
+      >
+        <p>Are you sure you want to delete this room?</p>
+      </Modal>
     </div>
   );
 };

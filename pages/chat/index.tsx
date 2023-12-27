@@ -7,10 +7,8 @@ import ResidentsList from "./residentsList";
 interface Message {
   chatGroupMessages_id: string;
   message: string;
-  sender: {
-    resident_fName: string;
-    resident_lName: string;
-  };
+  resident_fName: string;
+  resident_lName: string;
   resident_id: string;
 }
 
@@ -49,6 +47,27 @@ const ChatPage: React.FC = () => {
 
         setConversations([...conversations, { chatGroup_id: chatGroupId }]);
         setSelectedConversation(chatGroupId);
+
+        // Fetch messages and update sender's name when the conversation is selected
+        axiosInstance
+          .get(`/chatGroupMessages/get/GroupMessages/${chatGroupId}`)
+          .then((response) => {
+            console.log("Response:", response.data);
+            const messagesWithSender = response.data.map((message) => ({
+              message: message.message,
+
+              resident_id: message.sender.resident_id,
+              resident_fName: message.sender.resident_fName,
+              resident_lName: message.sender.resident_lName,
+
+              created_at: message.created_at,
+            }));
+
+            setMessages(messagesWithSender);
+          })
+          .catch((error) => {
+            console.error("Error fetching messages:", error);
+          });
       })
       .catch((error) => {
         console.error("Error creating chat group:", error);
@@ -62,8 +81,6 @@ const ChatPage: React.FC = () => {
     setShowResidentsList(!showResidentsList);
   };
 
- 
-
   const token = sessionStorage.getItem("authToken");
   // Set the token in Axios headers for this request
   axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
@@ -72,7 +89,8 @@ const ChatPage: React.FC = () => {
     if (inputMessage.trim() === "") return;
 
     const residentId = sessionStorage.getItem("resID");
-    console.log("residentId:", residentId);
+    const residentFirstName = sessionStorage.getItem("resFirstName");
+    const residentLastName = sessionStorage.getItem("resLastname");
 
     // Send the message
     axiosInstance
@@ -83,9 +101,15 @@ const ChatPage: React.FC = () => {
       })
       .then((response) => {
         console.log("Message sent successfully:", response.data);
+
         setMessages([
           ...messages,
-          { message: inputMessage, resident_id: Sender },
+          {
+            message: inputMessage,
+            resident_id: residentId,
+            resident_fName: residentFirstName,
+            resident_lName: residentLastName,
+          },
         ]);
         setInputMessage("");
       })
@@ -94,48 +118,77 @@ const ChatPage: React.FC = () => {
       });
   };
 
-  const fetchMessages = () => {
-    // Fetch messages with sender information
-    axiosInstance
-      .get(`/chatGroupMessages/get/GroupMessages/${selectedConversation}`)
-      .then((response) => {
-        console.log("Response:", response.data); // Log the entire response
-  
-        const messagesWithSender = response.data.map((message) => ({
-          message: message.message,
-          sender: {
+  useEffect(() => {
+    if (selectedConversation) {
+      // Update the alignment when a conversation is selected
+
+      // Fetch messages when the conversation is selected
+      const fetchMessages = async () => {
+        try {
+          const response = await axiosInstance.get(
+            `/chatGroupMessages/get/GroupMessages/${selectedConversation}`
+          );
+
+          const messagesWithSender = response.data.map((message) => ({
+            message: message.message,
             resident_id: message.sender.resident_id,
             resident_fName: message.sender.resident_fName,
             resident_lName: message.sender.resident_lName,
-          },
-          created_at: message.created_at,
-        }));
-  
-        // Update the Sender state with the sender of the latest message
-        if (messagesWithSender.length > 0) {
-          setSender(messagesWithSender[messagesWithSender.length - 1].sender.resident_id);
-        }
-  
-        setMessages(messagesWithSender);
-      })
-      .catch((error) => {
-        console.error("Error fetching messages:", error);
-      });
-  };
-  
-  
-  
 
-  useEffect(() => {
-    // Fetch messages when the conversation is selected
-    if (selectedConversation) {
+            created_at: message.created_at,
+          }));
+
+          setMessages(messagesWithSender);
+        } catch (error) {
+          console.error("Error fetching messages:", error);
+        }
+      };
+
       fetchMessages();
     }
   }, [selectedConversation]);
 
+  // useEffect(() => {
+  //   // Fetch messages and update sender's name when the conversation is selected
+  //   const fetchMessagesAndSender = async () => {
+  //     if (selectedConversation) {
+  //       try {
+  //         const response = await axiosInstance.get(
+  //           `/chatGroupMessages/get/GroupMessages/${selectedConversation}`
+  //         );
+
+  //         console.log("Response:", response.data);
+  //         const messagesWithSender = response.data.map((message) => ({
+  //           message: message.message,
+  //           sender: {
+  //             resident_id: message.sender.resident_id,
+  //             resident_fName: message.sender.resident_fName,
+  //             resident_lName: message.sender.resident_lName,
+  //           },
+  //           created_at: message.created_at,
+  //         }));
+
+  //         if (messagesWithSender.length > 0) {
+  //           // Update the Sender based on the latest message
+  //           setSender(
+  //             messagesWithSender[messagesWithSender.length - 1].sender
+  //               .resident_id
+  //           );
+  //         }
+
+  //         setMessages(messagesWithSender);
+  //       } catch (error) {
+  //         console.error("Error fetching messages:", error);
+  //       }
+  //     }
+  //   };
+
+  //   fetchMessagesAndSender();
+  // }, [selectedConversation, messages]); // Include messages as a dependency
+
   useEffect(() => {
     axiosInstance
-      .get("/chatGroup")
+      .get("chatGroupUsers/{chatGroupId}/residents/{residentId}")
       .then((response) => {
         console.log("Chat Groups:", response.data); // Add this line
         setConversations(response.data);
@@ -150,11 +203,11 @@ const ChatPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-full">
       <div className="p-2 bg-blue-500 text-white">
         <h1 className="text-xl font-semibold">Chat Home</h1>
       </div>
-      <div className="flex p-4">
+      <div className="flex p-4 h-full">
         <div className="w-1/3">
           <h2 className="text-lg font-semibold">Conversations</h2>
           <List
@@ -187,23 +240,21 @@ const ChatPage: React.FC = () => {
           </button>
         </div>
         <div className="w-2/3">
-        {selectedConversation ? (
-          <ChatWithChatmate
-            selectedConversation={selectedConversation}
-            messages={messages}
-            Sender={Sender}
-            inputMessage={inputMessage}
-            handleSendMessage={handleSendMessage}
-            setInputMessage={setInputMessage}
-          />
-        ) : (
+          {selectedConversation ? (
+            <ChatWithChatmate
+              selectedConversation={selectedConversation}
+              messages={messages}
+              inputMessage={inputMessage}
+              handleSendMessage={handleSendMessage}
+              setInputMessage={setInputMessage}
+            />
+          ) : (
             <div className="flex items-center justify-center h-full">
               Select a conversation to start chatting.
             </div>
           )}
         </div>
       </div>
-
       {showResidentsList && (
         <div className="fixed top-0 left-0 h-screen w-screen bg-gray-800 bg-opacity-50 flex items-center justify-center">
           <ResidentsList
@@ -219,51 +270,54 @@ const ChatPage: React.FC = () => {
 const ChatWithChatmate: React.FC<{
   selectedConversation: string;
   messages: Message[];
-  Sender: string;
   inputMessage: string;
   handleSendMessage: () => void;
   setInputMessage: (value: string) => void;
 }> = ({
   selectedConversation,
   messages,
-  Sender,
   inputMessage,
   handleSendMessage,
   setInputMessage,
 }) => {
+  const currentUserFirstName = sessionStorage.getItem("resFirstName");
+  const currentUserLastName = sessionStorage.getItem("resLastname");
+
   return (
     <div className="flex flex-col h-full">
       <div className="flex justify-between p-2 bg-blue-500 text-white">
         <h1 className="text-xl font-semibold">{selectedConversation}</h1>
       </div>
-      <div className="flex-grow p-4 overflow-y-auto">
+      <div
+        className="flex-grow p-4 overflow-y-auto"
+        style={{ maxHeight: "500px" }}
+      >
+        {/* Adjust the maxHeight value based on your design */}
         <List
           dataSource={messages}
-          renderItem={(message, index) => (
-            <List.Item>
-              <List.Item.Meta
-                avatar={
-                  <Avatar
-                    src={
-                      message.sender && message.sender.resident_id === Sender
-                        ? "your-avatar-url"
-                        : "chatmate-avatar-url"
-                    }
-                  />
-                }
-                title={
-                  message.sender
-                    ? message.sender.resident_id === Sender
-                      ? "You"
-                      : `${message.sender.resident_fName} ${message.sender.resident_lName}`
-                    : "You"
-                }
-                
-                
-                description={message.message}
-              />
-            </List.Item>
-          )}
+          renderItem={(message, index) => {
+            const isCurrentUser =
+              message.resident_id === sessionStorage.getItem("resID");
+            const messageAlignment = isCurrentUser ? "right" : "left";
+
+            return (
+              <List.Item
+                style={{
+                  textAlign: messageAlignment,
+                  marginBottom: "8px", // Adjust the margin as needed
+                }}
+              >
+                <List.Item.Meta
+                  title={
+                    isCurrentUser
+                      ? `${currentUserFirstName} ${currentUserLastName}`
+                      : `${message.resident_fName} ${message.resident_lName}`
+                  }
+                  description={message.message}
+                />
+              </List.Item>
+            );
+          }}
         />
       </div>
       <div className="p-4 border-t">
@@ -277,6 +331,7 @@ const ChatWithChatmate: React.FC<{
                 handleSendMessage();
               }
             }}
+            style={{ flex: 1, marginRight: "8px" }} // Adjust the styles
           />
           <button
             className="bg-blue-500 text-white py-2 px-4 rounded"
@@ -289,7 +344,6 @@ const ChatWithChatmate: React.FC<{
     </div>
   );
 };
-
 
 export default ChatPage;
 ChatPage.getLayout = function getLayout(page: ReactElement) {

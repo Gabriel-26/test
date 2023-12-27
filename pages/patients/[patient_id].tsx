@@ -11,6 +11,7 @@ import PatientHistory from "../utilities/patientroom/PatientHistory";
 import axiosInstance from "../../src/components/utils/axiosInstance";
 import { useRouter } from "next/router";
 import FullLayout from "../../src/layouts/full/FullLayout";
+import FileViewer from "../utilities/patientroom/FileViewer";
 
 const PatientHistoryPage = () => {
   const theme = useTheme();
@@ -64,7 +65,7 @@ const PatientHistoryPage = () => {
         {patientDetails.patient_lName}
       </Typography>
 
-      {loadingDetails && <CircularProgress />}
+      {loadingDetails && <CircularProgress style={{ margin: "20px" }} />}
 
       {errorDetails && (
         <Typography variant="body1" color="error" gutterBottom>
@@ -74,7 +75,7 @@ const PatientHistoryPage = () => {
 
       {!loadingDetails && !errorDetails && (
         <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={7}>
             <Paper elevation={3} style={{ padding: theme.spacing(3) }}>
               <Typography variant="h6" gutterBottom>
                 Patient Details
@@ -112,6 +113,15 @@ const PatientHistoryPage = () => {
                 Patient History
               </Typography>
               <PatientHistory patientData={patientDetails} />
+            </Paper>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <Paper elevation={3} style={{ padding: theme.spacing(3) }}>
+              <Typography variant="h6" gutterBottom>
+                File Viewer
+              </Typography>
+              <FileViewer patientData={patientDetails} />
             </Paper>
           </Grid>
         </Grid>

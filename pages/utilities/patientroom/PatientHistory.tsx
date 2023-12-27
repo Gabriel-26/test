@@ -34,7 +34,7 @@ const PatientHistory = ({ patientData }) => {
         );
 
         const phrData = phrResponse.data;
-
+        console.log(phrData);
         setPatientHistory(phrData);
         setLoading(false);
       } catch (error) {
@@ -297,48 +297,54 @@ const PatientHistory = ({ patientData }) => {
 
   return (
     <Card style={{ padding: "20px", margin: "20px", borderRadius: "15px" }}>
-      {Object.keys(groupedHistory).map((formCatName, index) => (
-        <Accordion key={index}>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography variant="h6" style={{ color: "#007bff" }}>
-              {formCatName}
-            </Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Grid container spacing={2}>
-              {groupedHistory[formCatName].map((historyEntry, idx) => (
-                <Grid item xs={12} key={idx}>
-                  <Box
-                    p={2}
-                    bgcolor="#f7f7f7"
-                    borderRadius="8px"
-                    boxShadow="0 2px 4px rgba(0, 0, 0, 0.1)"
-                  >
-                    <Typography variant="body2">
-                      <strong>
-                        {formatAttributeName(
-                          historyEntry.categoryAtt_name,
-                          historyEntry.attributeVal_values
-                        )}
-                        :
-                      </strong>{" "}
-                      {/* Display "Yes" or "No" for boolean attributes */}
-                      {booleanAttributes.includes(
-                        historyEntry.categoryAtt_name.replace(/^phr_/, "")
-                      )
-                        ? historyEntry.attributeVal_values === "1"
-                          ? "Yes"
-                          : "No"
-                        : historyEntry.attributeVal_values}
-                    </Typography>
-                  </Box>
-                </Grid>
-              ))}
-            </Grid>
-          </AccordionDetails>
-          <Divider style={{ margin: "15px 0", backgroundColor: "#e0e0e0" }} />
-        </Accordion>
-      ))}
+      {Object.keys(groupedHistory).length === 0 ? (
+        <Typography variant="body1">
+          There is no data on this patient.
+        </Typography>
+      ) : (
+        Object.keys(groupedHistory).map((formCatName, index) => (
+          <Accordion key={index}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography variant="h6" style={{ color: "#007bff" }}>
+                {formCatName}
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Grid container spacing={2}>
+                {groupedHistory[formCatName].map((historyEntry, idx) => (
+                  <Grid item xs={12} key={idx}>
+                    <Box
+                      p={2}
+                      bgcolor="#f7f7f7"
+                      borderRadius="8px"
+                      boxShadow="0 2px 4px rgba(0, 0, 0, 0.1)"
+                    >
+                      <Typography variant="body2">
+                        <strong>
+                          {formatAttributeName(
+                            historyEntry.categoryAtt_name,
+                            historyEntry.attributeVal_values
+                          )}
+                          :
+                        </strong>{" "}
+                        {/* Display "Yes" or "No" for boolean attributes */}
+                        {booleanAttributes.includes(
+                          historyEntry.categoryAtt_name.replace(/^phr_/, "")
+                        )
+                          ? historyEntry.attributeVal_values === "1"
+                            ? "Yes"
+                            : "No"
+                          : historyEntry.attributeVal_values}
+                      </Typography>
+                    </Box>
+                  </Grid>
+                ))}
+              </Grid>
+            </AccordionDetails>
+            <Divider style={{ margin: "15px 0", backgroundColor: "#e0e0e0" }} />
+          </Accordion>
+        ))
+      )}
     </Card>
   );
 };

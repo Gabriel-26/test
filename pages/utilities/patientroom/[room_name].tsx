@@ -11,11 +11,9 @@ import { useRouter } from "next/router";
 import PatientHistory from "./PatientHistory";
 import { uploadFile } from "../../../src/components/utils/fileUpload";
 import { Modal, Button, message } from "antd";
-import ImageDisplay from "./FileViewer";
-import PatientEvaluation from "./PhysicalExam";
 import Medication from "./Medications";
-import HumanFigureEvaluationPage from "./HumanFigureEvaluationPage";
 import HumanFigureEvaluation from "./PhysicalExam";
+import FileViewer from "./FileViewer";
 
 const Item = styled(Paper)(({ theme }) => ({
   ...theme.typography.body1,
@@ -33,7 +31,7 @@ const RoomView = () => {
   const [isTransferModalOpen, setTransferModalOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadSuccess, setUploadSuccess] = useState(false);
-  const { room_name: queryRoomName } = router.query;
+  const { room_name: queryRoomName, room_id: queryRoomId } = router.query;
   const [rooms, setRooms] = useState([]);
   const [selectedRoomId, setSelectedRoomId] = useState("");
   const [patientData, setPatientData] = useState([]);
@@ -74,15 +72,17 @@ const RoomView = () => {
 
   const handleCloseFilePicker = () => {
     setFilePickerOpen(false);
+    setSelectedFile(null); // Clear the selectedFile state
   };
 
   const handleFileUpload = async () => {
     if (!selectedFile) {
       return;
     }
+    console.log("Selected Room ID:", selectedRoomId); // Add this log statement
 
     const token = sessionStorage.getItem("authToken");
-    const residentID = sessionStorage.getItem("resID"); // Retrieve resident_id from session storage
+    const residentID = sessionStorage.getItem("resID");
 
     if (!residentID) {
       console.error("Resident ID not found in session storage");
@@ -93,9 +93,11 @@ const RoomView = () => {
     axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
     try {
-      // Make an API request to retrieve patient data
-      const response = await axiosInstance.get("/patAssRooms");
-      const patientData = response.data;
+      // Get the patient data for the current room
+      const roomResponse = await axiosInstance.get(
+        `patAssRooms/getPatientbyRoom/${queryRoomId}`
+      );
+      const patientData = roomResponse.data;
 
       // Check if patient data is available
       if (patientData && patientData.length > 0) {
@@ -275,7 +277,9 @@ const RoomView = () => {
             />
           </TabsContent>
           <TabsContent value="fileviewer">
-            <ImageDisplay />
+            <FileViewer
+              patientData={{ patient_id: patientData[0]?.patient_id }}
+            />
           </TabsContent>
           <TabsContent value="evaluation">
             <HumanFigureEvaluation
@@ -308,6 +312,7 @@ const RoomView = () => {
           </Button>
           <Button
             variant="outlined"
+            disabled={patientData.length === 0}
             onClick={handleOpenFilePicker} // Open the file picker dialog
             style={{ flex: 1 }}
           >
@@ -325,33 +330,53 @@ const RoomView = () => {
           </div>
         )}
       </DashboardCard>
-
       <Modal
         open={isTransferModalOpen}
         onCancel={() => setTransferModalOpen(false)}
-        onOk={() => {
-          handleTransferPatient(); // Removed 'selectedRoomId' parameter
-          setTransferModalOpen(false);
-        }}
-        okButtonProps={{ disabled: !selectedRoomId }}
+        footer={null} // Remove the default footer
       >
         <h3>Select a room to transfer the patient:</h3>
-        <label>Select a room:</label>
-        <select onChange={(e) => setSelectedRoomId(e.target.value)}>
+        <label>Select a room: </label>
+        <select
+          onChange={(e) => setSelectedRoomId(e.target.value)}
+          defaultValue={queryRoomId}
+        >
+          {/* Default option is the current room */}
           <option value="">Select a room</option>
+
+          {/* Other room options */}
           {rooms.map((room) => (
             <option key={room.room_id} value={room.room_id}>
               {room.room_name}
             </option>
           ))}
         </select>
+
+        {/* Customized OK button */}
+        <Button
+          key="ok"
+          onClick={() => {
+            handleTransferPatient();
+            setTransferModalOpen(false);
+          }}
+          disabled={!selectedRoomId}
+          style={{
+            backgroundColor: !selectedRoomId ? "#d9d9d9" : "#1890ff",
+            color: !selectedRoomId ? "rgba(0, 0, 0, 0.25)" : "white",
+            borderColor: !selectedRoomId ? "#d9d9d9" : "#1890ff",
+            marginLeft: "146px", // Add margin to match the layout
+          }}
+        >
+          Transfer Patient
+        </Button>
       </Modal>
+
       <Modal
-        title="Choose a File"
+        title="Upload a File"
         open={isFilePickerOpen}
         onCancel={handleCloseFilePicker}
-        footer={null} // Remove the footer to customize your own buttons
-        maskClosable={false} // Prevent closing when clicking outside the modal
+        footer={null}
+        maskClosable={true}
       >
         {/* ... input for selecting a file ... */}
         <input
@@ -364,6 +389,11 @@ const RoomView = () => {
           type="primary"
           onClick={handleFileUpload}
           disabled={!selectedFile}
+          style={{
+            backgroundColor: !selectedFile ? "#d9d9d9" : "#1890ff", // Background color
+            color: !selectedFile ? "rgba(0, 0, 0, 0.25)" : "white", // Text color
+            borderColor: !selectedFile ? "#d9d9d9" : "#1890ff", // Border color
+          }}
         >
           Upload File
         </Button>
@@ -375,12 +405,17 @@ const RoomView = () => {
           Cancel
         </Button>
       </Modal>
-
       <Modal
         title="Confirm Checkout"
         open={isCheckoutModalVisible}
         onOk={handleCheckoutPatient}
         onCancel={handleCheckoutCancel}
+        okButtonProps={{
+          style: { backgroundColor: "#1890ff", color: "white" },
+        }}
+        cancelButtonProps={{ style: { marginLeft: "8px" } }}
+        okText="Confirm"
+        cancelText="Cancel"
       >
         Are you sure you want to checkout/remove this patient from the room?
       </Modal>

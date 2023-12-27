@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import StatusPage from "./StatusPage";
 import ImagePage from "./ImagePage";
 import axiosInstance from "../../../src/components/utils/axiosInstance";
+import { Button, message } from "antd";
 
 const HumanFigureEvaluation = (props: any) => {
   const { patientData, updatePatientData, patientId } = props;
@@ -79,17 +80,17 @@ const HumanFigureEvaluation = (props: any) => {
   const handleSave = async () => {
     try {
       // Transform the local state into the structure expected by the server
-      const transformedData = Object.entries(evaluationData).reduce(
-        (acc, [bodyPart, { status, note }]) => {
-          const statusKey = `${bodyPart}`;
-          return {
-            ...acc,
-            [statusKey]: "", // Set status to an empty string
-            [`specify_${statusKey}`]: note,
-          };
-        },
-        { patient_id: patientId }
-      );
+      const transformedData = {};
+
+      for (const [bodyPart, { status, note }] of Object.entries(
+        evaluationData
+      )) {
+        const statusKey = bodyPart;
+        transformedData[statusKey] = status === "none" ? "" : status;
+        transformedData[`specify_${statusKey}`] = note;
+      }
+
+      transformedData["patient_id"] = patientId;
 
       const response = await axiosInstance.post(
         "/physicalExam/values",
@@ -98,11 +99,14 @@ const HumanFigureEvaluation = (props: any) => {
 
       if (response.status === 200) {
         console.log("Data saved successfully");
+        message.success("Data saved successfully");
       } else {
         console.error("Failed to save data");
+        message.error("Failed to save data");
       }
     } catch (error) {
       console.error("Error:", error);
+      message.error("An error occurred while saving data");
     }
   };
 
@@ -115,8 +119,14 @@ const HumanFigureEvaluation = (props: any) => {
         handleStatusChange={handleStatusChange}
         handleNoteChange={handleNoteChange}
       />
+      <Button
+        type="primary"
+        style={{ backgroundColor: "#4CAF50", borderColor: "#4CAF50" }}
+        onClick={handleSave}
+      >
+        Save
+      </Button>{" "}
       <ImagePage evaluationData={evaluationData} />
-      <button onClick={handleSave}>Save</button>
     </div>
   );
 };

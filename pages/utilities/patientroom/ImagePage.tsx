@@ -49,7 +49,7 @@ const ImagePage = ({ evaluationData }) => {
 
   return (
     <div className="relative">
-      <h1>Image and Body Part Colors Page</h1>
+      {/* <h1>Image and Body Part Colors Page</h1> */}
       <Image
         src="/images/human_figure.png" // Replace with your image path
         alt="Human Figure"
@@ -64,11 +64,11 @@ const ImagePage = ({ evaluationData }) => {
         >
           <div
             className={`w-5 h-5 rounded-full ${
-              evaluationData[bodyPart.name]?.status === "normal"
+              evaluationData[bodyPart.name]?.status === "Normal"
                 ? "bg-green-300 text-green-600"
-                : evaluationData[bodyPart.name]?.status === "abnormal"
+                : evaluationData[bodyPart.name]?.status === "Abnormal"
                 ? "bg-yellow-300 text-yellow-600"
-                : evaluationData[bodyPart.name]?.status === "needs_attention"
+                : evaluationData[bodyPart.name]?.status === "Needs Attention"
                 ? "bg-red-300 text-red-600"
                 : "bg-gray-300 text-gray-600"
             }`}

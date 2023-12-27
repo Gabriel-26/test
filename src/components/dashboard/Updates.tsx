@@ -9,16 +9,15 @@ const RoomUpdates = () => {
   const [roomUpdates, setRoomUpdates] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [totalItems, setTotalItems] = useState(0);
   const pageSize = 5;
-  const MAX_RETRIES = 5;
-  const INITIAL_DELAY = 1000; // 1 second
 
   const formatUpdateDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleString(); // You can adjust the formatting as needed
+    return date.toLocaleString();
   };
 
-  const fetchDataWithRetry = async (retryCount = 0) => {
+  const fetchData = async (page = 1) => {
     try {
       const token = sessionStorage.getItem("authToken");
       const userRole = sessionStorage.getItem("userRole");
@@ -35,10 +34,10 @@ const RoomUpdates = () => {
         endpoint = "/admin" + endpoint;
       }
 
-      const response = await axiosInstance.get(endpoint);
+      const response = await axiosInstance.get(endpoint, { params: { page } });
 
       const updatedRoomUpdates = await Promise.all(
-        response.data.map(async (update) => {
+        response.data.data.map(async (update) => {
           if (update.role === "resident" || update.role === "chiefResident") {
             let residentEndpoint = `/resActLog/residentName/${update.user_id}`;
 
@@ -59,69 +58,39 @@ const RoomUpdates = () => {
       );
 
       setRoomUpdates(updatedRoomUpdates);
+      setTotalItems(response.data.total);
       setLoading(false);
     } catch (error) {
-      handleFetchError(error, retryCount);
-    }
-  };
-
-  const handleFetchError = (error, retryCount) => {
-    if (
-      error.response &&
-      error.response.status === 429 &&
-      retryCount < MAX_RETRIES
-    ) {
-      const retryAfterHeader = error.response.headers["retry-after"];
-      const delay = retryAfterHeader
-        ? parseInt(retryAfterHeader) * 1000
-        : Math.pow(2, retryCount) * INITIAL_DELAY;
-
-      // Retry the request after the calculated delay
-      setTimeout(() => {
-        fetchDataWithRetry(retryCount + 1);
-      }, delay);
-    } else {
-      // Handle other errors or too many retries
-      setLoading(false);
       console.error(error);
       notification.error({
         message: "Error",
-        description: `Failed to fetch room updates. Retry count: ${
-          retryCount + 1
-        }`,
+        description: "Failed to fetch room updates.",
       });
     }
   };
 
   useEffect(() => {
-    // Fetch data only if it's not already in the cache
-    if (roomUpdates.length === 0) {
-      fetchDataWithRetry();
-    }
-  }, [roomUpdates]);
-
-  const paginateRoomUpdates = () => {
-    const startIndex = (currentPage - 1) * pageSize;
-    const endIndex = startIndex + pageSize;
-    const paginatedData = roomUpdates.slice(startIndex, endIndex);
-    return paginatedData;
-  };
+    fetchData(currentPage);
+  }, [currentPage]);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
+    setLoading(true);
   };
 
   return (
     <div>
       <DashboardCard title="Updates">
         <Spin spinning={loading}>
+          {/* <Typography.Text strong>Current Page: {currentPage}</Typography.Text> */}
+
           <List
             header={<div>Room Updates</div>}
             footer={<div></div>}
             bordered
-            dataSource={paginateRoomUpdates()}
+            dataSource={roomUpdates}
             renderItem={(update, index) => (
-              <Item>
+              <Item key={`${update.RA_id}_${index}`}>
                 <Typography.Text strong>
                   {`Resident/ Dr. ${
                     update.residentLastName || update.user_id
@@ -137,7 +106,7 @@ const RoomUpdates = () => {
         </Spin>
         <Pagination
           current={currentPage}
-          total={roomUpdates.length}
+          total={totalItems}
           pageSize={pageSize}
           onChange={handlePageChange}
         />
