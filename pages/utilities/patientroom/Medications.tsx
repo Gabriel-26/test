@@ -134,27 +134,27 @@ const Medication = (props: any) => {
     }
   };
 
-  const handleDeleteMedication = async (medicationId) => {
-    try {
-      const response = await axiosInstance.delete(
-        `/patientMedicines/${medicationId}`
-      );
+  // const handleDeleteMedication = async (medicationId) => {
+  //   try {
+  //     const response = await axiosInstance.delete(
+  //       `/patientMedicines/${medicationId}`
+  //     );
 
-      if (response.status === 200) {
-        console.log("Medication deleted successfully.");
-        // Update patientMedications state to exclude the deleted medication
-        setPatientMedications(
-          patientMedications.filter(
-            (medication) => medication.patientMedicine_id !== medicationId
-          )
-        );
-      } else {
-        console.error("Failed to delete medication.");
-      }
-    } catch (error) {
-      console.error("Error deleting medication:", error);
-    }
-  };
+  //     if (response.status === 200) {
+  //       console.log("Medication deleted successfully.");
+  //       // Update patientMedications state to exclude the deleted medication
+  //       setPatientMedications(
+  //         patientMedications.filter(
+  //           (medication) => medication.patientMedicine_id !== medicationId
+  //         )
+  //       );
+  //     } else {
+  //       console.error("Failed to delete medication.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error deleting medication:", error);
+  //   }
+  // };
 
   return (
     <div style={{ maxWidth: "800px", margin: "auto" }}>
@@ -300,7 +300,7 @@ const Medication = (props: any) => {
                 second: "numeric",
               })}`}</p>
 
-              <Button
+              {/* <Button
                 type="danger"
                 onClick={() =>
                   handleDeleteMedication(medication.patientMedicine_id)
@@ -309,7 +309,7 @@ const Medication = (props: any) => {
                 style={{ marginTop: "12px" }}
               >
                 <DeleteOutlined /> Delete Medication
-              </Button>
+              </Button> */}
             </div>
           ))}
         </div>

@@ -71,7 +71,7 @@ const SidebarItems = ({ toggleMobileSidebar }: any) => {
     if (item.type === "expandable-card") {
       return {
         ...item,
-        children: floorNames.map((floorName) => ({
+        items: floorNames.map((floorName) => ({
           id: uniqueId(),
           title: floorName.floor_name,
           icon: IconTypography,
@@ -97,7 +97,7 @@ const SidebarItems = ({ toggleMobileSidebar }: any) => {
                 {/* Use the ExpandableCard component directly */}
                 <ExpandableCard subheader="FLOORS">
                   <List>
-                    {item.children.map((subItem) => (
+                    {item.items.map((subItem) => (
                       <NavItem
                         item={subItem}
                         key={subItem.id}

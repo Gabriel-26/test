@@ -5,9 +5,7 @@ import Link from "next/link";
 
 // components
 import ResidentsOverview from "../src/components/dashboard/ResidentsOverview";
-import RoomsOverview from "../src/components/dashboard/RoomsOverview";
 import RoomUpdates from "../src/components/dashboard/Updates";
-// import ChiefResidentsOverview from "../src/components/dashboard/ChiefResidentsOverview"; // Add this import for the Chief Resident view
 import FullLayout from "../src/layouts/full/FullLayout";
 import { getUserRole } from "../src/components/utils/roles";
 import FloorList from "../src/components/dashboard/FloorsList";

@@ -5,50 +5,50 @@ import axiosInstance from "../../../src/components/utils/axiosInstance";
 import { Button, message } from "antd";
 
 const HumanFigureEvaluation = (props: any) => {
-  const { patientData, updatePatientData, patientId } = props;
+  const { patientId } = props;
   const [evaluationData, setEvaluationData] = useState({
     // Add the new body parts without specify_patient_ as needed
-    patient_head: { status: "none", note: "" },
-    patient_forehead: { status: "none", note: "" },
-    patient_nose: { status: "none", note: "" },
-    patient_mouth: { status: "none", note: "" },
-    patient_neck: { status: "none", note: "" },
-    patient_rightEye: { status: "none", note: "" },
-    patient_leftEye: { status: "none", note: "" },
-    patient_rightEar: { status: "none", note: "" },
-    patient_leftEar: { status: "none", note: "" },
-    patient_nape: { status: "none", note: "" },
-    patient_rightBreast: { status: "none", note: "" },
-    patient_leftBreast: { status: "none", note: "" },
-    patient_rightLung: { status: "none", note: "" },
-    patient_leftLung: { status: "none", note: "" },
-    patient_rightShoulderBlade: { status: "none", note: "" },
-    patient_leftShoulderBlade: { status: "none", note: "" },
-    patient_stomach: { status: "none", note: "" },
-    patient_abdomen: { status: "none", note: "" },
-    patient_waist: { status: "none", note: "" },
-    patient_rightThigh: { status: "none", note: "" },
-    patient_leftThigh: { status: "none", note: "" },
-    patient_rightFoot: { status: "none", note: "" },
-    patient_leftFoot: { status: "none", note: "" },
-    patient_rightKnee: { status: "none", note: "" },
-    patient_leftKnee: { status: "none", note: "" },
-    patient_rightLeg: { status: "none", note: "" },
-    patient_leftLeg: { status: "none", note: "" },
-    patient_rightAnkle: { status: "none", note: "" },
-    patient_leftAnkle: { status: "none", note: "" },
-    patient_rightCalf: { status: "none", note: "" },
-    patient_leftCalf: { status: "none", note: "" },
-    patient_rightShoulder: { status: "none", note: "" },
-    patient_leftShoulder: { status: "none", note: "" },
-    patient_rightArm: { status: "none", note: "" },
-    patient_leftArm: { status: "none", note: "" },
-    patient_rightForearm: { status: "none", note: "" },
-    patient_leftForearm: { status: "none", note: "" },
-    patient_rightWrist: { status: "none", note: "" },
-    patient_leftWrist: { status: "none", note: "" },
-    patient_rightHand: { status: "none", note: "" },
-    patient_leftHand: { status: "none", note: "" },
+    patient_head: { status: "None", note: "" },
+    patient_forehead: { status: "None", note: "" },
+    patient_nose: { status: "None", note: "" },
+    patient_mouth: { status: "None", note: "" },
+    patient_neck: { status: "None", note: "" },
+    patient_rightEye: { status: "None", note: "" },
+    patient_leftEye: { status: "None", note: "" },
+    patient_rightEar: { status: "None", note: "" },
+    patient_leftEar: { status: "None", note: "" },
+    patient_nape: { status: "None", note: "" },
+    patient_rightBreast: { status: "None", note: "" },
+    patient_leftBreast: { status: "None", note: "" },
+    patient_rightLung: { status: "None", note: "" },
+    patient_leftLung: { status: "None", note: "" },
+    patient_rightShoulderBlade: { status: "None", note: "" },
+    patient_leftShoulderBlade: { status: "None", note: "" },
+    patient_stomach: { status: "None", note: "" },
+    patient_abdomen: { status: "None", note: "" },
+    patient_waist: { status: "None", note: "" },
+    patient_rightThigh: { status: "None", note: "" },
+    patient_leftThigh: { status: "None", note: "" },
+    patient_rightFoot: { status: "None", note: "" },
+    patient_leftFoot: { status: "None", note: "" },
+    patient_rightKnee: { status: "None", note: "" },
+    patient_leftKnee: { status: "None", note: "" },
+    patient_rightLeg: { status: "None", note: "" },
+    patient_leftLeg: { status: "None", note: "" },
+    patient_rightAnkle: { status: "None", note: "" },
+    patient_leftAnkle: { status: "None", note: "" },
+    patient_rightCalf: { status: "None", note: "" },
+    patient_leftCalf: { status: "None", note: "" },
+    patient_rightShoulder: { status: "None", note: "" },
+    patient_leftShoulder: { status: "None", note: "" },
+    patient_rightArm: { status: "None", note: "" },
+    patient_leftArm: { status: "None", note: "" },
+    patient_rightForearm: { status: "None", note: "" },
+    patient_leftForearm: { status: "None", note: "" },
+    patient_rightWrist: { status: "None", note: "" },
+    patient_leftWrist: { status: "None", note: "" },
+    patient_rightHand: { status: "None", note: "" },
+    patient_leftHand: { status: "None", note: "" },
   });
 
   const handleStatusChange = (bodyPart, newStatus) => {
@@ -56,8 +56,8 @@ const HumanFigureEvaluation = (props: any) => {
       const updatedData = { ...prevData };
       updatedData[bodyPart].status = newStatus;
 
-      // If the status is "none," set the note to an empty string
-      if (newStatus === "none") {
+      // If the status is "None," set the note to an empty string
+      if (newStatus === "None") {
         updatedData[bodyPart].note = "";
       }
 
@@ -86,7 +86,7 @@ const HumanFigureEvaluation = (props: any) => {
         evaluationData
       )) {
         const statusKey = bodyPart;
-        transformedData[statusKey] = status === "none" ? "" : status;
+        transformedData[statusKey] = status === "None" ? "" : status;
         transformedData[`specify_${statusKey}`] = note;
       }
 

@@ -18,6 +18,7 @@ const useResidentAuth = () => {
       const resident_id = response.data.resident_id;
       const resident_fName = response.data.resident_fName;
       const resident_lName = response.data.resident_lName;
+      const depId = response.data.department_id;
 
       console.log("Resident ID:", resident_id);
 
@@ -26,7 +27,8 @@ const useResidentAuth = () => {
       sessionStorage.setItem("resID", resident_id);
       sessionStorage.setItem("resFirstName", resident_fName);
       sessionStorage.setItem("resLastname", resident_lName);
-
+      sessionStorage.setItem("depID", depId);
+      sessionStorage.setItem("userN", username);
       router.push("/");
       return "success";
     } catch (error) {
@@ -47,6 +49,9 @@ const useResidentAuth = () => {
     sessionStorage.removeItem("resID");
     sessionStorage.removeItem("resFirstName");
     sessionStorage.removeItem("resLastname");
+    sessionStorage.removeItem("depID");
+    sessionStorage.removeItem("userN");
+
     await axiosInstance.get("/logout");
     router.push("/authentication/login");
   };

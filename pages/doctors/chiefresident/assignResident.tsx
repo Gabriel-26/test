@@ -207,6 +207,8 @@ const AssignResidentRoom = () => {
         message.error("Too Many Requests. Please try again later.");
       } else {
         console.error("Error assigning resident to room:", error);
+        // Add an error message for unsuccessful assignment
+        message.error("Error assigning resident to room. Please try again.");
       }
     } finally {
       setLoading(false);
@@ -260,30 +262,39 @@ const AssignResidentRoom = () => {
   const fetchResidents = async () => {
     try {
       const token = sessionStorage.getItem("authToken");
+      const userRole = sessionStorage.getItem("userRole");
+      const chiefResidentDepartmentId = sessionStorage.getItem("depID");
+
       axiosInstance.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${token}`;
 
       setLoading(true);
 
-      const response = await axiosInstance.get("/residents");
+      let response;
+      if (userRole === "chiefResident") {
+        // Fetch residents based on the chiefResident's department_id
+        response = await axiosInstance.get(
+          `/resAssRooms/residentsByDepartment/${chiefResidentDepartmentId}`
+        );
+      } else {
+        // Fetch all residents for other roles
+        response = await axiosInstance.get("/residents");
+      }
 
       if (response.status === 200) {
-        // Filter residents by their roles
         const filteredResidents = response.data.filter(
           (resident) => resident.role === "resident"
         );
 
-        // Create a mapping of resident_id to resident names or last names
         const namesMapping = {};
         filteredResidents.forEach((resident) => {
           const fullName = ` ${resident.resident_lName}`;
-          // Use fullName or last name, depending on your preference
           namesMapping[resident.resident_id] = fullName;
         });
 
         setResidents(filteredResidents);
-        setResidentNames(namesMapping); // Set the resident names
+        setResidentNames(namesMapping);
       }
     } catch (error) {
       console.error("Error fetching residents:", error);
@@ -357,6 +368,9 @@ const AssignResidentRoom = () => {
           open={isModalVisible}
           onOk={handleAssignmentConfirm}
           onCancel={handleAssignmentCancel}
+          okButtonProps={{
+            style: { backgroundColor: "#52c41a", borderColor: "#52c41a" },
+          }}
         >
           <p className="text-lg">
             Are you sure you want to assign this resident to the selected room?

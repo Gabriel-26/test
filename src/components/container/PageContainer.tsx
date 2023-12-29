@@ -1,6 +1,5 @@
 // import { Helmet } from 'react-helmet';
-import { Helmet, HelmetProvider } from 'react-helmet-async';
-
+import { Helmet, HelmetProvider } from "react-helmet-async";
 
 type Props = {
   description?: string;
@@ -9,7 +8,7 @@ type Props = {
 };
 
 const PageContainer = ({ title, description, children }: Props) => (
-  <HelmetProvider >
+  <HelmetProvider>
     <div>
       <Helmet>
         <title>{title}</title>

@@ -2,8 +2,9 @@ import { ReactElement, useEffect, useState } from "react";
 import PageContainer from "../../src/components/container/PageContainer";
 import DashboardCard from "../../src/components/shared/DashboardCard";
 import FullLayout from "../../src/layouts/full/FullLayout";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import axios from "../../src/components/utils/axiosInstance";
+import { message, Button } from "antd";
 
 export function EHRForm() {
   const [roomData, setRoomData] = useState([]);
@@ -307,15 +308,22 @@ export function EHRForm() {
     const token = sessionStorage.getItem("authToken");
     // Set the token in Axios headers for this request
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
     console.log(mappedData);
+
     axios
-      .post("/patients", data)
+      .post("/patients", mappedData) // <-- Send mappedData instead of the original data
       .then((response) => {
         console.log("Data sent successfully:", response.data);
+        // Display success message
+        message.success("Data sent successfully");
         // Handle success or redirect to another page
+        // history.push("/success-page");
       })
       .catch((error) => {
         console.error("Error sending data:", error);
+        // Display error message
+        message.error("Error sending data. Please try again.");
         // Handle error
       });
   };
@@ -1712,42 +1720,18 @@ export function EHRForm() {
             </label>
           </div>
 
-          <button
-            disabled={isSubmitting}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          <Button
+            type="primary"
+            htmlType="submit"
+            loading={isSubmitting} // This will disable the button and show a loading spinner when submitting
+            style={{
+              marginTop: 16,
+              backgroundColor: "#52c41a",
+              borderColor: "#52c41a",
+            }}
           >
-            Submit
-          </button>
-
-          {/* Dynamic custom fields */}
-          {/* <button
-              type="button"
-              onClick={() => {
-                // Dynamically add a custom field
-                const fieldName = prompt("Enter field name");
-                if (fieldName) {
-                  setValue(fieldName, ""); // Initialize the field
-                }
-              }}
-            >
-              Add Custom Field
-            </button> */}
-
-          {/* Render custom fields */}
-          {/* {Object.keys(control._fields).map((fieldName) => (
-              <div key={fieldName}>
-                <label>{fieldName}</label>
-                <Controller
-                  name={fieldName}
-                  control={control}
-                  render={({ field }) => (
-                    <input {...field} placeholder={fieldName} />
-                  )}
-                />
-              </div>
-            ))}
-
-            <button type="submit">Save</button> */}
+            Save
+          </Button>
         </form>
       </DashboardCard>
     </PageContainer>

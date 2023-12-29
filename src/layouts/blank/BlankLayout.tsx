@@ -5,12 +5,7 @@ interface BlankLayoutProps {
 }
 
 const BlankLayout = ({ children }: BlankLayoutProps) => {
-  return (
-    <Box>{children}</Box>
-  )
+  return <Box>{children}</Box>;
 };
 
 export default BlankLayout;
-
-
-

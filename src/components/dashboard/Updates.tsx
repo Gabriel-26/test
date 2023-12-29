@@ -27,17 +27,24 @@ const RoomUpdates = () => {
       ] = `Bearer ${token}`;
 
       let endpoint = "/resActLog";
+      let responseDataKey = "data"; // Default key for responseData
 
       if (userRole === "chiefResident" || userRole === "resident") {
         endpoint = "/resActLog/logs/department";
+        responseDataKey = ""; // No additional key needed for responseData
       } else if (userRole === "admin") {
         endpoint = "/admin" + endpoint;
       }
 
       const response = await axiosInstance.get(endpoint, { params: { page } });
+      console.log(response.data);
+
+      const responseData = responseDataKey
+        ? response.data[responseDataKey]
+        : response.data;
 
       const updatedRoomUpdates = await Promise.all(
-        response.data.data.map(async (update) => {
+        responseData.map(async (update) => {
           if (update.role === "resident" || update.role === "chiefResident") {
             let residentEndpoint = `/resActLog/residentName/${update.user_id}`;
 
@@ -47,6 +54,7 @@ const RoomUpdates = () => {
 
             const residentResponse = await axiosInstance.get(residentEndpoint);
             const residentLastName = residentResponse.data.lastName;
+            console.log("Update Data:", update);
 
             return {
               ...update,
@@ -82,8 +90,6 @@ const RoomUpdates = () => {
     <div>
       <DashboardCard title="Updates">
         <Spin spinning={loading}>
-          {/* <Typography.Text strong>Current Page: {currentPage}</Typography.Text> */}
-
           <List
             header={<div>Room Updates</div>}
             footer={<div></div>}
@@ -93,7 +99,7 @@ const RoomUpdates = () => {
               <Item key={`${update.RA_id}_${index}`}>
                 <Typography.Text strong>
                   {`Resident/ Dr. ${
-                    update.residentLastName || update.user_id
+                    update.residentLastName || update.resident_id
                   } has performed the action: ${update.action}`}
                 </Typography.Text>
                 <br />
