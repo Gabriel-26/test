@@ -39,35 +39,51 @@ const ChatPage: React.FC = () => {
       .then((response) => {
         console.log("Chat Group Created:", response.data);
 
-        console.log("Selected Resident Data:", selectedResidents);
-        // Ensure that the response contains the actual chatGroup_id
-        const chatGroupId = response.data;
+        // Check if the response contains chatGroups
+        const chatGroups = response.data.chatGroups || [];
 
-        console.log("chatGroupId:", chatGroupId); // Add this line
+        // Update conversations state with the new chat group
+        setConversations((prevConversations) => [
+          ...prevConversations,
+          ...chatGroups, // Use the chatGroups from the response
+        ]);
 
-        setConversations([...conversations, { chatGroup_id: chatGroupId }]);
-        setSelectedConversation(chatGroupId);
+        // Assuming that the chat group ID is the first item in the array
+        setSelectedConversation(chatGroups[0]?.chatGroup_id);
 
-        // Fetch messages and update sender's name when the conversation is selected
-        axiosInstance
-          .get(`/chatGroupMessages/get/GroupMessages/${chatGroupId}`)
-          .then((response) => {
-            console.log("Response:", response.data);
-            const messagesWithSender = response.data.map((message) => ({
+        // Fetch messages and chat group details for the new chat group
+        const fetchData = async () => {
+          try {
+            // Fetch messages
+            const messagesResponse = await axiosInstance.get(
+              `/chatGroupMessages/get/GroupMessages/${selectedConversation}`
+            );
+
+            const messagesWithSender = messagesResponse.data.map((message) => ({
               message: message.message,
-
               resident_id: message.sender.resident_id,
               resident_fName: message.sender.resident_fName,
               resident_lName: message.sender.resident_lName,
-
               created_at: message.created_at,
             }));
 
             setMessages(messagesWithSender);
-          })
-          .catch((error) => {
-            console.error("Error fetching messages:", error);
-          });
+            console.log("Messages:", messagesResponse);
+            // Fetch chat group details (if needed)
+            const chatGroupDetailsResponse = await axiosInstance.get(
+              `/chatGroupUsers/${selectedConversation}/residents/${sessionStorage.getItem(
+                "resID"
+              )}`
+            );
+
+            console.log("Chat Group Details:", chatGroupDetailsResponse.data);
+            // Use chat group details data as needed
+          } catch (error) {
+            console.error("Error fetching data:", error);
+          }
+        };
+
+        fetchData();
       })
       .catch((error) => {
         console.error("Error creating chat group:", error);
@@ -119,84 +135,58 @@ const ChatPage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (selectedConversation) {
-      // Update the alignment when a conversation is selected
+    // Fetch resident_id from sessionStorage
+    const residentId = sessionStorage.getItem("resID");
 
-      // Fetch messages when the conversation is selected
-      const fetchMessages = async () => {
-        try {
-          const response = await axiosInstance.get(
-            `/chatGroupMessages/get/GroupMessages/${selectedConversation}`
-          );
-
-          const messagesWithSender = response.data.map((message) => ({
-            message: message.message,
-            resident_id: message.sender.resident_id,
-            resident_fName: message.sender.resident_fName,
-            resident_lName: message.sender.resident_lName,
-
-            created_at: message.created_at,
-          }));
-
-          setMessages(messagesWithSender);
-        } catch (error) {
-          console.error("Error fetching messages:", error);
-        }
-      };
-
-      fetchMessages();
-    }
-  }, [selectedConversation]);
-
-  // useEffect(() => {
-  //   // Fetch messages and update sender's name when the conversation is selected
-  //   const fetchMessagesAndSender = async () => {
-  //     if (selectedConversation) {
-  //       try {
-  //         const response = await axiosInstance.get(
-  //           `/chatGroupMessages/get/GroupMessages/${selectedConversation}`
-  //         );
-
-  //         console.log("Response:", response.data);
-  //         const messagesWithSender = response.data.map((message) => ({
-  //           message: message.message,
-  //           sender: {
-  //             resident_id: message.sender.resident_id,
-  //             resident_fName: message.sender.resident_fName,
-  //             resident_lName: message.sender.resident_lName,
-  //           },
-  //           created_at: message.created_at,
-  //         }));
-
-  //         if (messagesWithSender.length > 0) {
-  //           // Update the Sender based on the latest message
-  //           setSender(
-  //             messagesWithSender[messagesWithSender.length - 1].sender
-  //               .resident_id
-  //           );
-  //         }
-
-  //         setMessages(messagesWithSender);
-  //       } catch (error) {
-  //         console.error("Error fetching messages:", error);
-  //       }
-  //     }
-  //   };
-
-  //   fetchMessagesAndSender();
-  // }, [selectedConversation, messages]); // Include messages as a dependency
-
-  useEffect(() => {
     axiosInstance
-      .get("chatGroupUsers/{chatGroupId}/residents/{residentId}")
+      .get(`chatGroup`)
       .then((response) => {
-        console.log("Chat Groups:", response.data); // Add this line
+        console.log("Chat Groups:", response.data);
         setConversations(response.data);
       })
       .catch((error) => {
         console.error("Error fetching chat groups:", error);
       });
-  }, []);
+  }, []); // Empty dependency array to ensure it runs only once
+
+  useEffect(() => {
+    // Fetch messages only if there is a selectedConversation
+    if (selectedConversation) {
+      const fetchData = async () => {
+        try {
+          // Fetch messages
+          const messagesResponse = await axiosInstance.get(
+            `/chatGroupMessages/get/GroupMessages/${selectedConversation}`
+          );
+
+          const messagesWithSender = messagesResponse.data.map((message) => ({
+            message: message.message,
+            resident_id: message.sender.resident_id,
+            resident_fName: message.sender.resident_fName,
+            resident_lName: message.sender.resident_lName,
+            created_at: message.created_at,
+          }));
+
+          setMessages(messagesWithSender);
+          console.log("Messages:", messagesResponse);
+
+          // Fetch chat group details (if needed)
+          const chatGroupDetailsResponse = await axiosInstance.get(
+            `/chatGroupUsers/${selectedConversation}/residents/${sessionStorage.getItem(
+              "resID"
+            )}`
+          );
+
+          console.log("Chat Group Details:", chatGroupDetailsResponse.data);
+          // Use chat group details data as needed
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      };
+
+      fetchData();
+    }
+  }, [selectedConversation]);
 
   const selectConversation = (resident_id: string) => {
     setSelectedConversation(resident_id);
