@@ -294,7 +294,7 @@ const RoomView = () => {
         </Tabs>
         <div style={{ display: "flex", flexWrap: "wrap", gap: "16px" }}>
           <Button
-            variant="outlined"
+            // variant="outlined"
             onClick={showCheckoutConfirmation} // Add the checkout handler
             disabled={patientData.length === 0}
             style={{ flex: 1 }}
@@ -303,7 +303,7 @@ const RoomView = () => {
           </Button>
 
           <Button
-            variant="outlined"
+            // variant="outlined"
             onClick={() => setTransferModalOpen(true)}
             disabled={patientData.length === 0}
             style={{ flex: 1 }}
@@ -311,7 +311,7 @@ const RoomView = () => {
             Transfer Patient
           </Button>
           <Button
-            variant="outlined"
+            // variant="outlined"
             disabled={patientData.length === 0}
             onClick={handleOpenFilePicker} // Open the file picker dialog
             style={{ flex: 1 }}

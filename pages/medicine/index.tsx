@@ -147,7 +147,7 @@ const MedicineList = () => {
         <Spin spinning={loading}>
           <h1>Medicine Formulary</h1>
           <Button
-            variant="contained"
+            // variant="contained"
             color="primary"
             onClick={() => showDrawer()}
             style={{ display: userRole === "admin" ? "block" : "none" }}
@@ -190,7 +190,7 @@ const MedicineList = () => {
                   <TableCell>{medicine.updated_at}</TableCell> */}
                         <TableCell>
                           <Button
-                            variant="text"
+                            // variant="text"
                             color="primary"
                             onClick={() => showDrawer(medicine)}
                             style={{

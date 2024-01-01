@@ -106,7 +106,7 @@ const EditChiefResidentForm = ({ editChiefResident, onFinish, onUpdate }) => {
             htmlType="submit"
             style={{
               backgroundColor: "green",
-              "&:hover": { backgroundColor: "orange" },
+              // "&:hover": { backgroundColor: "orange" },
             }}
           >
             Save

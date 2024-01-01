@@ -28,7 +28,7 @@ const ChatPage: React.FC = () => {
   const [inputMessage, setInputMessage] = useState("");
   const [showResidentsList, setShowResidentsList] = useState(false);
   const [selectedResidents, setSelectedResidents] = useState<string[]>([]);
-  const [pollInterval, setPollInterval] = useState<number | null>(null);
+  const [pollInterval, setPollInterval] = useState<NodeJS.Timer | null>(null);
 
   const fetchChatGroups = async () => {
     try {
@@ -139,15 +139,15 @@ const ChatPage: React.FC = () => {
         resident_id: residentId,
       })
       .then((response) => {
-        setMessages([
-          ...messages,
-          {
-            message: inputMessage,
-            resident_id: residentId,
-            resident_fName: residentFirstName,
-            resident_lName: residentLastName,
-          },
-        ]);
+        const newMessage: Message = {
+          chatGroupMessages_id: response.data.chatGroupMessages_id,
+          message: inputMessage,
+          resident_id: residentId,
+          resident_fName: residentFirstName,
+          resident_lName: residentLastName,
+        };
+
+        setMessages([...messages, newMessage]);
         setInputMessage("");
       })
       .catch((error) => {
@@ -162,15 +162,13 @@ const ChatPage: React.FC = () => {
 
   useEffect(() => {
     if (selectedConversation) {
-      fetchData(selectedConversation);
-
       // Setup polling for the selected conversation
-      const pollInterval = setInterval(() => {
+      const intervalId = setInterval(() => {
         fetchData(selectedConversation);
       }, 5000);
 
       // Cleanup interval on component unmount
-      return () => clearInterval(pollInterval);
+      return () => clearInterval(intervalId);
     }
   }, [selectedConversation]);
 
@@ -339,7 +337,8 @@ const ChatWithChatmate: React.FC<{
   );
 };
 
-export default ChatPage;
-ChatPage.getLayout = function getLayout(page: React.ReactElement) {
+(ChatPage as any).getLayout = function getLayout(page: React.ReactElement) {
   return <FullLayout>{page}</FullLayout>;
 };
+
+export default ChatPage;

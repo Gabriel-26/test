@@ -182,8 +182,10 @@ const Medication = (props: any) => {
           <AutoComplete
             placeholder="Type to search and select a medicine"
             filterOption={(inputValue, option) =>
-              option?.value.toUpperCase().indexOf(inputValue.toUpperCase()) !==
-              -1
+              option?.value
+                ?.toString()
+                .toUpperCase()
+                .indexOf(inputValue.toUpperCase()) !== -1
             }
             onSelect={(value, option) => {
               // Store the selected medicine_name in the form
