@@ -3,6 +3,8 @@ import { create } from "zustand";
 import axiosInstance from "./axiosInstance"; // Import your Axios instance
 
 interface Floor {
+  floor_name: any;
+  floor_id: any;
   id: string;
   name: string;
   // Add other properties as needed
