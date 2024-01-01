@@ -514,9 +514,9 @@ export function EHRForm() {
                 </label>
               );
             })}
-            {errors["phr_HxFrom"] && (
+            {/* {errors["phr_HxFrom"] && (
               <p role="alert">{errors["phr_HxFrom"]?.message}</p>
-            )}
+            )} */}
           </div>
 
           <div className="my-4">
@@ -570,7 +570,7 @@ export function EHRForm() {
                   <input
                     {...register(field)}
                     className="form-checkbox h-4 w-4 text-indigo-600 rounded mr-2"
-                    aria-invalid={errors[field] ? "true" : "false"}
+                    aria-invalid={[] ? "true" : "false"}
                     value={1} // Set the default value to 0
                     type="checkbox"
                     defaultChecked={false} // Set defaultChecked to false
@@ -580,9 +580,9 @@ export function EHRForm() {
                 </label>
               );
             })}
-            {errors["med-records"] && (
+            {/* {errors["med-records"] && (
               <p role="alert">{errors["med-records"]?.message}</p>
-            )}
+            )} */}
           </div>
 
           <div className="my-4">
