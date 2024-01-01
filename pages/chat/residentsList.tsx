@@ -27,7 +27,7 @@ const ResidentsList: React.FC<ResidentsListProps> = ({
 
   useEffect(() => {
     axiosInstance
-      .get("/residents")
+      .get("chatGroupUsers/get/firstAddResidents")
       .then((response) => {
         setResidents(response.data);
         console.log("Residents:", response.data);
@@ -60,6 +60,12 @@ const ResidentsList: React.FC<ResidentsListProps> = ({
           type="primary"
           onClick={handleCreateChatGroup}
           disabled={selectedResidents.length === 0}
+          style={{
+            background: selectedResidents.length > 0 ? "#4CAF50" : "#d9d9d9",
+            borderColor: selectedResidents.length > 0 ? "#4CAF50" : "#d9d9d9",
+            color:
+              selectedResidents.length > 0 ? "white" : "rgba(0, 0, 0, 0.25)",
+          }}
         >
           Create Chat Group
         </Button>,

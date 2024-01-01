@@ -31,17 +31,16 @@ const RoomUpdates = () => {
 
       if (userRole === "chiefResident" || userRole === "resident") {
         endpoint = "/resActLog/logs/department";
-        responseDataKey = ""; // No additional key needed for responseData
+        responseDataKey = "data"; // Consistent key for responseData
       } else if (userRole === "admin") {
         endpoint = "/admin" + endpoint;
       }
 
       const response = await axiosInstance.get(endpoint, { params: { page } });
-      console.log(response.data);
+      console.log("API Response:", response.data);
 
-      const responseData = responseDataKey
-        ? response.data[responseDataKey]
-        : response.data;
+      const responseData = response.data[responseDataKey];
+      console.log("Response Data:", responseData);
 
       const updatedRoomUpdates = await Promise.all(
         responseData.map(async (update) => {

@@ -245,7 +245,9 @@ const AssignResidentRoom = () => {
 
       setLoading(true);
 
-      const response = await axiosInstance.get(`/rooms`);
+      const response = await axiosInstance.get(
+        `/resAssRooms/get/unassignedRooms`
+      );
 
       if (response.status === 200) {
         console.log("Fetched rooms:", response.data); // Add this line to check the fetched data
