@@ -505,6 +505,7 @@ export function EHRForm() {
                 <label key={field} className="flex items-center">
                   <span className="mr-2">{label}</span>
                   <input
+                    //@ts-ignore
                     {...register(field)}
                     className="form-radio h-5 w-5 text-indigo-600 rounded"
                     aria-invalid={errors[field] ? "true" : "false"}
@@ -568,6 +569,7 @@ export function EHRForm() {
               return (
                 <label key={field} className="flex items-center mt-2">
                   <input
+                    //@ts-ignore
                     {...register(field)}
                     className="form-checkbox h-4 w-4 text-indigo-600 rounded mr-2"
                     aria-invalid={[] ? "true" : "false"}
@@ -819,6 +821,7 @@ export function EHRForm() {
                 <label key={field} className="flex items-center">
                   <span>{label}</span>
                   <input
+                    //@ts-ignore
                     {...register(field)}
                     aria-invalid={errors[field] ? "true" : "false"}
                     value={errors[field] ? 0 : 1}
@@ -924,6 +927,7 @@ export function EHRForm() {
                 <label key={field} className="flex items-center">
                   <span>{label}</span>
                   <input
+                    //@ts-ignore
                     {...register(field)}
                     aria-invalid={errors[field] ? "true" : "false"}
                     value={errors[field] ? 0 : 1}
@@ -982,6 +986,7 @@ export function EHRForm() {
                 <label key={field} className="flex items-center">
                   <span>{label}</span>
                   <input
+                    //@ts-ignore
                     {...register(field)}
                     aria-invalid={errors[field] ? "true" : "false"}
                     value={1}
@@ -1042,6 +1047,7 @@ export function EHRForm() {
                 <label key={field} className="flex items-center">
                   <span>{label}</span>
                   <input
+                    //@ts-ignore
                     {...register(field)}
                     aria-invalid={errors[field] ? "true" : "false"}
                     value={errors[field] ? 0 : 1}
@@ -1072,6 +1078,7 @@ export function EHRForm() {
                 <label key={field} className="flex items-center">
                   <span>{label}</span>
                   <input
+                    //@ts-ignore
                     {...register(field)}
                     aria-invalid={errors[field] ? "true" : "false"}
                     value={errors[field] ? 0 : 1}
@@ -1106,6 +1113,7 @@ export function EHRForm() {
                 <label key={field} className="flex items-center">
                   <span>{label}</span>
                   <input
+                    //@ts-ignore
                     {...register(field)}
                     aria-invalid={errors[field] ? "true" : "false"}
                     value={errors[field] ? 0 : 1}
@@ -1134,6 +1142,7 @@ export function EHRForm() {
                 <label key={field} className="flex items-center">
                   <span>{label}</span>
                   <input
+                    //@ts-ignore
                     {...register(field)}
                     aria-invalid={errors[field] ? "true" : "false"}
                     value={errors[field] ? 0 : 1}
@@ -1159,7 +1168,7 @@ export function EHRForm() {
               return (
                 <label key={field} className="flex items-center">
                   <span>{label}</span>
-                  <input
+                  <input //@ts-ignore
                     {...register(field)}
                     aria-invalid={errors[field] ? "true" : "false"}
                     value={errors[field] ? 0 : 1}
@@ -1190,7 +1199,7 @@ export function EHRForm() {
               return (
                 <label key={field} className="flex items-center">
                   <span>{label}</span>
-                  <input
+                  <input //@ts-ignore
                     {...register(field)}
                     aria-invalid={errors[field] ? "true" : "false"}
                     value={errors[field] ? 0 : 1}
@@ -1216,7 +1225,7 @@ export function EHRForm() {
               return (
                 <label key={field} className="flex items-center">
                   <span>{label}</span>
-                  <input
+                  <input //@ts-ignore
                     {...register(field)}
                     aria-invalid={errors[field] ? "true" : "false"}
                     value={errors[field] ? 0 : 1}
@@ -1238,7 +1247,7 @@ export function EHRForm() {
               <span className="font-bold">
                 Chest (Equal chest expansion & symmetrical){" "}
               </span>
-              <input
+              <input //@ts-ignore
                 {...register("phr_chestExpansionAndSymmetrical")}
                 aria-invalid={
                   errors["phr_chestExpansionAndSymmetrical"] ? "true" : "false"
@@ -1269,7 +1278,7 @@ export function EHRForm() {
               return (
                 <label key={field} className="flex items-center">
                   <span>{label}</span>
-                  <input
+                  <input //@ts-ignore
                     {...register(field)}
                     aria-invalid={errors[field] ? "true" : "false"}
                     value={errors[field] ? 0 : 1}
@@ -1302,7 +1311,7 @@ export function EHRForm() {
               return (
                 <label key={field} className="flex items-center">
                   <span>{label}</span>
-                  <input
+                  <input //@ts-ignore
                     {...register(field)}
                     aria-invalid={errors[field] ? "true" : "false"}
                     value={errors[field] ? 0 : 1}
@@ -1329,7 +1338,7 @@ export function EHRForm() {
               return (
                 <label key={field} className="flex items-center">
                   <span>{label}</span>
-                  <input
+                  <input //@ts-ignore
                     {...register(field)}
                     aria-invalid={errors[field] ? "true" : "false"}
                     value={errors[field] ? 0 : 1}
@@ -1363,7 +1372,7 @@ export function EHRForm() {
               return (
                 <label key={field} className="flex items-center">
                   <span>{label}</span>
-                  <input
+                  <input //@ts-ignore
                     {...register(field)}
                     aria-invalid={errors[field] ? "true" : "false"}
                     value={1}
@@ -1420,7 +1429,7 @@ export function EHRForm() {
               return (
                 <label key={field} className="flex items-center">
                   <span>{label}</span>
-                  <input
+                  <input //@ts-ignore
                     {...register(field)}
                     aria-invalid={errors[field] ? "true" : "false"}
                     value={1}
@@ -1440,7 +1449,7 @@ export function EHRForm() {
           <div className="my-4">
             <label className="flex flex-col">
               <span className="font-bold">Grade</span>
-              <input
+              <input //@ts-ignore
                 {...register("phr_grade")}
                 type="number"
                 className="border border-gray-300 px-4 py-2 rounded-lg"
@@ -1462,7 +1471,7 @@ export function EHRForm() {
             <label className="font-bold">Abdomen</label>
             <div className="flex items-center">
               <p className="mr-4">WNL</p>
-              <input
+              <input //@ts-ignore
                 {...register("phr_abdomenWNL")}
                 type="checkbox"
                 className="form-checkbox h-4 w-4 text-indigo-600 rounded"
@@ -1472,7 +1481,7 @@ export function EHRForm() {
 
           <div className="my-4">
             <label className="flex items-center">
-              <input
+              <input //@ts-ignore
                 {...register("phr_massPresent")}
                 type="checkbox"
                 className="form-checkbox h-4 w-4 text-indigo-600 rounded mr-2"
@@ -1480,7 +1489,7 @@ export function EHRForm() {
               <span className="font-bold">Mass Present</span>
             </label>
             <label className="flex flex-col">
-              <input
+              <input //@ts-ignore
                 {...register("phr_specifyMassPresent")}
                 type="text"
                 className="border border-gray-300 px-4 py-2 rounded-lg mt-2"
@@ -1499,7 +1508,7 @@ export function EHRForm() {
               return (
                 <label key={field} className="flex items-center">
                   <span>{label}</span>
-                  <input
+                  <input //@ts-ignore
                     {...register(field)}
                     aria-invalid={errors[field] ? "true" : "false"}
                     value={1}
@@ -1520,7 +1529,7 @@ export function EHRForm() {
             <label className="font-bold">Liver & Spleen</label>
             <div className="flex items-center">
               <p className="mr-4">Palpable and WNL</p>
-              <input
+              <input //@ts-ignore
                 {...register("liver-spleen")}
                 type="checkbox"
                 className="form-checkbox h-4 w-4 text-indigo-600 rounded"
@@ -1537,7 +1546,7 @@ export function EHRForm() {
               return (
                 <label key={field} className="flex items-center">
                   <span>{label}</span>
-                  <input
+                  <input //@ts-ignore
                     {...register(field)}
                     aria-invalid={errors[field] ? "true" : "false"}
                     value={errors[field] ? 0 : 1}
@@ -1563,7 +1572,7 @@ export function EHRForm() {
               return (
                 <label key={field} className="flex items-center">
                   <span>{label}</span>
-                  <input
+                  <input //@ts-ignore
                     {...register(field)}
                     aria-invalid={errors[field] ? "true" : "false"}
                     value={errors[field] ? 0 : 1}
@@ -1599,7 +1608,7 @@ export function EHRForm() {
               return (
                 <label key={field} className="flex items-center">
                   <span>{label}</span>
-                  <input
+                  <input //@ts-ignore
                     {...register(field)}
                     aria-invalid={errors[field] ? "true" : "false"}
                     value={errors[field] ? 0 : 1}
@@ -1625,7 +1634,7 @@ export function EHRForm() {
               return (
                 <label key={field} className="flex items-center">
                   <span>{label}</span>
-                  <input
+                  <input //@ts-ignore
                     {...register(field)}
                     aria-invalid={errors[field] ? "true" : "false"}
                     value={errors[field] ? 0 : 1}
@@ -1653,7 +1662,7 @@ export function EHRForm() {
               return (
                 <label key={field} className="flex items-center">
                   <span>{label}</span>
-                  <input
+                  <input //@ts-ignore
                     {...register(field)}
                     aria-invalid={errors[field] ? "true" : "false"}
                     value={1}
@@ -1673,7 +1682,7 @@ export function EHRForm() {
           <div className="my-4">
             <label className="flex flex-col">
               <span className="font-bold">Capillary refill time</span>
-              <input
+              <input //@ts-ignore
                 {...register("phr_capillaryRefillTime")}
                 type="number"
                 className="border border-gray-300 px-4 py-2 rounded-lg"
@@ -1693,7 +1702,7 @@ export function EHRForm() {
               return (
                 <label key={field} className="flex items-center">
                   <span>{label}</span>
-                  <input
+                  <input //@ts-ignore
                     {...register(field)}
                     aria-invalid={errors[field] ? "true" : "false"}
                     value={1}
