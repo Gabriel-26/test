@@ -29,7 +29,7 @@ export function EHRForm() {
       }
       setLoading(false);
     } catch (error) {
-      setError(error);
+      // setError(error);
       setLoading(false);
     }
   };
