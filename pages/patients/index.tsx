@@ -19,8 +19,13 @@ import { getUserRole } from "../../src/components/utils/roles";
 interface PatientSearchProps {
   getLayout: (page: React.ReactNode) => React.ReactNode;
 }
+interface PatientSearchWithLayoutProps extends PatientSearchProps {
+  getLayout: (page: ReactElement) => ReactElement;
+}
 
-const PatientSearch: React.FC<PatientSearchProps> = ({ getLayout }) => {
+const PatientSearch: React.FC<PatientSearchProps> & {
+  getLayout?: (page: ReactElement) => ReactElement;
+} = (props) => {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [patients, setPatients] = useState([]);
@@ -151,7 +156,8 @@ const PatientSearch: React.FC<PatientSearchProps> = ({ getLayout }) => {
   );
 };
 
-export default PatientSearch;
 PatientSearch.getLayout = function getLayout(page: ReactElement) {
   return <FullLayout>{page}</FullLayout>;
 };
+
+export default PatientSearch as React.FC<PatientSearchWithLayoutProps>;

@@ -360,7 +360,7 @@ const ChiefResident = () => {
                       </TableCell>
                       <TableCell>
                         <Button
-                          variant="text"
+                          // variant="text"
                           color="primary"
                           onClick={() => handleEditDoctor(doctor)}
                         >

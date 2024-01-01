@@ -208,10 +208,16 @@ const RoomView = () => {
 
   return (
     <PageContainer
+      //@ts-ignore
       title={queryRoomName || "(Room Name)"}
       description="this is Shadow"
     >
-      <DashboardCard title={queryRoomName || "(Room Name)"}>
+      <DashboardCard
+        title={
+          (Array.isArray(queryRoomName) ? queryRoomName[0] : queryRoomName) ||
+          "(Room Name)"
+        }
+      >
         <Tabs defaultValue="pninfo" className="min-w-[600px] w-full md:w-[90%]">
           <TabsList className="flex">
             <TabsTrigger

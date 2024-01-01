@@ -5,18 +5,20 @@ import { ListSubheader, styled, Theme, List } from "@mui/material";
 type NavGroup = {
   navlabel?: boolean;
   subheader?: string;
-  items: ItemType[];
+  items?: ItemType[]; // Include the 'items' property conditionally
 };
 
 interface ItemType {
-  disabled: boolean | undefined;
-  external: any;
+  disabled?: boolean;
+  external?: any;
   id?: string;
   navlabel?: boolean;
   subheader?: string;
   title?: string;
-  // icon?: any;
+  icon?: React.ElementType;
   href?: any;
+  items?: ItemType[]; // Include the 'items' property conditionally
+
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
 }
 

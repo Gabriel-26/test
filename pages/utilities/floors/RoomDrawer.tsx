@@ -22,6 +22,7 @@ const RoomDrawer = ({ visible, onClose, floorId }: any) => {
         // Add other properties as needed
       };
       // Update the rooms in the Zustand store
+      //@ts-ignore
       setFloors((prevFloors: any) =>
         prevFloors.map((floor: any) =>
           floor.id === floorId

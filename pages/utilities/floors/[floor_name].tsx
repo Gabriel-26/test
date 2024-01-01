@@ -302,7 +302,7 @@ const Rooms = () => {
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             {userRole === "admin" && (
               <Button
-                variant="contained"
+                // variant="contained"
                 color="secondary"
                 onClick={() => setShowAddForm(true)}
               >
@@ -312,17 +312,16 @@ const Rooms = () => {
             {userRole === "admin" && (
               <div>
                 <Button
-                  variant="contained"
                   color="primary"
-                  onClick={() => handleEditFloor()}
+                  onClick={() => handleEditFloor(editFloorId, editFloorName)}
                 >
                   Edit Floor
                 </Button>
+
                 <Button
-                  variant="contained"
                   color="secondary"
                   style={{ marginLeft: "10px" }}
-                  onClick={() => handleDeleteFloor()}
+                  onClick={() => handleDeleteFloor(deleteFloorId)}
                 >
                   Delete Floor
                 </Button>
@@ -331,7 +330,7 @@ const Rooms = () => {
 
             {userRole === "admin" && (
               <Button
-                variant="contained"
+                // variant="contained"
                 color="secondary"
                 onClick={() => setShowAddRoomForm(true)}
               >

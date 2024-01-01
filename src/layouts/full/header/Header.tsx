@@ -64,12 +64,12 @@ const Header = ({ toggleMobileSidebar }: ItemType) => {
         </IconButton> */}
         <NotificationDropdown />
         <Box flexGrow={1} />
-
         {/* Adjust the height to your desired space */}
-        <Stack spacing={1} direction="row" alignItems="center">
-          <Profile loggedInUserName={loggedInUserName} />{" "}
-          {/* Pass the username as prop */}
-        </Stack>
+        {/* <Stack spacing={1} direction="row" alignItems="center"> */}
+        {/* @ts-ignore */}
+        <Profile loggedInUserName={loggedInUserName} />{" "}
+        {/* Pass the username as prop */}
+        {/* </Stack> */}
       </ToolbarStyled>
     </AppBarStyled>
   );

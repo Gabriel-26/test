@@ -13,12 +13,26 @@ import { useRouter } from "next/router";
 import FullLayout from "../../src/layouts/full/FullLayout";
 import FileViewer from "../utilities/patientroom/FileViewer";
 
+interface PatientDetails {
+  patient_id: string;
+  patient_fName: string;
+  patient_lName: string;
+  patient_mName: string;
+  patient_age: number;
+  patient_sex: string;
+  created_at: string;
+  updated_at: string;
+  // Add other fields as needed
+}
+
 const PatientHistoryPage = () => {
   const theme = useTheme();
   const router = useRouter();
   const { patient_id: patientID } = router.query;
 
-  const [patientDetails, setPatientDetails] = useState({});
+  const [patientDetails, setPatientDetails] = useState<PatientDetails | null>(
+    null
+  );
   const [loadingDetails, setLoadingDetails] = useState(true);
   const [errorDetails, setErrorDetails] = useState(null);
 
@@ -33,13 +47,14 @@ const PatientHistoryPage = () => {
         ] = `Bearer ${token}`;
 
         console.log("Patient ID", patientID);
+
         const response = await axiosInstance.get(
           `patients/getPatientbyId/${patientID}`
         );
 
         console.log("Response:", response.data);
 
-        setPatientDetails(response.data);
+        setPatientDetails(response.data as PatientDetails);
         setLoadingDetails(false);
       } catch (error) {
         console.error("Error fetching patient details:", error);
@@ -61,8 +76,8 @@ const PatientHistoryPage = () => {
         gutterBottom
         style={{ color: theme.palette.primary.main }}
       >
-        Patient History - {patientDetails.patient_fName}{" "}
-        {patientDetails.patient_lName}
+        Patient History - {patientDetails?.patient_fName}{" "}
+        {patientDetails?.patient_lName}
       </Typography>
 
       {loadingDetails && <CircularProgress style={{ margin: "20px" }} />}

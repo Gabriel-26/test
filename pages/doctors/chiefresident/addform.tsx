@@ -116,7 +116,7 @@ const AddChiefResidentForm = ({
             htmlType="submit"
             style={{
               backgroundColor: "green",
-              "&:hover": { backgroundColor: "orange" },
+              // "&:hover": { backgroundColor: "orange" },
             }}
           >
             Save
