@@ -11,6 +11,11 @@ import { getUserRole } from "../../../components/utils/roles"; // Import the get
 import useFloorStore from "../../../components/utils/zustandStore";
 import axiosInstance from "../../../components/utils/axiosInstance";
 
+interface Floor {
+  floor_name: string;
+  floor_id: number; // Assuming floor_id is of type number, adjust accordingly
+  // ... other properties if any
+}
 const SidebarItems = ({ toggleMobileSidebar }: any) => {
   const { pathname } = useRouter();
   const pathDirect = pathname;
