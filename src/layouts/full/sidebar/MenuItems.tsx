@@ -36,6 +36,14 @@ const Menuitems = [
   },
 
   {
+    id: uniqueId(),
+    title: "Assigned Rooms",
+    icon: IconLayoutDashboard,
+    href: "/doctors/residents/assignedRooms",
+    role: "resident", // This item is visible to all roles
+  },
+
+  {
     navlabel: true,
     id: uniqueId(),
     title: "Home",
