@@ -118,6 +118,7 @@ const AssignedRoomsPage: React.FC = () => {
 
 export default AssignedRoomsPage;
 
+/* @ts-ignore */
 AssignedRoomsPage.getLayout = function getLayout(page: ReactElement) {
   return <FullLayout>{page}</FullLayout>;
 };
