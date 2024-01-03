@@ -5,6 +5,7 @@ import FullLayout from "../../../src/layouts/full/FullLayout";
 import PageContainer from "../../../src/components/container/PageContainer";
 import DashboardCard from "../../../src/components/shared/DashboardCard";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import React from "react";
 
 const AssignedRoomsPage: React.FC = () => {
   const [assignedRooms, setAssignedRooms] = useState([]);
