@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Input, List, Avatar } from "antd";
+import { Input, List, Avatar, Modal, Button } from "antd";
 import FullLayout from "../../src/layouts/full/FullLayout";
 import axiosInstance from "../../src/components/utils/axiosInstance";
 import ResidentsList from "./residentsList";
+import { useRouter } from "next/router";
+import PatientListPage from "./patientList";
 
 interface Message {
   chatGroupMessages_id: string;
@@ -29,6 +31,10 @@ const ChatPage: React.FC = () => {
   const [showResidentsList, setShowResidentsList] = useState(false);
   const [selectedResidents, setSelectedResidents] = useState<string[]>([]);
   const [pollInterval, setPollInterval] = useState<NodeJS.Timer | null>(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedPatients, setSelectedPatients] = useState<string[]>([]);
+
+  const router = useRouter(); // Add this line
 
   const fetchChatGroups = async () => {
     try {
@@ -61,6 +67,10 @@ const ChatPage: React.FC = () => {
     } catch (error) {
       console.error("Error fetching data:", error);
     }
+  };
+
+  const handleSelectPatients = (selectedPatients: string[]) => {
+    setSelectedPatients(selectedPatients);
   };
 
   const handleSelectResidents = (selectedResidents: string[]) => {
@@ -122,37 +132,86 @@ const ChatPage: React.FC = () => {
     setShowResidentsList(!showResidentsList);
   };
 
-  const token = sessionStorage.getItem("authToken");
+  const token = localStorage.getItem("authToken");
   axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
   const handleSendMessage = () => {
     if (inputMessage.trim() === "") return;
 
-    const residentId = sessionStorage.getItem("resID");
-    const residentFirstName = sessionStorage.getItem("resFirstName");
-    const residentLastName = sessionStorage.getItem("resLastname");
+    const residentId = localStorage.getItem("resID");
+    const residentFirstName = localStorage.getItem("resFirstName");
+    const residentLastName = localStorage.getItem("resLastname");
+
+    // Check if there are selected patients
+    const hasSelectedPatients = selectedPatients.length > 0;
+
+    // Construct the message
+    let messageContent = inputMessage;
+
+    if (hasSelectedPatients) {
+      // Use the first selected patient ID to generate the link
+      const patientId = selectedPatients[0];
+      const patientLink = generateShareLinks([patientId]);
+      // Append patient link to the message
+      messageContent;
+    }
 
     axiosInstance
       .post(`/chatGroupMessages`, {
         chatGroup_id: selectedConversation,
-        message: inputMessage,
+        message: messageContent,
         resident_id: residentId,
       })
       .then((response) => {
         const newMessage: Message = {
           chatGroupMessages_id: response.data.chatGroupMessages_id,
-          message: inputMessage,
+          message: messageContent,
           resident_id: residentId,
           resident_fName: residentFirstName,
           resident_lName: residentLastName,
         };
 
         setMessages([...messages, newMessage]);
-        setInputMessage("");
+        setInputMessage(""); // Clear the input message if needed, remove if not
       })
       .catch((error) => {
         console.error("Error sending message:", error);
       });
+  };
+
+  const selectConversation = (resident_id: string) => {
+    setSelectedConversation(resident_id);
+  };
+
+  const handleSharePatientHistory = () => {
+    setModalVisible(true);
+  };
+
+  const handleConfirmShare = () => {
+    // Handle confirmation and generate links here
+    const links = generateShareLinks(selectedPatients);
+    console.log("Share Links:", links);
+
+    // Create messages for each patient with their respective link
+    const messages = links.map(
+      (link, index) => `Patient ${selectedPatients[index]}: ${link}`
+    );
+
+    // Preserve the existing content of inputMessage and append the new messages
+    setInputMessage((prevInputMessage) => {
+      return prevInputMessage + " " + messages.join(" ");
+    });
+
+    // Close the modal
+    setModalVisible(false);
+  };
+
+  const generateShareLinks = (selectedPatients: string[]): string[] => {
+    // Implement your logic to generate a share link for each patient
+    const patientLinks = selectedPatients.map(
+      (patientId) => `/patients/${patientId}`
+    );
+    return patientLinks;
   };
 
   useEffect(() => {
@@ -171,10 +230,6 @@ const ChatPage: React.FC = () => {
       return () => clearInterval(intervalId);
     }
   }, [selectedConversation]);
-
-  const selectConversation = (resident_id: string) => {
-    setSelectedConversation(resident_id);
-  };
 
   return (
     <div className="flex flex-col h-full">
@@ -228,6 +283,7 @@ const ChatPage: React.FC = () => {
               handleSendMessage={handleSendMessage}
               setInputMessage={setInputMessage}
               conversations={conversations}
+              handleSharePatientHistory={handleSharePatientHistory}
             />
           ) : (
             <div className="flex items-center justify-center h-full">
@@ -244,6 +300,29 @@ const ChatPage: React.FC = () => {
           />
         </div>
       )}
+      {/* Patient List Modal */}
+      <Modal
+        title="Select Patients to Share"
+        open={modalVisible}
+        onOk={handleConfirmShare}
+        onCancel={() => setModalVisible(false)}
+        footer={[
+          <Button key="cancel" onClick={() => setModalVisible(false)}>
+            Cancel
+          </Button>,
+          <Button
+            key="share"
+            type="primary"
+            onClick={handleConfirmShare}
+            style={{ background: "#52c41a", borderColor: "#52c41a" }}
+          >
+            Share
+          </Button>,
+        ]}
+      >
+        {/* Pass handleSelectPatients function to PatientListPage */}
+        <PatientListPage onSelectPatients={handleSelectPatients} />
+      </Modal>
     </div>
   );
 };
@@ -255,6 +334,7 @@ const ChatWithChatmate: React.FC<{
   handleSendMessage: () => void;
   setInputMessage: (value: string) => void;
   conversations: Conversation[];
+  handleSharePatientHistory: () => void;
 }> = ({
   selectedConversation,
   messages,
@@ -262,9 +342,10 @@ const ChatWithChatmate: React.FC<{
   handleSendMessage,
   setInputMessage,
   conversations,
+  handleSharePatientHistory,
 }) => {
-  const currentUserFirstName = sessionStorage.getItem("resFirstName");
-  const currentUserLastName = sessionStorage.getItem("resLastname");
+  const currentUserFirstName = localStorage.getItem("resFirstName");
+  const currentUserLastName = localStorage.getItem("resLastname");
 
   const currentConversation = conversations?.find(
     (conversation) => conversation.chatGroup_id === selectedConversation
@@ -289,26 +370,99 @@ const ChatWithChatmate: React.FC<{
           dataSource={messages}
           renderItem={(message, index) => {
             const isCurrentUser =
-              message.resident_id === sessionStorage.getItem("resID");
+              message.resident_id === localStorage.getItem("resID");
             const messageAlignment = isCurrentUser ? "right" : "left";
+            const patientLinkRegex = /Patient (\w+): (\S+)/g;
+            let matches = [];
+            let match;
 
-            return (
-              <List.Item
-                style={{
-                  textAlign: messageAlignment,
-                  marginBottom: "8px",
-                }}
-              >
-                <List.Item.Meta
-                  title={
-                    isCurrentUser
-                      ? `${currentUserFirstName} ${currentUserLastName}`
-                      : `${message.resident_fName} ${message.resident_lName}`
-                  }
-                  description={message.message}
-                />
-              </List.Item>
-            );
+            // Use a loop to find all matches in the message
+            while ((match = patientLinkRegex.exec(message.message)) !== null) {
+              const patientId = match[1];
+              const patientLink = match[2];
+
+              matches.push({
+                patientId,
+                patientLink,
+                start: match.index,
+                end: match.index + match[0].length,
+              });
+            }
+
+            // If matches found, render the message with patient links
+            if (matches.length > 0) {
+              const messageParts = [];
+              let lastIndex = 0;
+
+              matches.forEach((match, matchIndex) => {
+                // Add the text before the match
+                const beforeText = message.message.substring(
+                  lastIndex,
+                  match.start
+                );
+                messageParts.push(
+                  <span key={`before_${matchIndex}`}>{beforeText}</span>
+                );
+
+                // Add the patient link
+                messageParts.push(
+                  <a
+                    key={`link_${matchIndex}`}
+                    href={match.patientLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >{`Patient ${match.patientId}`}</a>
+                );
+
+                // Update the lastIndex
+                lastIndex = match.end;
+              });
+
+              // Add the text after the last match
+              const afterText = message.message.substring(lastIndex);
+              messageParts.push(
+                <span key={`after_${matches.length}`}>{afterText}</span>
+              );
+
+              return (
+                <List.Item
+                  key={index}
+                  style={{
+                    textAlign: messageAlignment,
+                    marginBottom: "8px",
+                  }}
+                >
+                  <List.Item.Meta
+                    title={
+                      isCurrentUser
+                        ? `${currentUserFirstName} ${currentUserLastName}`
+                        : `${message.resident_fName} ${message.resident_lName}`
+                    }
+                    description={messageParts}
+                  />
+                </List.Item>
+              );
+            } else {
+              // If no matches found, render the message without a link
+              return (
+                <List.Item
+                  key={index}
+                  style={{
+                    textAlign: messageAlignment,
+                    marginBottom: "8px",
+                  }}
+                >
+                  <List.Item.Meta
+                    title={
+                      isCurrentUser
+                        ? `${currentUserFirstName} ${currentUserLastName}`
+                        : `${message.resident_fName} ${message.resident_lName}`
+                    }
+                    description={message.message}
+                  />
+                </List.Item>
+              );
+            }
           }}
         />
       </div>
@@ -326,10 +480,16 @@ const ChatWithChatmate: React.FC<{
             style={{ flex: 1, marginRight: "8px" }}
           />
           <button
-            className="bg-blue-500 text-white py-2 px-4 rounded"
+            className="bg-blue-500 text-white py-2 px-4 rounded mr-2"
             onClick={handleSendMessage}
           >
             Send
+          </button>
+          <button
+            className="bg-green-500 text-white py-2 px-4 rounded"
+            onClick={handleSharePatientHistory}
+          >
+            Share Patient History
           </button>
         </div>
       </div>

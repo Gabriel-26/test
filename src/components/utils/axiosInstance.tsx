@@ -11,9 +11,9 @@ const getXXsrfToken = (config: AxiosRequestConfig) => {
 
 // Create Axios instance with default configurations
 const axiosInstance: AxiosInstance = axios.create({
-  baseURL: "https://hospitalcapstone.onrender.com/api",
+  baseURL: "http://127.0.0.1:8000/api",
   headers: {
-    "X-Requested-With": "XTMLHttpRequest",
+    "X-Requested-With": "XMLHttpRequest",
     "Content-Type": "application/json",
   }, // Replace with your Laravel API URL
   withCredentials: true, // Enable CORS credentials to include cookies

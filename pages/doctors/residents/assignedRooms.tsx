@@ -23,7 +23,7 @@ const AssignedRoomsPage: React.FC = () => {
       key: "room_name",
     },
     {
-      title: "Is Finished",
+      title: "Status",
       dataIndex: "isFinished",
       key: "isFinished",
       render: (text, record) => (
@@ -46,7 +46,7 @@ const AssignedRoomsPage: React.FC = () => {
 
   const fetchAssignedRooms = async () => {
     try {
-      const token = sessionStorage.getItem("authToken");
+      const token = localStorage.getItem("authToken");
       axiosInstance.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${token}`;
@@ -67,7 +67,7 @@ const AssignedRoomsPage: React.FC = () => {
 
   const handleUpdateIsFinished = async (resAssRoom_id, isFinished) => {
     try {
-      const token = sessionStorage.getItem("authToken");
+      const token = localStorage.getItem("authToken");
       axiosInstance.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${token}`;

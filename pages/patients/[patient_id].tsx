@@ -41,7 +41,7 @@ const PatientHistoryPage = () => {
       try {
         console.log("Fetching patient details for patient ID:", patientID);
 
-        const token = sessionStorage.getItem("authToken");
+        const token = localStorage.getItem("authToken");
         axiosInstance.defaults.headers.common[
           "Authorization"
         ] = `Bearer ${token}`;

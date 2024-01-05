@@ -58,8 +58,8 @@ const Doctors = () => {
     try {
       setLoading(true);
 
-      const token = sessionStorage.getItem("authToken");
-      const role = sessionStorage.getItem("userRole");
+      const token = localStorage.getItem("authToken");
+      const role = localStorage.getItem("userRole");
 
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 

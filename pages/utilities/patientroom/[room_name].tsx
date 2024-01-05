@@ -81,8 +81,8 @@ const RoomView = () => {
     }
     console.log("Selected Room ID:", selectedRoomId); // Add this log statement
 
-    const token = sessionStorage.getItem("authToken");
-    const residentID = sessionStorage.getItem("resID");
+    const token = localStorage.getItem("authToken");
+    const residentID = localStorage.getItem("resID");
 
     if (!residentID) {
       console.error("Resident ID not found in session storage");
@@ -130,7 +130,7 @@ const RoomView = () => {
   };
 
   useEffect(() => {
-    const token = sessionStorage.getItem("authToken");
+    const token = localStorage.getItem("authToken");
     const apiUrl = "/patAssRooms/get/AvailableRooms"; // Updated API route
 
     axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
@@ -151,7 +151,7 @@ const RoomView = () => {
       return;
     }
 
-    const token = sessionStorage.getItem("authToken");
+    const token = localStorage.getItem("authToken");
     const apiUrl = `/patAssRooms/transferPatient/${patientData[0].patient_id}`;
 
     const requestBody = {
@@ -186,7 +186,7 @@ const RoomView = () => {
       return;
     }
 
-    const token = sessionStorage.getItem("authToken");
+    const token = localStorage.getItem("authToken");
     const apiUrl = `/patAssRooms/checkout/${patientData[0].patient_id}`;
 
     axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;

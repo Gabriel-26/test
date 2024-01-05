@@ -22,13 +22,13 @@ const useResidentAuth = () => {
 
       console.log("Resident ID:", resident_id);
 
-      sessionStorage.setItem("authToken", token);
-      sessionStorage.setItem("userRole", role); // Save the role in the session
-      sessionStorage.setItem("resID", resident_id);
-      sessionStorage.setItem("resFirstName", resident_fName);
-      sessionStorage.setItem("resLastname", resident_lName);
-      sessionStorage.setItem("depID", depId);
-      sessionStorage.setItem("userN", username);
+      localStorage.setItem("authToken", token);
+      localStorage.setItem("userRole", role); // Save the role in the session
+      localStorage.setItem("resID", resident_id);
+      localStorage.setItem("resFirstName", resident_fName);
+      localStorage.setItem("resLastname", resident_lName);
+      localStorage.setItem("depID", depId);
+      localStorage.setItem("userN", username);
       router.push("/");
       return "success";
     } catch (error) {
@@ -40,17 +40,17 @@ const useResidentAuth = () => {
   };
 
   const logout = async () => {
-    const token = sessionStorage.getItem("authToken");
+    const token = localStorage.getItem("authToken");
     // Set the token in Axios headers for this request
     axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-    sessionStorage.removeItem("authToken");
-    sessionStorage.removeItem("userRole");
-    sessionStorage.removeItem("resID");
-    sessionStorage.removeItem("resFirstName");
-    sessionStorage.removeItem("resLastname");
-    sessionStorage.removeItem("depID");
-    sessionStorage.removeItem("userN");
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("userRole");
+    localStorage.removeItem("resID");
+    localStorage.removeItem("resFirstName");
+    localStorage.removeItem("resLastname");
+    localStorage.removeItem("depID");
+    localStorage.removeItem("userN");
 
     await axiosInstance.get("/logout");
     router.push("/authentication/login");

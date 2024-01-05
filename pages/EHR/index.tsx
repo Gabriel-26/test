@@ -18,7 +18,7 @@ export function EHRForm() {
 
   const fetchRoomData = async () => {
     try {
-      const token = sessionStorage.getItem("authToken");
+      const token = localStorage.getItem("authToken");
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
       const response = await axios.get("patAssRooms/get/unassignedRooms"); // Adjust the endpoint as per your API
@@ -305,7 +305,7 @@ export function EHRForm() {
       phr_skinNodules: data.phr_skinNodules ? 1 : 0,
       phr_skinUlcer: data.phr_skinUlcer ? 1 : 0,
     };
-    const token = sessionStorage.getItem("authToken");
+    const token = localStorage.getItem("authToken");
     // Set the token in Axios headers for this request
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 

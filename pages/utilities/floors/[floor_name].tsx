@@ -81,13 +81,13 @@ const Rooms = () => {
   const fetchRooms = async (floorId) => {
     try {
       setLoading(true);
-      const token = sessionStorage.getItem("authToken");
+      const token = localStorage.getItem("authToken");
       axiosInstance.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${token}`;
 
       let url = "/rooms";
-      const userRole = sessionStorage.getItem("userRole");
+      const userRole = localStorage.getItem("userRole");
       if (userRole === "admin") {
         url = "/admin/rooms";
       }
@@ -227,12 +227,12 @@ const Rooms = () => {
 
   const handleAddFloor = async () => {
     try {
-      const token = sessionStorage.getItem("authToken");
+      const token = localStorage.getItem("authToken");
       axiosInstance.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${token}`;
 
-      const userRole = sessionStorage.getItem("userRole");
+      const userRole = localStorage.getItem("userRole");
       let url = "/floors";
       if (userRole === "admin") {
         url = "/admin/floors";
@@ -258,12 +258,12 @@ const Rooms = () => {
 
   const handleAddRoom = async () => {
     try {
-      const token = sessionStorage.getItem("authToken");
+      const token = localStorage.getItem("authToken");
       axiosInstance.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${token}`;
 
-      const userRole = sessionStorage.getItem("userRole");
+      const userRole = localStorage.getItem("userRole");
       let url = "/rooms";
       if (userRole === "admin") {
         url = "/admin/rooms";
@@ -488,7 +488,7 @@ const Rooms = () => {
       {/* Edit Floor Modal */}
       <Modal
         title="Edit Floor"
-        visible={showEditFloorModal}
+        open={showEditFloorModal}
         onCancel={() => setShowEditFloorModal(false)}
         onOk={handleConfirmEditFloor}
       >
@@ -517,10 +517,10 @@ const Rooms = () => {
           </Form.Item>
         </Form>
       </Modal>
-      ;{/* Delete Floor Modal */}
+      {/* Delete Floor Modal */}
       <Modal
         title="Delete Floor"
-        visible={showDeleteFloorModal}
+        open={showDeleteFloorModal}
         onCancel={() => setShowDeleteFloorModal(false)}
         onOk={handleConfirmDeleteFloor}
         okButtonProps={{
@@ -543,7 +543,7 @@ const Rooms = () => {
       {/* Edit Room Modal */}
       <Modal
         title="Edit Room"
-        visible={showEditRoomModal}
+        open={showEditRoomModal}
         onCancel={() => setShowEditRoomModal(false)}
         onOk={handleConfirmEditRoom}
       >
@@ -577,7 +577,7 @@ const Rooms = () => {
       {/* Delete Room Modal */}
       <Modal
         title="Delete Room"
-        visible={showDeleteRoomModal}
+        open={showDeleteRoomModal}
         onCancel={() => setShowDeleteRoomModal(false)}
         onOk={handleConfirmDeleteRoom}
         okButtonProps={{

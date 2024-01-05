@@ -21,7 +21,7 @@ const ResidentsList: React.FC<ResidentsListProps> = ({
   const [residents, setResidents] = useState<Resident[]>([]);
   const [selectedResidents, setSelectedResidents] = useState<string[]>([]);
 
-  const token = sessionStorage.getItem("authToken");
+  const token = localStorage.getItem("authToken");
   // Set the token in Axios headers for this request
   axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 

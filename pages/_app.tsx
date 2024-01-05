@@ -34,8 +34,8 @@ const MyApp = (props: MyAppProps) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const authToken = sessionStorage.getItem("authToken");
-    const userRole = sessionStorage.getItem("userRole");
+    const authToken = localStorage.getItem("authToken");
+    const userRole = localStorage.getItem("userRole");
 
     const simulateLoading = async () => {
       await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate a 5-second delay

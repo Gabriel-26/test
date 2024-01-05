@@ -7,8 +7,14 @@ import {
   IconTypography,
   IconUserPlus,
 } from "@tabler/icons-react";
-
+import { IoChatbubbles } from "react-icons/io5";
 import { uniqueId } from "lodash";
+import { BiSolidDashboard } from "react-icons/bi";
+import { MdAssignment } from "react-icons/md";
+import { MdAssignmentAdd } from "react-icons/md";
+import { BsFillFilePersonFill } from "react-icons/bs";
+import { RiMedicineBottleFill } from "react-icons/ri";
+import { FaUserDoctor } from "react-icons/fa6";
 
 // Define your menu items with a "role" property
 const Menuitems = [
@@ -22,7 +28,7 @@ const Menuitems = [
   {
     id: uniqueId(),
     title: "Dashboard",
-    icon: IconLayoutDashboard,
+    icon: BiSolidDashboard,
     href: "/",
     role: "all", // This item is visible to all roles
   },
@@ -30,17 +36,9 @@ const Menuitems = [
   {
     id: uniqueId(),
     title: "Chat",
-    icon: IconLayoutDashboard,
+    icon: IoChatbubbles,
     href: "/chat",
-    role: "all", // This item is visible to all roles
-  },
-
-  {
-    id: uniqueId(),
-    title: "Assigned Rooms",
-    icon: IconLayoutDashboard,
-    href: "/doctors/residents/assignedRooms",
-    role: "resident", // This item is visible to all roles
+    role: ["chiefResident", "resident"],
   },
 
   {
@@ -48,28 +46,36 @@ const Menuitems = [
     id: uniqueId(),
     title: "Home",
     subheader: "Doctors",
-    role: ["chiefResident", "admin"], // This item is visible to both "chiefResident" and "admin"
+    role: ["chiefResident", "admin", "resident"], // This item is visible to both "chiefResident" and "admin"
   },
   {
     id: uniqueId(),
     title: "Residents",
-    icon: IconLogin,
+    icon: FaUserDoctor,
     href: "/doctors/residents",
     role: "admin", // This item is visible to residents and admin
   },
   {
     id: uniqueId(),
     title: "Chief Resident",
-    icon: IconLogin,
+    icon: FaUserDoctor,
     href: "/doctors/chiefresident",
     role: "admin", // This item is visible to residents and admin
   },
   {
     id: uniqueId(),
     title: "Assign Residents",
-    icon: IconLogin,
+    icon: MdAssignmentAdd,
     href: "/doctors/chiefresident/assignResident",
     role: ["chiefResident"], // This item is visible to residents and admin
+  },
+
+  {
+    id: uniqueId(),
+    title: "Assigned Rooms",
+    icon: MdAssignment,
+    href: "/doctors/residents/assignedRooms",
+    role: "resident", // This item is visible to all roles
   },
   {
     navlabel: true,
@@ -81,7 +87,7 @@ const Menuitems = [
   {
     id: uniqueId(),
     title: "Patients",
-    icon: IconLogin,
+    icon: BsFillFilePersonFill,
     href: "/patients",
     role: ["chiefResident", "resident"], // This item is visible to residents and admin
   },
@@ -133,7 +139,7 @@ const Menuitems = [
   {
     id: uniqueId(),
     title: "Medicines",
-    icon: IconAperture,
+    icon: RiMedicineBottleFill,
     href: "/medicine",
     role: "all", // This item is visible to all roles
   },

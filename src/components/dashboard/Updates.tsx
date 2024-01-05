@@ -19,8 +19,8 @@ const RoomUpdates = () => {
 
   const fetchData = async (page = 1) => {
     try {
-      const token = sessionStorage.getItem("authToken");
-      const userRole = sessionStorage.getItem("userRole");
+      const token = localStorage.getItem("authToken");
+      const userRole = localStorage.getItem("userRole");
 
       axiosInstance.defaults.headers.common[
         "Authorization"

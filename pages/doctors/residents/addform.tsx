@@ -23,7 +23,7 @@ const AddDoctorForm = ({
 
   const handleFinish = async (values) => {
     try {
-      const token = sessionStorage.getItem("authToken");
+      const token = localStorage.getItem("authToken");
       // Set the token in Axios headers for this request
       axiosInstance.defaults.headers.common[
         "Authorization"

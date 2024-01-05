@@ -18,8 +18,8 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    const storedUserRole = sessionStorage.getItem("userRole");
-    const storedUserName = sessionStorage.getItem("userN");
+    const storedUserRole = localStorage.getItem("userRole");
+    const storedUserName = localStorage.getItem("userN");
 
     if (storedUserRole) {
       setUserRole(storedUserRole);

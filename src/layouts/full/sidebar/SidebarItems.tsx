@@ -10,6 +10,7 @@ import Menuitems from "./MenuItems"; // Import your menu items
 import { getUserRole } from "../../../components/utils/roles"; // Import the getUserRole function
 import useFloorStore from "../../../components/utils/zustandStore";
 import axiosInstance from "../../../components/utils/axiosInstance";
+import { MdElevator } from "react-icons/md";
 
 interface Floor {
   floor_name: string;
@@ -45,8 +46,8 @@ const SidebarItems = ({ toggleMobileSidebar }: any) => {
   // const [floorNames, setFloorNames] = useState([]);
   const floorNames = useFloorStore((state) => state.floors);
   useEffect(() => {
-    const token = sessionStorage.getItem("authToken");
-    const role = sessionStorage.getItem("userRole"); // Assuming user role is stored in sessionStorage
+    const token = localStorage.getItem("authToken");
+    const role = localStorage.getItem("userRole"); // Assuming user role is stored in localStorage
 
     // Set the token in Axios headers for this request
     axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
@@ -79,7 +80,7 @@ const SidebarItems = ({ toggleMobileSidebar }: any) => {
         items: floorNames.map((floorName) => ({
           id: uniqueId(),
           title: floorName.floor_name,
-          icon: IconTypography,
+          icon: MdElevator,
           href: `/utilities/floors/${floorName.floor_name}?floor_id=${floorName.floor_id}`,
         })),
       };

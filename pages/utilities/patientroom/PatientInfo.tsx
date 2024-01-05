@@ -34,7 +34,7 @@ const PatientInfo = (props: any) => {
 
   const fetchPatientData = async (roomId: string | string[] | undefined) => {
     try {
-      const token = sessionStorage.getItem("authToken");
+      const token = localStorage.getItem("authToken");
       axiosInstance.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${token}`;
@@ -70,7 +70,7 @@ const PatientInfo = (props: any) => {
 
   const onFinish = async (values: any) => {
     try {
-      const token = sessionStorage.getItem("authToken");
+      const token = localStorage.getItem("authToken");
       axiosInstance.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${token}`;

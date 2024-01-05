@@ -68,7 +68,7 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
 
       if (loginResult === "success") {
         // If the login was successful, set the token and redirect
-        const token = sessionStorage.getItem("authToken");
+        const token = localStorage.getItem("authToken");
         console.log("Token:", token);
 
         // Show a success message
@@ -158,7 +158,7 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
           alignItems="center"
           my={2}
         >
-          <FormGroup>
+          {/* <FormGroup>
             <FormControlLabel
               control={
                 <Checkbox
@@ -179,7 +179,7 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
             }}
           >
             Forgot Password ?
-          </Typography>
+          </Typography> */}
         </Stack>
       </Stack>
       <Box>

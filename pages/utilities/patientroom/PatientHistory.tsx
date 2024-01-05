@@ -24,7 +24,7 @@ const PatientHistory = ({ patientData }) => {
   useEffect(() => {
     const fetchPatientHistory = async (patientID) => {
       try {
-        const token = sessionStorage.getItem("authToken");
+        const token = localStorage.getItem("authToken");
         axiosInstance.defaults.headers.common[
           "Authorization"
         ] = `Bearer ${token}`;

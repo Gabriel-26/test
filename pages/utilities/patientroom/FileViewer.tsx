@@ -12,7 +12,7 @@ const FileViewer = ({ patientData }) => {
 
   // Function to fetch files from the API
   const fetchFiles = (patientId) => {
-    const token = sessionStorage.getItem("authToken");
+    const token = localStorage.getItem("authToken");
 
     // Set the token in Axios headers for this request
     axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
@@ -54,7 +54,7 @@ const FileViewer = ({ patientData }) => {
   };
 
   const handleDownloadFile = (fileId) => {
-    const token = sessionStorage.getItem("authToken");
+    const token = localStorage.getItem("authToken");
 
     // Set the token in Axios headers for this request
     axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;

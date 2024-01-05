@@ -53,8 +53,8 @@ const MedicineList = () => {
     try {
       setLoading(true); // Set loading to true when starting data fetch
 
-      const token = sessionStorage.getItem("authToken");
-      const role = sessionStorage.getItem("userRole"); // Assuming user role is stored in sessionStorage
+      const token = localStorage.getItem("authToken");
+      const role = localStorage.getItem("userRole"); // Assuming user role is stored in localStorage
 
       // Set the token in Axios headers for this request
       axiosInstance.defaults.headers.common[
@@ -100,7 +100,7 @@ const MedicineList = () => {
 
   const handleFormSubmit = async (values: any) => {
     try {
-      const token = sessionStorage.getItem("authToken");
+      const token = localStorage.getItem("authToken");
       // Set the token in Axios headers for this request
       axiosInstance.defaults.headers.common[
         "Authorization"

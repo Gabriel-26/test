@@ -37,7 +37,7 @@ const PatientSearch: React.FC<PatientSearchProps> & {
   useEffect(() => {
     // Fetch user role using the getUserRole function
     const role = getUserRole();
-    const token = sessionStorage.getItem("authToken");
+    const token = localStorage.getItem("authToken");
     // Set the token in Axios headers for this request
     axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     // Dynamically construct the API route based on user role

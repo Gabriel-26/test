@@ -141,7 +141,7 @@ const AssignResidentRoom = () => {
     try {
       console.log("Delete button clicked");
 
-      const token = sessionStorage.getItem("authToken");
+      const token = localStorage.getItem("authToken");
       axiosInstance.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${token}`;
@@ -182,7 +182,7 @@ const AssignResidentRoom = () => {
 
   const handleRoomChange = async (selectedResidentId, selectedRoomId) => {
     try {
-      const token = sessionStorage.getItem("authToken");
+      const token = localStorage.getItem("authToken");
       axiosInstance.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${token}`;
@@ -217,7 +217,7 @@ const AssignResidentRoom = () => {
 
   const fetchAssignedRooms = async () => {
     try {
-      const token = sessionStorage.getItem("authToken");
+      const token = localStorage.getItem("authToken");
       axiosInstance.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${token}`;
@@ -238,16 +238,14 @@ const AssignResidentRoom = () => {
 
   const fetchRooms = async () => {
     try {
-      const token = sessionStorage.getItem("authToken");
+      const token = localStorage.getItem("authToken");
       axiosInstance.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${token}`;
 
       setLoading(true);
 
-      const response = await axiosInstance.get(
-        `/resAssRooms/get/unassignedRooms`
-      );
+      const response = await axiosInstance.get(`/rooms`);
 
       if (response.status === 200) {
         console.log("Fetched rooms:", response.data); // Add this line to check the fetched data
@@ -263,9 +261,9 @@ const AssignResidentRoom = () => {
 
   const fetchResidents = async () => {
     try {
-      const token = sessionStorage.getItem("authToken");
-      const userRole = sessionStorage.getItem("userRole");
-      const chiefResidentDepartmentId = sessionStorage.getItem("depID");
+      const token = localStorage.getItem("authToken");
+      const userRole = localStorage.getItem("userRole");
+      const chiefResidentDepartmentId = localStorage.getItem("depID");
 
       axiosInstance.defaults.headers.common[
         "Authorization"

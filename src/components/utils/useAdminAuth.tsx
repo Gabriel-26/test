@@ -20,8 +20,8 @@ const useAdminAuth = () => {
         const token = response.data.token;
         const role = response.data.role;
 
-        sessionStorage.setItem("authToken", token);
-        sessionStorage.setItem("userRole", role); // Save the role in the session
+        localStorage.setItem("authToken", token);
+        localStorage.setItem("userRole", role); // Save the role in the session
 
         // Redirect to the desired route (e.g., '/')
         router.push("/");
@@ -40,12 +40,12 @@ const useAdminAuth = () => {
   };
 
   const logout = async () => {
-    const token = sessionStorage.getItem("authToken");
+    const token = localStorage.getItem("authToken");
     // Set the token in Axios headers for this request
     axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-    sessionStorage.removeItem("authToken");
-    sessionStorage.removeItem("userRole");
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("userRole");
     await axiosInstance.get("/admin/Logout");
     router.push("/authentication/login");
   };

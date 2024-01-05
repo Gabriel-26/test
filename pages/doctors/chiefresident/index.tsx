@@ -58,8 +58,8 @@ const ChiefResident = () => {
     try {
       setLoading(true); // Set loading to true when starting data fetch
 
-      const token = sessionStorage.getItem("authToken");
-      const role = sessionStorage.getItem("userRole"); // Assuming user role is stored in sessionStorage
+      const token = localStorage.getItem("authToken");
+      const role = localStorage.getItem("userRole"); // Assuming user role is stored in localStorage
 
       // Set the token in Axios headers for this request
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
@@ -129,7 +129,7 @@ const ChiefResident = () => {
 
   const handleSubmit = async () => {
     try {
-      const token = sessionStorage.getItem("authToken");
+      const token = localStorage.getItem("authToken");
       // Set the token in Axios headers for this request
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       // Set role to 1, as all residents being added are Chiefs
