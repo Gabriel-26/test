@@ -33,8 +33,11 @@ const ChatPage: React.FC = () => {
   const [pollInterval, setPollInterval] = useState<NodeJS.Timer | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedPatients, setSelectedPatients] = useState<string[]>([]);
-
   const router = useRouter(); // Add this line
+
+  const clearSelectedPatients = () => {
+    setSelectedPatients([]);
+  };
 
   const fetchChatGroups = async () => {
     try {
@@ -204,6 +207,9 @@ const ChatPage: React.FC = () => {
 
     // Close the modal
     setModalVisible(false);
+
+    // Clear selected patients after sharing
+    clearSelectedPatients();
   };
 
   const generateShareLinks = (selectedPatients: string[]): string[] => {
@@ -305,7 +311,11 @@ const ChatPage: React.FC = () => {
         title="Select Patients to Share"
         open={modalVisible}
         onOk={handleConfirmShare}
-        onCancel={() => setModalVisible(false)}
+        onCancel={() => {
+          // Clear selected patients when the modal is closed
+          clearSelectedPatients();
+          setModalVisible(false);
+        }}
         footer={[
           <Button key="cancel" onClick={() => setModalVisible(false)}>
             Cancel

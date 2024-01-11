@@ -90,7 +90,7 @@ const RoomUpdates = () => {
       <DashboardCard title="Updates">
         <Spin spinning={loading}>
           <List
-            header={<div>Room Updates</div>}
+            header={<div>Updates</div>}
             footer={<div></div>}
             bordered
             dataSource={roomUpdates}

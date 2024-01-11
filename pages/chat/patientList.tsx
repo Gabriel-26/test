@@ -39,6 +39,8 @@ const PatientListPage = ({ onSelectPatients }) => {
     onSelectPatients(updatedSelectedPatients);
   };
 
+  // Function to clear the selectedPatients state
+
   return (
     <div>
       {/* <h1>Patient List</h1> */}

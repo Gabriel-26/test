@@ -110,7 +110,11 @@ const RoomView = () => {
               console.log("File uploaded successfully", uploadResponse.data);
               setUploadSuccess(true);
               setSelectedFile(null);
+              setTimeout(() => {
+                setUploadSuccess(false);
+              }, 3000);
             })
+
             .catch((error) => {
               console.error("File upload error", error);
               message.error("File upload failed");
