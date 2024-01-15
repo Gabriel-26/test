@@ -71,7 +71,10 @@ const Rooms = () => {
 
   const fetchFloors = async () => {
     try {
-      const response = await axiosInstance.get("admin/floors");
+      const userRole = localStorage.getItem("userRole");
+      let url = userRole === "admin" ? "admin/floors" : "/floors";
+
+      const response = await axiosInstance.get(url);
       setFloors(response.data);
     } catch (error) {
       console.error("Error fetching floors:", error);

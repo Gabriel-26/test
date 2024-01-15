@@ -132,12 +132,12 @@ const FileViewer = ({ patientData }) => {
       >
         {selectedFile && (
           <div className="iframe-container">
-            <iframe
+            {/* <iframe
               title="File Viewer"
               src={`http://127.0.0.1:8000/api/fileUpload/viewFile/${selectedFile.file_id}`}
               className="iframe-content w-full h-auto max-h-screen"
               style={{ aspectRatio: "16/9" }}
-            />
+            /> */}
           </div>
         )}
       </Modal>

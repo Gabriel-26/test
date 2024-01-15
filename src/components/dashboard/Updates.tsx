@@ -69,10 +69,10 @@ const RoomUpdates = () => {
       setLoading(false);
     } catch (error) {
       console.error(error);
-      notification.error({
-        message: "Error",
-        description: "Failed to fetch room updates.",
-      });
+      // notification.error({
+      //   message: "Error",
+      //   description: "Failed to fetch room updates.",
+      // });
     }
   };
 
