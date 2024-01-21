@@ -261,8 +261,9 @@ const ChatPage: React.FC = () => {
               >
                 <List.Item.Meta
                   avatar={
-                    <Avatar>{conversation.other_resident_fName[0]? conversation.other_resident_fName[0] : ''}</Avatar>}
-                  
+<Avatar>
+  {conversation.other_resident_fName ? conversation.other_resident_fName[0] : ''}
+</Avatar>                  }
                   title={
                     <span>
                       {conversation.other_resident_fName}{" "}
