@@ -246,7 +246,7 @@ const ChatPage: React.FC = () => {
         <div className="w-1/3">
           <h2 className="text-lg font-semibold">Conversations</h2>
           <List
-            dataSource={conversations}
+          dataSource={conversations || []}
             style={{ maxHeight: "680px", overflowY: "auto" }}
             renderItem={(conversation, index) => (
               <List.Item
