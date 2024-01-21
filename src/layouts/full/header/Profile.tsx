@@ -4,6 +4,9 @@ import { IconUser } from "@tabler/icons-react";
 import useAdminAuth from "../../../components/utils/useAdminAuth";
 import useResidentAuth from "../../../components/utils/useResidentAuth";
 
+// Import the image
+import doctorImage from "../../../assets/images/profile/doctorm.png";
+
 const Profile = () => {
   const [anchorEl2, setAnchorEl2] = useState(null);
   const [userRole, setUserRole] = useState("");
@@ -51,17 +54,16 @@ const Profile = () => {
         }}
         onClick={handleClick2}
       >
+        {/* Use the imported image as the src for Avatar */}
         <Avatar
+          src={doctorImage}
+          alt="Doctor"
           sx={{
             width: 35,
             height: 35,
             backgroundColor: "primary.main",
-            color: "white", // Set the text color to white
-            fontWeight: "bold", // Make the text bold
           }}
-        >
-          {userNameInitial}
-        </Avatar>
+        />
       </IconButton>
       <Menu
         id="msgs-menu"
