@@ -246,7 +246,7 @@ const ChatPage: React.FC = () => {
         <div className="w-1/3">
           <h2 className="text-lg font-semibold">Conversations</h2>
           <List
-          dataSource={conversations || []}
+            dataSource={conversations || []}
             style={{ maxHeight: "680px", overflowY: "auto" }}
             renderItem={(conversation, index) => (
               <List.Item
@@ -261,9 +261,8 @@ const ChatPage: React.FC = () => {
               >
                 <List.Item.Meta
                   avatar={
-<Avatar>
-  {conversation.other_resident_fName ? conversation.other_resident_fName[0] : ''}
-</Avatar>                  }
+                    <Avatar>{conversation.other_resident_fName[0]}</Avatar>
+                  }
                   title={
                     <span>
                       {conversation.other_resident_fName}{" "}
@@ -364,7 +363,8 @@ const ChatWithChatmate: React.FC<{
 
   const otherResidentFirstName =
     currentConversation?.other_resident_fName || "Other ";
-  const otherResidentLastName = currentConversation?.other_resident_lName || "Resident";
+  const otherResidentLastName =
+    currentConversation?.other_resident_lName || "Resident";
 
   return (
     <div className="flex flex-col h-full">
