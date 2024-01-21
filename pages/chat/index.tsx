@@ -250,15 +250,16 @@ const ChatPage: React.FC = () => {
   style={{ maxHeight: "680px", overflowY: "auto" }}
   renderItem={(conversation, index) => (
     <List.Item
-      onClick={() => {
-        selectConversation(conversation.chatGroup_id);
-      }}
-      className={`${
-        selectedConversation === conversation.chatGroup_id
-          ? "bg-gray-200 cursor-pointer transition-colors duration-300"
-          : "cursor-pointer"
-      }`}
-    >
+    key={conversation.chatGroup_id}
+    onClick={() => {
+      selectConversation(conversation.chatGroup_id);
+    }}
+    className={`${
+      selectedConversation === conversation.chatGroup_id
+        ? "bg-gray-200 cursor-pointer transition-colors duration-300"
+        : "cursor-pointer"
+    }`}
+  >
       <List.Item.Meta
         avatar={<Avatar>{conversation.other_resident_fName ? conversation.other_resident_fName[0] : ''}</Avatar>}
         title={`${conversation.other_resident_fName} ${conversation.other_resident_lName}`}
