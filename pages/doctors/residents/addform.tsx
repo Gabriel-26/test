@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Form, Input, Select, Button, Space } from "antd";
 import axiosInstance from "../../../src/components/utils/axiosInstance"; // Replace with your axios import
 
@@ -10,6 +10,8 @@ const AddDoctorForm = ({
   onUpdate,
   onFinish,
 }) => {
+  const [departments, setDepartments] = useState([]);
+
   useEffect(() => {
     // Reset the form fields when a new doctor is added
     handleInputChange({ target: { name: "resident_userName", value: "" } });
@@ -19,8 +21,21 @@ const AddDoctorForm = ({
     handleInputChange({ target: { name: "resident_password", value: "" } });
     handleInputChange({ target: { name: "role", value: "resident" } }); // Set the role to "resident"
     handleInputChange({ target: { name: "department_id", value: "" } });
+    fetchDepartments();
   }, [newDoctor, handleInputChange]);
 
+  const fetchDepartments = async () => {
+    try {
+      const token = localStorage.getItem("authToken");
+      axiosInstance.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${token}`;
+      const response = await axiosInstance.get("/admin/departments"); // Adjust the API endpoint accordingly
+      setDepartments(response.data);
+    } catch (error) {
+      console.error("Error fetching departments:", error);
+    }
+  };
   const handleFinish = async (values) => {
     try {
       const token = localStorage.getItem("authToken");
@@ -40,7 +55,7 @@ const AddDoctorForm = ({
 
       // Trigger any necessary actions (e.g., fetch the updated list of residents)
       // ...
-
+      onFinish();
       // Reset the form fields
       handleInputChange({ target: { name: "resident_userName", value: "" } });
       handleInputChange({ target: { name: "resident_fName", value: "" } });
@@ -105,9 +120,18 @@ const AddDoctorForm = ({
       <Form.Item
         label="Department ID"
         name="department_id"
-        rules={[{ required: true, message: "Please enter Department ID" }]}
+        rules={[{ required: true, message: "Please select Department ID" }]}
       >
-        <Input />
+        <Select>
+          {departments.map((department) => (
+            <Option
+              key={department.department_id}
+              value={department.department_id}
+            >
+              {department.department_id}
+            </Option>
+          ))}
+        </Select>
       </Form.Item>
       <Form.Item wrapperCol={{ offset: 9, span: 16 }}>
         <Space>

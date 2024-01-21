@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Input, List, Avatar, Modal, Button } from "antd";
 import FullLayout from "../../src/layouts/full/FullLayout";
 import axiosInstance from "../../src/components/utils/axiosInstance";
@@ -354,6 +354,61 @@ const ChatWithChatmate: React.FC<{
   conversations,
   handleSharePatientHistory,
 }) => {
+  const messagesEndRef = useRef(null);
+  const [isNewMessage, setIsNewMessage] = useState<boolean>(false);
+  const [notification, setNotification] = useState<string | null>(null);
+  const [lastReceivedMessageId, setLastReceivedMessageId] = useState<
+    string | null
+  >(null);
+
+  const scrollToBottom = () => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  useEffect(() => {
+    // Scroll to bottom when messages change
+    scrollToBottom();
+  }, [messages]);
+
+  useEffect(() => {
+    // Check if there's a new incoming message
+    const lastMessage = messages[messages.length - 1];
+    const isCurrentUser =
+      lastMessage?.resident_id === localStorage.getItem("resID");
+
+    if (
+      !isCurrentUser &&
+      lastReceivedMessageId !== lastMessage?.chatGroupMessages_id
+    ) {
+      // Display a notification for new incoming messages
+      setIsNewMessage(true);
+      setLastReceivedMessageId(lastMessage?.chatGroupMessages_id || null);
+
+      // Clear the notification after 3 seconds
+      const timeoutId = setTimeout(() => {
+        setNotification(null);
+        setIsNewMessage(false);
+      }, 3000);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [messages, selectedConversation, lastReceivedMessageId]);
+
+  // useEffect(() => {
+  //   // Display notification and clear after 3 seconds
+  //   if (isNewMessage) {
+  //     setNotification("New message received");
+  //     const timeoutId = setTimeout(() => {
+  //       setNotification(null);
+  //       setIsNewMessage(false);
+  //     }, 3000);
+
+  //     return () => clearTimeout(timeoutId);
+  //   }
+  // }, [isNewMessage, selectedConversation]);
+
   const currentUserFirstName = localStorage.getItem("resFirstName");
   const currentUserLastName = localStorage.getItem("resLastname");
 
@@ -373,6 +428,11 @@ const ChatWithChatmate: React.FC<{
           {`${otherResidentFirstName} ${otherResidentLastName}`}
         </h1>
       </div>
+      {notification && (
+        <div className="p-2 bg-yellow-400 text-white">
+          <p className="text-sm">{notification}</p>
+        </div>
+      )}
       <div
         className="flex-grow p-4 overflow-y-auto"
         style={{ maxHeight: "500px" }}
@@ -476,6 +536,7 @@ const ChatWithChatmate: React.FC<{
             }
           }}
         />
+        <div ref={messagesEndRef} />
       </div>
       <div className="p-4 border-t">
         <div className="flex items-center space-x-4">

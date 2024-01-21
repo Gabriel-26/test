@@ -6,10 +6,25 @@ const { Option } = Select;
 
 const EditDoctorForm = ({ editDoctor, onFinish, onUpdate }) => {
   const [form] = Form.useForm();
+  const [departments, setDepartments] = useState([]);
 
   useEffect(() => {
     form.setFieldsValue(editDoctor);
+    fetchDepartments();
   }, [editDoctor, form]);
+
+  const fetchDepartments = async () => {
+    try {
+      const token = localStorage.getItem("authToken");
+      axiosInstance.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${token}`;
+      const response = await axiosInstance.get("/admin/departments"); // Adjust the API endpoint accordingly
+      setDepartments(response.data);
+    } catch (error) {
+      console.error("Error fetching departments:", error);
+    }
+  };
 
   const handleFinish = async (values) => {
     try {
@@ -31,6 +46,7 @@ const EditDoctorForm = ({ editDoctor, onFinish, onUpdate }) => {
 
       // Trigger the onFinish callback to close the edit form
       onFinish();
+      form.resetFields();
     } catch (error) {
       console.log("Error updating doctor:", error);
       // Handle any error that occurred during the request
@@ -95,9 +111,18 @@ const EditDoctorForm = ({ editDoctor, onFinish, onUpdate }) => {
       <Form.Item
         label="Department ID"
         name="department_id"
-        rules={[{ required: true, message: "Please enter Department ID" }]}
+        rules={[{ required: true, message: "Please select Department ID" }]}
       >
-        <Input />
+        <Select>
+          {departments.map((department) => (
+            <Option
+              key={department.department_id}
+              value={department.department_id}
+            >
+              {department.department_id}
+            </Option>
+          ))}
+        </Select>
       </Form.Item>
       <Form.Item wrapperCol={{ offset: 9, span: 16 }}>
         <Space>

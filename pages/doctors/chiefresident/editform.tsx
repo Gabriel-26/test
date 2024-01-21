@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Form, Input, Select, Button, Space } from "antd";
 import axiosInstance from "../../../src/components/utils/axiosInstance"; // Replace with your axios import
 
@@ -6,10 +6,25 @@ const { Option } = Select;
 
 const EditChiefResidentForm = ({ editChiefResident, onFinish, onUpdate }) => {
   const [form] = Form.useForm();
+  const [departments, setDepartments] = useState([]);
 
   useEffect(() => {
     form.setFieldsValue(editChiefResident);
+    fetchDepartments();
   }, [editChiefResident, form]);
+
+  const fetchDepartments = async () => {
+    try {
+      const token = localStorage.getItem("authToken");
+      axiosInstance.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${token}`;
+      const response = await axiosInstance.get("/admin/departments"); // Adjust the API endpoint accordingly
+      setDepartments(response.data);
+    } catch (error) {
+      console.error("Error fetching departments:", error);
+    }
+  };
 
   const handleFinish = async (values) => {
     try {
@@ -20,7 +35,7 @@ const EditChiefResidentForm = ({ editChiefResident, onFinish, onUpdate }) => {
       ] = `Bearer ${token}`;
       // Send a PUT request to the API endpoint with the updated chief resident data
       const response = await axiosInstance.put(
-        `/admin/residents/edit/${editChiefResident.resident_id}`,
+        `/admin/residents/updateResident/${editChiefResident.resident_id}`,
         values
       );
 
@@ -95,9 +110,18 @@ const EditChiefResidentForm = ({ editChiefResident, onFinish, onUpdate }) => {
       <Form.Item
         label="Department ID"
         name="department_id"
-        rules={[{ required: true, message: "Please enter Department ID" }]}
+        rules={[{ required: true, message: "Please select Department ID" }]}
       >
-        <Input />
+        <Select>
+          {departments.map((department) => (
+            <Option
+              key={department.department_id}
+              value={department.department_id}
+            >
+              {department.department_id}
+            </Option>
+          ))}
+        </Select>
       </Form.Item>
       <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
         <Space>

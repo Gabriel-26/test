@@ -110,6 +110,7 @@ const AssignedRoomsPage: React.FC = () => {
           rowKey={(record) => record.resAssRoom_id}
           loading={loading}
           pagination={false}
+          scroll={{ y: 400 }}
         />
       </DashboardCard>
     </PageContainer>

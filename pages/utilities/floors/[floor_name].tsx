@@ -333,9 +333,10 @@ const Rooms = () => {
 
             {userRole === "admin" && (
               <Button
-                // variant="contained"
                 color="secondary"
-                onClick={() => setShowAddRoomForm(true)}
+                onClick={() => {
+                  setShowAddRoomForm(true);
+                }}
               >
                 Add Room
               </Button>
@@ -453,12 +454,7 @@ const Rooms = () => {
               onChange={(e) => setRoomNameInput(e.target.value)}
             />
           </Form.Item>
-          <Form.Item name="room_floor" label="Room Floor">
-            <Input
-              value={roomFloorInput}
-              onChange={(e) => setRoomFloorInput(e.target.value)}
-            />
-          </Form.Item>
+
           <Form.Item name="room_type" label="Room Type">
             <Input
               value={roomTypeInput}
@@ -467,8 +463,13 @@ const Rooms = () => {
           </Form.Item>
           <Form.Item name="room_price" label="Room Price">
             <Input
+              type="number" // Use the type attribute to ensure numeric input
               value={roomPriceInput}
-              onChange={(e) => setRoomPriceInput(e.target.value)}
+              onChange={(e) => {
+                // Use a regular expression to allow only numbers
+                const numericValue = e.target.value.replace(/[^0-9]/g, "");
+                setRoomPriceInput(numericValue);
+              }}
             />
             <div style={{ marginTop: "16px", textAlign: "center" }}>
               <Button
@@ -494,6 +495,7 @@ const Rooms = () => {
         open={showEditFloorModal}
         onCancel={() => setShowEditFloorModal(false)}
         onOk={handleConfirmEditFloor}
+        okButtonProps={{ style: { backgroundColor: "green" } }}
       >
         <Form layout="vertical">
           {/* Dropdown to select floor */}
@@ -549,6 +551,7 @@ const Rooms = () => {
         open={showEditRoomModal}
         onCancel={() => setShowEditRoomModal(false)}
         onOk={handleConfirmEditRoom}
+        okButtonProps={{ style: { backgroundColor: "green" } }}
       >
         <Form>
           <Form.Item label="Room Name">
@@ -557,12 +560,7 @@ const Rooms = () => {
               onChange={(e) => setEditRoomName(e.target.value)}
             />
           </Form.Item>
-          <Form.Item label="Room Floor">
-            <Input
-              value={editRoomFloor}
-              onChange={(e) => setEditRoomFloor(e.target.value)}
-            />
-          </Form.Item>
+
           <Form.Item label="Room Type">
             <Input
               value={editRoomType}

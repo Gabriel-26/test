@@ -36,6 +36,7 @@ const AssignResidentRoom = () => {
   const [expandedRowKeys, setExpandedRowKeys] = useState([]);
   const [residentNames, setResidentNames] = useState({});
   const [selectKey, setSelectKey] = useState(Date.now());
+  const [selectedRooms, setSelectedRooms] = useState({});
 
   const assignedColumns = [
     {
@@ -97,7 +98,7 @@ const AssignResidentRoom = () => {
 
   const unassignedColumns = [
     {
-      title: "Resident", // Update the column title
+      title: "Resident",
       dataIndex: "resident_id",
       key: "resident_id",
       render: (residentId) => {
@@ -114,7 +115,11 @@ const AssignResidentRoom = () => {
             key={selectKey}
             style={{ width: 120 }}
             placeholder="Select Room"
-            onChange={(value) => setSelectedRoomId(value)}
+            onChange={(value) => {
+              const updatedSelectedRooms = { ...selectedRooms };
+              updatedSelectedRooms[record.resident_id] = value;
+              setSelectedRooms(updatedSelectedRooms);
+            }}
           >
             {rooms.map((room) => (
               <Option key={room.room_id} value={room.room_id}>
@@ -129,6 +134,7 @@ const AssignResidentRoom = () => {
               setSelectedResidentId(record.resident_id);
               showConfirmationModal();
             }}
+            disabled={!selectedRooms[record.resident_id]}
           >
             Assign Room
           </Button>
@@ -174,7 +180,7 @@ const AssignResidentRoom = () => {
 
   const handleAssignmentConfirm = () => {
     // Perform the assignment logic here
-    handleRoomChange(selectedResidentId, selectedRoomId);
+    handleRoomChange(selectedResidentId, selectedRooms[selectedResidentId]);
     setIsModalVisible(false); // Close the modal
     setSelectedRoomId(null); // Clear selected room
     setSelectKey(Date.now()); // Change the key to force re-render
@@ -341,6 +347,7 @@ const AssignResidentRoom = () => {
             columns={unassignedColumns}
             rowKey={(record) => record.resident_id}
             pagination={false}
+            scroll={{ y: 300 }}
           />
         </Form>
         <Row gutter={16} className="mb-4">

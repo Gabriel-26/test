@@ -97,6 +97,11 @@ const ChiefResident = () => {
     setIsEditing(false);
   };
 
+  const handleDrawerClose = () => {
+    setIsAddingDoctor(false);
+    setIsEditing(false);
+  };
+
   const handleEditDoctor = (
     doctor: React.SetStateAction<{
       resident_id: string;
@@ -224,12 +229,15 @@ const ChiefResident = () => {
                   newChiefResident={newDoctor}
                   onUpdate={handleUpdate}
                   handleInputChange={handleInputChange}
-                  onFinish={handleCancel}
+                  onFinish={() => {
+                    handleDrawerClose(); // Close the Drawer
+                    // Additional actions you may want to perform on finish
+                  }}
                 />
               ) : isEditing ? ( // Render edit form
                 <EditChiefResidentForm
                   editChiefResident={editDoctor}
-                  onFinish={handleCancel}
+                  onFinish={handleDrawerClose}
                   onUpdate={fetchDoctors}
                 />
               ) : null}{" "}
