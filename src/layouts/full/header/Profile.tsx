@@ -56,7 +56,7 @@ const Profile = () => {
       >
         {/* Use the imported image as the src for Avatar */}
         <Avatar
-          src={doctorImage}
+          src={doctorImage.src} // Use .src to get the string
           alt="Doctor"
           sx={{
             width: 35,
