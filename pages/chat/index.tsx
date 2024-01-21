@@ -362,8 +362,8 @@ const ChatWithChatmate: React.FC<{
   );
 
   const otherResidentFirstName =
-    currentConversation?.other_resident_fName || "Other Resident";
-  const otherResidentLastName = currentConversation?.other_resident_lName || "";
+    currentConversation?.other_resident_fName || "Other ";
+  const otherResidentLastName = currentConversation?.other_resident_lName || "Resident";
 
   return (
     <div className="flex flex-col h-full">
