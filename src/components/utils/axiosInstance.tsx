@@ -11,7 +11,7 @@ const getXXsrfToken = (config: AxiosRequestConfig) => {
 
 // Create Axios instance with default configurations
 const axiosInstance: AxiosInstance = axios.create({
-  baseURL: "https://hcvercel.vercel.app/api/api",
+  baseURL: "https://ipimsbe.online/api",
   headers: {
     "X-Requested-With": "XMLHttpRequest",
     "Content-Type": "application/json",
