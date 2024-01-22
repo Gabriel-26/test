@@ -25,6 +25,7 @@ const FileViewer = ({ patientData }) => {
       })
       .catch((error) => {
         console.error("Error fetching files:", error);
+        message.error("Failed to fetch files. Please try again.");
       });
   };
 
@@ -43,7 +44,6 @@ const FileViewer = ({ patientData }) => {
   }, [patient_id]); // Run useEffect when patient_id changes
 
   const handleFileClick = (file) => {
-    console.log("Clicked File:", file);
     setSelectedFile(file);
     setViewerVisible(true);
   };
@@ -60,12 +60,9 @@ const FileViewer = ({ patientData }) => {
     axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
     if (!selectedFile) {
-      console.error("Selected file is null.");
-      message.error("Failed to download file.");
+      message.error("Selected file is null. Failed to download file.");
       return;
     }
-
-    console.log("Selected File:", selectedFile);
 
     axiosInstance
       .get(`/fileUpload/download/${fileId}`, {
@@ -74,17 +71,18 @@ const FileViewer = ({ patientData }) => {
       .then((response) => {
         // Create a URL for the blob data and trigger a download
         const url = window.URL.createObjectURL(new Blob([response.data]));
-        console.log("Download URL:", url);
 
         const a = document.createElement("a");
         a.href = url;
         a.download = selectedFile.file_name || "downloaded_file"; // Use a default name if file_name is not available
         a.click();
         window.URL.revokeObjectURL(url);
+
+        message.success("File downloaded successfully!");
       })
       .catch((error) => {
         console.error("Error downloading file:", error);
-        message.error("Failed to download file.");
+        message.error("Failed to download file. Please try again.");
       });
   };
 
@@ -121,7 +119,6 @@ const FileViewer = ({ patientData }) => {
           </Button>,
           <Button
             key="download"
-            // type="primary"
             onClick={() => handleDownloadFile(selectedFile?.file_id)}
             style={{ backgroundColor: "#1890ff", color: "white" }}
           >
@@ -136,7 +133,7 @@ const FileViewer = ({ patientData }) => {
               title="File Viewer"
               src={`https://ipimsbe.online/api/fileUpload/viewFile/${selectedFile.file_id}`}
               className="iframe-content w-full h-auto max-h-screen"
-              style={{ aspectRatio: "16/9" }}
+              style={{ width: "100%", height: "100%", aspectRatio: "16/9" }}
             />
           </div>
         )}

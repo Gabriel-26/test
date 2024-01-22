@@ -14,7 +14,7 @@ import {
   TableBody,
   TablePagination,
 } from "@mui/material";
-import { Input, Form, Modal, Drawer, Spin, Select } from "antd";
+import { Input, Form, Modal, Drawer, Spin, Select, message } from "antd";
 import { getUserRole } from "../../../src/components/utils/roles";
 import dynamic from "next/dynamic";
 
@@ -156,8 +156,14 @@ const Rooms = () => {
 
       // Fetch floors again after the edit is completed
       fetchFloors();
+
+      // Display success message
+      message.success("Floor updated successfully");
     } catch (error) {
       console.error("Error updating floor:", error);
+
+      // Display error message
+      message.error("Error updating floor. Please try again.");
     }
 
     // Reset state
@@ -175,8 +181,14 @@ const Rooms = () => {
       // Fetch floors again after the delete is completed
       fetchFloors();
       fetchRooms(queryFloorId as string);
+
+      // Display success message
+      message.success("Floor deleted successfully");
     } catch (error) {
       console.error("Error deleting floor:", error);
+
+      // Display error message
+      message.error("Error deleting floor. Please try again.");
     }
 
     // Reset state
@@ -198,8 +210,14 @@ const Rooms = () => {
 
       // Fetch rooms again after the edit is completed
       fetchRooms(queryFloorId as string);
+
+      // Display success message
+      message.success("Room updated successfully");
     } catch (error) {
       console.error("Error updating room:", error);
+
+      // Display error message
+      message.error("Error updating room. Please try again.");
     }
 
     // Reset state
@@ -219,8 +237,14 @@ const Rooms = () => {
 
       // Fetch rooms again after the delete is completed
       fetchRooms(queryFloorId as string);
+
+      // Display success message
+      message.success("Room deleted successfully");
     } catch (error) {
       console.error("Error deleting room:", error);
+
+      // Display error message
+      message.error("Error deleting room. Please try again.");
     }
 
     // Reset state
@@ -249,8 +273,14 @@ const Rooms = () => {
       // Fetch floors again after the add is completed
       fetchFloors();
       fetchRooms(queryFloorId as string);
+
+      // Display success message
+      message.success("Floor added successfully");
     } catch (error) {
       console.error("Error adding floor:", error);
+
+      // Display error message
+      message.error("Error adding floor. Please try again.");
     }
 
     // Reset state
@@ -282,8 +312,14 @@ const Rooms = () => {
 
       // Fetch rooms again after the add is completed
       fetchRooms(queryFloorId as string);
+
+      // Display success message
+      message.success("Room added successfully");
     } catch (error) {
       console.error("Error adding room:", error);
+
+      // Display error message
+      message.error("Error adding room. Please try again.");
     }
 
     // Reset state
@@ -364,16 +400,22 @@ const Rooms = () => {
                     .map((room) => (
                       <TableRow key={room.room_id}>
                         <TableCell>
-                          <span
-                            style={{ cursor: "pointer", color: "blue" }}
-                            onClick={() =>
-                              router.push(
-                                `/utilities/patientroom/${room.room_name}?room_id=${room.room_id}`
-                              )
-                            }
-                          >
-                            {room.room_id}
-                          </span>
+                          {userRole === "admin" ? (
+                            // Display room_id without link for admin
+                            room.room_id
+                          ) : (
+                            // Make room_id clickable for non-admin users
+                            <span
+                              style={{ cursor: "pointer", color: "blue" }}
+                              onClick={() =>
+                                router.push(
+                                  `/utilities/patientroom/${room.room_name}?room_id=${room.room_id}`
+                                )
+                              }
+                            >
+                              {room.room_id}
+                            </span>
+                          )}
                         </TableCell>
                         <TableCell>{room.room_name}</TableCell>
                         <TableCell>{room.room_floor}</TableCell>

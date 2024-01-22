@@ -77,6 +77,7 @@ const RoomView = () => {
 
   const handleFileUpload = async () => {
     if (!selectedFile) {
+      message.error("Please select a file to upload.");
       return;
     }
     console.log("Selected Room ID:", selectedRoomId); // Add this log statement
@@ -108,7 +109,7 @@ const RoomView = () => {
           uploadFile(selectedFile, patientID, residentID)
             .then((uploadResponse) => {
               console.log("File uploaded successfully", uploadResponse.data);
-              setUploadSuccess(true);
+              message.success("File uploaded successfully!");
               setSelectedFile(null);
               setTimeout(() => {
                 setUploadSuccess(false);
@@ -146,12 +147,14 @@ const RoomView = () => {
       })
       .catch((error) => {
         console.error("Error fetching rooms", error);
+        message.error("Failed to fetch available rooms. Please try again.");
       });
   }, []);
 
   const handleTransferPatient = () => {
     if (!selectedRoomId || patientData.length === 0) {
       setTransferError("No patients available to transfer");
+
       return;
     }
 

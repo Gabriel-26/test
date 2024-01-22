@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Select, Button, Space } from "antd";
+import { Form, Input, Select, Button, Space, message } from "antd";
 import axiosInstance from "../../../src/components/utils/axiosInstance"; // Replace with your axios import
 
 const { Option } = Select;
@@ -46,10 +46,14 @@ const EditDoctorForm = ({ editDoctor, onFinish, onUpdate }) => {
 
       // Trigger the onFinish callback to close the edit form
       onFinish();
+
       form.resetFields();
+
+      message.success("Doctor updated successfully");
     } catch (error) {
       console.log("Error updating doctor:", error);
       // Handle any error that occurred during the request
+      message.error("Error updating doctor. Please try again.");
     }
   };
 

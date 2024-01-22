@@ -9,6 +9,7 @@ import {
   DatePicker,
   InputNumber,
   Spin,
+  message,
 } from "antd";
 import FullLayout from "../../src/layouts/full/FullLayout";
 import {
@@ -101,24 +102,25 @@ const MedicineList = () => {
   const handleFormSubmit = async (values: any) => {
     try {
       const token = localStorage.getItem("authToken");
-      // Set the token in Axios headers for this request
       axiosInstance.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${token}`;
+
       if (editingMedicine) {
-        // Edit existing medicine
         await axiosInstance.put(
           `admin/medicines/${editingMedicine.medicine_id}`,
           values
         );
+        message.success("Medicine updated successfully");
       } else {
-        // Add new medicine
         await axiosInstance.post(`/admin/medicines`, values);
+        message.success("Medicine added successfully");
       }
       fetchMedicines();
       closeDrawer();
     } catch (error) {
       console.error("Error submitting form:", error);
+      message.error("Error adding/updating medicine. Please try again.");
     }
   };
 

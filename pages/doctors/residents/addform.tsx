@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Select, Button, Space } from "antd";
+import { Form, Input, Select, Button, Space, message } from "antd";
 import axiosInstance from "../../../src/components/utils/axiosInstance"; // Replace with your axios import
 
 const { Option } = Select;
@@ -56,6 +56,7 @@ const AddDoctorForm = ({
       // Trigger any necessary actions (e.g., fetch the updated list of residents)
       // ...
       onFinish();
+
       // Reset the form fields
       handleInputChange({ target: { name: "resident_userName", value: "" } });
       handleInputChange({ target: { name: "resident_fName", value: "" } });
@@ -63,9 +64,11 @@ const AddDoctorForm = ({
       handleInputChange({ target: { name: "resident_mName", value: "" } });
       handleInputChange({ target: { name: "resident_password", value: "" } });
       handleInputChange({ target: { name: "department_id", value: "" } });
+      message.success("New resident added successfully");
     } catch (error) {
       console.log("Error adding new resident:", error);
       // Handle any error that occurred during the request
+      message.error("Error adding new resident. Please try again.");
     }
   };
 

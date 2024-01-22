@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Select, Button, Space } from "antd";
+import { Form, Input, Select, Button, Space, message } from "antd";
 import axiosInstance from "../../../src/components/utils/axiosInstance"; // Replace with your axios import
 
 const { Option } = Select;
@@ -45,9 +45,11 @@ const EditChiefResidentForm = ({ editChiefResident, onFinish, onUpdate }) => {
 
       // Trigger the onFinish callback to close the edit form
       onFinish();
+      message.success("Chief resident updated successfully");
     } catch (error) {
       console.log("Error updating chief resident:", error);
       // Handle any error that occurred during the request
+      message.error("Error updating chief resident. Please try again.");
     }
   };
 

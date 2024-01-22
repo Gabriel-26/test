@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Select, Button, Space } from "antd";
+import { Form, Input, Select, Button, Space, message } from "antd";
 import axiosInstance from "../../../src/components/utils/axiosInstance"; // Replace with your axios import
 
 const { Option } = Select;
@@ -63,9 +63,11 @@ const AddChiefResidentForm = ({
       handleInputChange({ target: { name: "resident_mName", value: "" } });
       handleInputChange({ target: { name: "resident_password", value: "" } });
       handleInputChange({ target: { name: "department_id", value: "" } });
+      message.success("New chief resident added successfully");
     } catch (error) {
       console.log("Error adding new chief resident:", error);
       // Handle any error that occurred during the request
+      message.error("Error adding new chief resident. Please try again.");
     }
   };
 

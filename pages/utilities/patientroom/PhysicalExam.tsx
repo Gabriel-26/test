@@ -99,10 +99,10 @@ const HumanFigureEvaluation = (props: any) => {
 
       if (response.status === 200) {
         console.log("Data saved successfully");
-        message.success("Data saved successfully");
+        message.success("Physical Exam saved successfully");
       } else {
         console.error("Failed to save data");
-        message.error("Failed to save data");
+        message.error("Failed to save Physical Exam");
       }
     } catch (error) {
       console.error("Error:", error);

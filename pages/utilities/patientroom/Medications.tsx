@@ -10,6 +10,7 @@ import {
   AutoComplete,
   Spin,
   Alert,
+  message,
 } from "antd";
 import axiosInstance from "../../../src/components/utils/axiosInstance";
 import { LoadingOutlined, DeleteOutlined } from "@ant-design/icons";
@@ -123,14 +124,18 @@ const Medication = (props: any) => {
 
           // Update patientMedications state with the updated list
           setPatientMedications(updatedMedications);
+          message.success("Medication added successfully!");
         } else {
           console.error("Failed to save medication.");
+          message.error("Failed to save medication. Please try again.");
         }
       } else {
         console.error("Selected medicine not found.");
+        message.error("Selected medicine not found. Please try again.");
       }
     } catch (error) {
       console.error("Error saving medication:", error);
+      message.error("Error saving medication. Please try again.");
     }
   };
 

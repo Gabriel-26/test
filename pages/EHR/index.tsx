@@ -316,14 +316,19 @@ export function EHRForm() {
       .then((response) => {
         console.log("Data sent successfully:", response.data);
         // Display success message
-        message.success("Data sent successfully");
+        message.success("Patient saved successfully");
         // Handle success or redirect to another page
-        // history.push("/success-page");
+        const formElement = document.getElementById(
+          "myForm"
+        ) as HTMLFormElement;
+        if (formElement) {
+          formElement.reset();
+        }
       })
       .catch((error) => {
         console.error("Error sending data:", error);
         // Display error message
-        message.error("Error sending data. Please try again.");
+        message.error("Error saving patient. Please try again.");
         // Handle error
       });
   };
@@ -331,7 +336,7 @@ export function EHRForm() {
   return (
     <PageContainer title="EHR Form" description="this is Icons">
       <DashboardCard title="">
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form id="myForm" onSubmit={handleSubmit(onSubmit)}>
           <h1 className="text-3xl">EHR Form</h1>
 
           <div className="my-4">
