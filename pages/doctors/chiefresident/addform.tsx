@@ -22,7 +22,7 @@ const AddChiefResidentForm = ({
     handleInputChange({ target: { name: "role", value: "chiefResident" } }); // Set the role to "chiefResident"
     handleInputChange({ target: { name: "department_id", value: "" } });
     fetchDepartments();
-  }, [newChiefResident, handleInputChange]);
+  }, []); // Empty dependency array ensures the effect runs only once
 
   const fetchDepartments = async () => {
     try {

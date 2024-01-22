@@ -22,7 +22,7 @@ const AddDoctorForm = ({
     handleInputChange({ target: { name: "role", value: "resident" } }); // Set the role to "resident"
     handleInputChange({ target: { name: "department_id", value: "" } });
     fetchDepartments();
-  }, [newDoctor, handleInputChange]);
+  }, []); // Empty dependency array ensures the effect runs only once
 
   const fetchDepartments = async () => {
     try {
