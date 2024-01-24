@@ -14,7 +14,7 @@ import FullLayout from "../../src/layouts/full/FullLayout";
 import FileViewer from "../utilities/patientroom/FileViewer";
 
 interface PatientDetails {
-  patientRoom: ReactNode;
+  patientRoom: string;
   patient_id: string;
   patient_fName: string;
   patient_lName: string;
