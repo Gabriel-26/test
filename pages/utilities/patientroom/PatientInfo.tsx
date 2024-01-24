@@ -121,12 +121,13 @@ const PatientInfo = (props: any) => {
                   <Text strong>Sex:</Text> <Text>{patient.patient_sex}</Text>
                 </Col>
                 <Col span={8}>
-                  <Text strong>Room ID:</Text> <Text>{patient.room_id}</Text>
+                  <Text strong>Room ID:</Text>{" "}
+                  <Text>{patient.patientRoom}</Text>
                 </Col>
                 {/* OR */}
                 <Col span={8}>
                   <Text strong>Room Name:</Text>{" "}
-                  <Text>{patient.room_name}</Text>
+                  <Text>{patient.patientRoom}</Text>
                 </Col>
                 {/* <Col span={8}>
                   <Text strong>Vaccination History:</Text>{" "}
