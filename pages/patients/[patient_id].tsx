@@ -147,7 +147,7 @@ const PatientHistoryPage = () => {
               <Typography variant="h6" gutterBottom>
                 Patient History
               </Typography>
-              <PatientHistory patientData={patientDetails} />
+              <PatientHistory patientData={patientDetails.patient} />
             </Paper>
           </Grid>
 
@@ -156,7 +156,7 @@ const PatientHistoryPage = () => {
               <Typography variant="h6" gutterBottom>
                 File Viewer
               </Typography>
-              <FileViewer patientData={patientDetails} />
+              <FileViewer patientData={patientDetails.patient} />
             </Paper>
           </Grid>
         </Grid>
