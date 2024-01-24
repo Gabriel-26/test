@@ -14,6 +14,7 @@ import FullLayout from "../../src/layouts/full/FullLayout";
 import FileViewer from "../utilities/patientroom/FileViewer";
 
 interface PatientDetails {
+  patientRoom: ReactNode;
   patient_id: string;
   patient_fName: string;
   patient_lName: string;
@@ -112,6 +113,13 @@ const PatientHistoryPage = () => {
               </Typography>
               <Typography variant="subtitle1" gutterBottom>
                 Sex: {patientDetails.patient_sex}
+              </Typography>
+              <Typography variant="subtitle1" gutterBottom>
+                Room ID: {patientDetails.patientRoom}
+              </Typography>
+              {/* OR */}
+              <Typography variant="subtitle1" gutterBottom>
+                Room Name: {patientDetails.patientRoom}
               </Typography>
               <Typography variant="subtitle1" gutterBottom>
                 Created At: {patientDetails.created_at}
