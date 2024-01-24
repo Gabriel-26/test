@@ -14,18 +14,28 @@ import FullLayout from "../../src/layouts/full/FullLayout";
 import FileViewer from "../utilities/patientroom/FileViewer";
 
 interface PatientDetails {
-  patientRoom: any;
-  room_name: string;
-  room_id: string;
-  patient_id: string;
-  patient_fName: string;
-  patient_lName: string;
-  patient_mName: string;
-  patient_age: number;
-  patient_sex: string;
+  patient: {
+    created_at: string;
+    patient_age: number;
+    patient_fName: string;
+    patient_id: string;
+    patient_lName: string;
+    patient_mName: string;
+    patient_sex: string;
+    updated_at: string;
+  };
+  patientRoom: {
+    created_at: string;
+    floor_id: string;
+    room_floor: string;
+    room_id: string;
+    room_name: string;
+    room_price: number;
+    room_type: string;
+    updated_at: string;
+  };
   created_at: string;
   updated_at: string;
-  // Add other fields as needed
 }
 
 const PatientHistoryPage = () => {
@@ -79,8 +89,8 @@ const PatientHistoryPage = () => {
         gutterBottom
         style={{ color: theme.palette.primary.main }}
       >
-        Patient History - {patientDetails?.patient_fName}{" "}
-        {patientDetails?.patient_lName}
+        Patient History - {patientDetails?.patient.patient_fName}{" "}
+        {patientDetails?.patient.patient_lName}
       </Typography>
 
       {loadingDetails && <CircularProgress style={{ margin: "20px" }} />}
@@ -99,22 +109,22 @@ const PatientHistoryPage = () => {
                 Patient Details
               </Typography>
               <Typography variant="subtitle1" gutterBottom>
-                Patient ID: {patientDetails.patient_id}
+                Patient ID: {patientDetails.patient.patient_id}
               </Typography>
               <Typography variant="subtitle1" gutterBottom>
-                First Name: {patientDetails.patient_fName}
+                First Name: {patientDetails.patient.patient_fName}
               </Typography>
               <Typography variant="subtitle1" gutterBottom>
-                Last Name: {patientDetails.patient_lName}
+                Last Name: {patientDetails.patient.patient_lName}
               </Typography>
               <Typography variant="subtitle1" gutterBottom>
-                Middle Name: {patientDetails.patient_mName}
+                Middle Name: {patientDetails.patient.patient_mName}
               </Typography>
               <Typography variant="subtitle1" gutterBottom>
-                Age: {patientDetails.patient_age}
+                Age: {patientDetails.patient.patient_age}
               </Typography>
               <Typography variant="subtitle1" gutterBottom>
-                Sex: {patientDetails.patient_sex}
+                Sex: {patientDetails.patient.patient_sex}
               </Typography>
               <Typography variant="subtitle1" gutterBottom>
                 Room ID: {patientDetails.patientRoom.room_id}
@@ -124,10 +134,10 @@ const PatientHistoryPage = () => {
                 Room Name: {patientDetails.patientRoom.room_name}
               </Typography>
               <Typography variant="subtitle1" gutterBottom>
-                Created At: {patientDetails.created_at}
+                Created At: {patientDetails.patient.created_at}
               </Typography>
               <Typography variant="subtitle1" gutterBottom>
-                Updated At: {patientDetails.updated_at}
+                Updated At: {patientDetails.patient.updated_at}
               </Typography>
             </Paper>
           </Grid>
