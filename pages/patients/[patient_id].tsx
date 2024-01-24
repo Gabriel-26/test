@@ -14,6 +14,7 @@ import FullLayout from "../../src/layouts/full/FullLayout";
 import FileViewer from "../utilities/patientroom/FileViewer";
 
 interface PatientDetails {
+  patientRoom: any;
   room_name: string;
   room_id: string;
   patient_id: string;
@@ -116,11 +117,11 @@ const PatientHistoryPage = () => {
                 Sex: {patientDetails.patient_sex}
               </Typography>
               <Typography variant="subtitle1" gutterBottom>
-                Room ID: {patientDetails.room_id}
+                Room ID: {patientDetails.patientRoom.room_id}
               </Typography>
               {/* OR */}
               <Typography variant="subtitle1" gutterBottom>
-                Room Name: {patientDetails.room_name}
+                Room Name: {patientDetails.patientRoom.room_name}
               </Typography>
               <Typography variant="subtitle1" gutterBottom>
                 Created At: {patientDetails.created_at}
