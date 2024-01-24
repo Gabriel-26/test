@@ -149,14 +149,14 @@ const PatientHistoryPage = () => {
                   />
                 </ListItem>
                 <Divider />
-                <ListItem>
+                {/* <ListItem>
                   <ListItemText
                     primary={`Room ID: ${
                       patientDetails.patientRoom.room_id ||
                       "Patient has no room"
                     }`}
                   />
-                </ListItem>
+                </ListItem> */}
                 <Divider />
                 {/* OR */}
                 <ListItem>
