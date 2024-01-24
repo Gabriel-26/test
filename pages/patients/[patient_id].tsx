@@ -83,64 +83,96 @@ const PatientHistoryPage = () => {
   }, [patientID]);
 
   return (
-    <Box p={3}>
-      <Typography
-        variant="h4"
-        gutterBottom
-        style={{ color: theme.palette.primary.main }}
-      >
-        Patient History - {patientDetails?.patient.patient_fName}{" "}
-        {patientDetails?.patient.patient_lName}
-      </Typography>
-
-      {loadingDetails && <CircularProgress style={{ margin: "20px" }} />}
-
-      {errorDetails && (
-        <Typography variant="body1" color="error" gutterBottom>
-          Error fetching patient details. Please try again later.
+    return (
+      <Box p={3}>
+        <Typography
+          variant="h4"
+          gutterBottom
+          style={{ color: theme.palette.primary.main }}
+        >
+          Patient History - {patientDetails?.patient.patient_fName}{" "}
+          {patientDetails?.patient.patient_lName}
         </Typography>
-      )}
-
-      {!loadingDetails && !errorDetails && (
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={7}>
-            <Paper elevation={3} style={{ padding: theme.spacing(3) }}>
-              <Typography variant="h6" gutterBottom>
-                Patient Details
-              </Typography>
-              <Typography variant="subtitle1" gutterBottom>
-                Patient ID: {patientDetails.patient.patient_id}
-              </Typography>
-              <Typography variant="subtitle1" gutterBottom>
-                First Name: {patientDetails.patient.patient_fName}
-              </Typography>
-              <Typography variant="subtitle1" gutterBottom>
-                Last Name: {patientDetails.patient.patient_lName}
-              </Typography>
-              <Typography variant="subtitle1" gutterBottom>
-                Middle Name: {patientDetails.patient.patient_mName}
-              </Typography>
-              <Typography variant="subtitle1" gutterBottom>
-                Age: {patientDetails.patient.patient_age}
-              </Typography>
-              <Typography variant="subtitle1" gutterBottom>
-                Sex: {patientDetails.patient.patient_sex}
-              </Typography>
-              <Typography variant="subtitle1" gutterBottom>
-                Room ID: {patientDetails.patientRoom.room_id}
-              </Typography>
-              {/* OR */}
-              <Typography variant="subtitle1" gutterBottom>
-                Room Name: {patientDetails.patientRoom.room_name}
-              </Typography>
-              <Typography variant="subtitle1" gutterBottom>
-                Created At: {patientDetails.patient.created_at}
-              </Typography>
-              <Typography variant="subtitle1" gutterBottom>
-                Updated At: {patientDetails.patient.updated_at}
-              </Typography>
-            </Paper>
-          </Grid>
+  
+        {loadingDetails && <CircularProgress style={{ margin: "20px" }} />}
+  
+        {errorDetails && (
+          <Typography variant="body1" color="error" gutterBottom>
+            Error fetching patient details. Please try again later.
+          </Typography>
+        )}
+  
+        {!loadingDetails && !errorDetails && (
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={7}>
+              <Paper elevation={3} style={{ padding: theme.spacing(3) }}>
+                <Typography variant="h6" gutterBottom>
+                  Patient Details
+                </Typography>
+                <List>
+                  <ListItem>
+                    <ListItemText
+                      primary={`Patient ID: ${patientDetails.patient.patient_id}`}
+                    />
+                  </ListItem>
+                  <Divider />
+                  <ListItem>
+                    <ListItemText
+                      primary={`First Name: ${patientDetails.patient.patient_fName}`}
+                    />
+                  </ListItem>
+                  <Divider />
+                  <ListItem>
+                    <ListItemText
+                      primary={`Last Name: ${patientDetails.patient.patient_lName}`}
+                    />
+                  </ListItem>
+                  <Divider />
+                  <ListItem>
+                    <ListItemText
+                      primary={`Middle Name: ${patientDetails.patient.patient_mName}`}
+                    />
+                  </ListItem>
+                  <Divider />
+                  <ListItem>
+                    <ListItemText
+                      primary={`Age: ${patientDetails.patient.patient_age}`}
+                    />
+                  </ListItem>
+                  <Divider />
+                  <ListItem>
+                    <ListItemText
+                      primary={`Sex: ${patientDetails.patient.patient_sex}`}
+                    />
+                  </ListItem>
+                  <Divider />
+                  <ListItem>
+                    <ListItemText
+                      primary={`Room ID: ${patientDetails.patientRoom.room_id}`}
+                    />
+                  </ListItem>
+                  <Divider />
+                  {/* OR */}
+                  <ListItem>
+                    <ListItemText
+                      primary={`Room Name: ${patientDetails.patientRoom.room_name}`}
+                    />
+                  </ListItem>
+                  <Divider />
+                  <ListItem>
+                    <ListItemText
+                      primary={`Created At: ${patientDetails.patient.created_at}`}
+                    />
+                  </ListItem>
+                  <Divider />
+                  <ListItem>
+                    <ListItemText
+                      primary={`Updated At: ${patientDetails.patient.updated_at}`}
+                    />
+                  </ListItem>
+                </List>
+              </Paper>
+            </Grid>
 
           <Grid item xs={12} md={6}>
             <Paper elevation={3} style={{ padding: theme.spacing(3) }}>
