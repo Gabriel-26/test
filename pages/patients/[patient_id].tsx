@@ -6,6 +6,10 @@ import {
   Paper,
   CircularProgress,
   useTheme,
+  Divider,
+  List,
+  ListItem,
+  ListItemText,
 } from "@mui/material";
 import PatientHistory from "../utilities/patientroom/PatientHistory";
 import axiosInstance from "../../src/components/utils/axiosInstance";
@@ -83,96 +87,95 @@ const PatientHistoryPage = () => {
   }, [patientID]);
 
   return (
-    return (
-      <Box p={3}>
-        <Typography
-          variant="h4"
-          gutterBottom
-          style={{ color: theme.palette.primary.main }}
-        >
-          Patient History - {patientDetails?.patient.patient_fName}{" "}
-          {patientDetails?.patient.patient_lName}
+    <Box p={3}>
+      <Typography
+        variant="h4"
+        gutterBottom
+        style={{ color: theme.palette.primary.main }}
+      >
+        Patient History - {patientDetails?.patient.patient_fName}{" "}
+        {patientDetails?.patient.patient_lName}
+      </Typography>
+
+      {loadingDetails && <CircularProgress style={{ margin: "20px" }} />}
+
+      {errorDetails && (
+        <Typography variant="body1" color="error" gutterBottom>
+          Error fetching patient details. Please try again later.
         </Typography>
-  
-        {loadingDetails && <CircularProgress style={{ margin: "20px" }} />}
-  
-        {errorDetails && (
-          <Typography variant="body1" color="error" gutterBottom>
-            Error fetching patient details. Please try again later.
-          </Typography>
-        )}
-  
-        {!loadingDetails && !errorDetails && (
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={7}>
-              <Paper elevation={3} style={{ padding: theme.spacing(3) }}>
-                <Typography variant="h6" gutterBottom>
-                  Patient Details
-                </Typography>
-                <List>
-                  <ListItem>
-                    <ListItemText
-                      primary={`Patient ID: ${patientDetails.patient.patient_id}`}
-                    />
-                  </ListItem>
-                  <Divider />
-                  <ListItem>
-                    <ListItemText
-                      primary={`First Name: ${patientDetails.patient.patient_fName}`}
-                    />
-                  </ListItem>
-                  <Divider />
-                  <ListItem>
-                    <ListItemText
-                      primary={`Last Name: ${patientDetails.patient.patient_lName}`}
-                    />
-                  </ListItem>
-                  <Divider />
-                  <ListItem>
-                    <ListItemText
-                      primary={`Middle Name: ${patientDetails.patient.patient_mName}`}
-                    />
-                  </ListItem>
-                  <Divider />
-                  <ListItem>
-                    <ListItemText
-                      primary={`Age: ${patientDetails.patient.patient_age}`}
-                    />
-                  </ListItem>
-                  <Divider />
-                  <ListItem>
-                    <ListItemText
-                      primary={`Sex: ${patientDetails.patient.patient_sex}`}
-                    />
-                  </ListItem>
-                  <Divider />
-                  <ListItem>
-                    <ListItemText
-                      primary={`Room ID: ${patientDetails.patientRoom.room_id}`}
-                    />
-                  </ListItem>
-                  <Divider />
-                  {/* OR */}
-                  <ListItem>
-                    <ListItemText
-                      primary={`Room Name: ${patientDetails.patientRoom.room_name}`}
-                    />
-                  </ListItem>
-                  <Divider />
-                  <ListItem>
-                    <ListItemText
-                      primary={`Created At: ${patientDetails.patient.created_at}`}
-                    />
-                  </ListItem>
-                  <Divider />
-                  <ListItem>
-                    <ListItemText
-                      primary={`Updated At: ${patientDetails.patient.updated_at}`}
-                    />
-                  </ListItem>
-                </List>
-              </Paper>
-            </Grid>
+      )}
+
+      {!loadingDetails && !errorDetails && (
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={7}>
+            <Paper elevation={3} style={{ padding: theme.spacing(3) }}>
+              <Typography variant="h6" gutterBottom>
+                Patient Details
+              </Typography>
+              <List>
+                <ListItem>
+                  <ListItemText
+                    primary={`Patient ID: ${patientDetails.patient.patient_id}`}
+                  />
+                </ListItem>
+                <Divider />
+                <ListItem>
+                  <ListItemText
+                    primary={`First Name: ${patientDetails.patient.patient_fName}`}
+                  />
+                </ListItem>
+                <Divider />
+                <ListItem>
+                  <ListItemText
+                    primary={`Last Name: ${patientDetails.patient.patient_lName}`}
+                  />
+                </ListItem>
+                <Divider />
+                <ListItem>
+                  <ListItemText
+                    primary={`Middle Name: ${patientDetails.patient.patient_mName}`}
+                  />
+                </ListItem>
+                <Divider />
+                <ListItem>
+                  <ListItemText
+                    primary={`Age: ${patientDetails.patient.patient_age}`}
+                  />
+                </ListItem>
+                <Divider />
+                <ListItem>
+                  <ListItemText
+                    primary={`Sex: ${patientDetails.patient.patient_sex}`}
+                  />
+                </ListItem>
+                <Divider />
+                <ListItem>
+                  <ListItemText
+                    primary={`Room ID: ${patientDetails.patientRoom.room_id}`}
+                  />
+                </ListItem>
+                <Divider />
+                {/* OR */}
+                <ListItem>
+                  <ListItemText
+                    primary={`Room Name: ${patientDetails.patientRoom.room_name}`}
+                  />
+                </ListItem>
+                <Divider />
+                <ListItem>
+                  <ListItemText
+                    primary={`Created At: ${patientDetails.patient.created_at}`}
+                  />
+                </ListItem>
+                <Divider />
+                <ListItem>
+                  <ListItemText
+                    primary={`Updated At: ${patientDetails.patient.updated_at}`}
+                  />
+                </ListItem>
+              </List>
+            </Paper>
+          </Grid>
 
           <Grid item xs={12} md={6}>
             <Paper elevation={3} style={{ padding: theme.spacing(3) }}>
