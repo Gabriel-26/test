@@ -550,7 +550,7 @@ const ChatWithChatmate: React.FC<{
                 handleSendMessage();
               }
             }}
-            style={{ flex: 1, marginRight: "8px", wordWrap: "break-word" }} // Add wordWrap style
+            autoSize={{ minRows: 2, maxRows: 6 }}
           />
           <button
             className="bg-blue-500 text-white py-2 px-4 rounded mr-2"
