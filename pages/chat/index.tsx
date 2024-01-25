@@ -5,6 +5,7 @@ import axiosInstance from "../../src/components/utils/axiosInstance";
 import ResidentsList from "./residentsList";
 import { useRouter } from "next/router";
 import PatientListPage from "./patientList";
+import TextArea from "antd/es/input/TextArea";
 
 interface Message {
   chatGroupMessages_id: string;
@@ -33,8 +34,7 @@ const ChatPage: React.FC = () => {
   const [pollInterval, setPollInterval] = useState<NodeJS.Timer | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedPatients, setSelectedPatients] = useState<string[]>([]);
-  const router = useRouter(); // Add this line
-
+  const { TextArea } = Input;
   const clearSelectedPatients = () => {
     setSelectedPatients([]);
   };
@@ -540,7 +540,7 @@ const ChatWithChatmate: React.FC<{
       </div>
       <div className="p-4 border-t">
         <div className="flex items-center space-x-4">
-          <Input
+          <TextArea
             className="w-full mr-8 whitespace-pre-wrap"
             placeholder="Type a message..."
             value={inputMessage}
