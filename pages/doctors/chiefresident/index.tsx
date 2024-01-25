@@ -305,8 +305,11 @@ const ChiefResident = () => {
                           .includes(searchQuery.toLowerCase()) ||
                         doctor.resident_lName
                           .toLowerCase()
-                          .includes(searchQuery.toLowerCase()))
-                  ) // Filter doctors based on the condition
+                          .includes(searchQuery.toLowerCase()) ||
+                        doctor.resident_gender
+                          .toLowerCase()
+                          .includes(searchQuery.toLowerCase())) // Adjust filtering to consider gender
+                  )
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((doctor) => (
                     <TableRow key={doctor.resident_id}>
@@ -362,6 +365,9 @@ const ChiefResident = () => {
                         <Typography>{doctor.resident_mName}</Typography>
                       </TableCell>
                       <TableCell>
+                        <Typography>{doctor.resident_gender}</Typography>
+                      </TableCell>
+                      <TableCell>
                         <Typography className=" pl-8">
                           {doctor.department_id}
                         </Typography>
@@ -385,7 +391,9 @@ const ChiefResident = () => {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25, 50, 100]}
           component="div"
-          count={doctors.length}
+          count={
+            doctors.filter((doctor) => doctor.role === "chiefResident").length
+          }
           page={page}
           onPageChange={handleChangePage}
           rowsPerPage={rowsPerPage}

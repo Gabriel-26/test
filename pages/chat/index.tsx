@@ -541,6 +541,7 @@ const ChatWithChatmate: React.FC<{
       <div className="p-4 border-t">
         <div className="flex items-center space-x-4">
           <Input
+            className="w-full mr-8 whitespace-pre-wrap"
             placeholder="Type a message..."
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}

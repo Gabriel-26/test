@@ -18,6 +18,8 @@ const AddChiefResidentForm = ({
     handleInputChange({ target: { name: "resident_fName", value: "" } });
     handleInputChange({ target: { name: "resident_lName", value: "" } });
     handleInputChange({ target: { name: "resident_mName", value: "" } });
+    handleInputChange({ target: { name: "resident_gender", value: "" } });
+
     handleInputChange({ target: { name: "resident_password", value: "" } });
     handleInputChange({ target: { name: "role", value: "chiefResident" } }); // Set the role to "chiefResident"
     handleInputChange({ target: { name: "department_id", value: "" } });
@@ -61,6 +63,8 @@ const AddChiefResidentForm = ({
       handleInputChange({ target: { name: "resident_fName", value: "" } });
       handleInputChange({ target: { name: "resident_lName", value: "" } });
       handleInputChange({ target: { name: "resident_mName", value: "" } });
+      handleInputChange({ target: { name: "resident_gender", value: "" } });
+
       handleInputChange({ target: { name: "resident_password", value: "" } });
       handleInputChange({ target: { name: "department_id", value: "" } });
       message.success("New chief resident added successfully");
@@ -102,6 +106,13 @@ const AddChiefResidentForm = ({
         label="Middle Name"
         name="resident_mName"
         rules={[{ required: true, message: "Please enter Middle Name" }]}
+      >
+        <Input />
+      </Form.Item>
+      <Form.Item
+        label="Gender"
+        name="resident_gender"
+        rules={[{ required: true, message: "Please enter Gender" }]}
       >
         <Input />
       </Form.Item>

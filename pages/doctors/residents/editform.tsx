@@ -99,6 +99,13 @@ const EditDoctorForm = ({ editDoctor, onFinish, onUpdate }) => {
       >
         <Input />
       </Form.Item>
+      <Form.Item
+        label="Gender"
+        name="resident_gender"
+        rules={[{ required: true, message: "Please enter Gender" }]}
+      >
+        <Input />
+      </Form.Item>
       <Form.Item label="Password" name="resident_password">
         <Input.Password />
       </Form.Item>
