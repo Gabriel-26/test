@@ -550,7 +550,7 @@ const ChatWithChatmate: React.FC<{
                 handleSendMessage();
               }
             }}
-            autoSize={{ minRows: 2, maxRows: 6 }}
+            autoSize={{ minRows: 1, maxRows: 6 }}
           />
           <button
             className="bg-blue-500 text-white py-2 px-4 rounded mr-2"
