@@ -281,6 +281,11 @@ const ChiefResident = () => {
                   </TableCell>
                   <TableCell>
                     <Typography variant="subtitle2" fontWeight={600}>
+                      Gender
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2" fontWeight={600}>
                       Department ID
                     </Typography>
                   </TableCell>
