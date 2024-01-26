@@ -30,7 +30,7 @@ const useResidentAuth = () => {
       localStorage.setItem("resLastname", resident_lName);
       localStorage.setItem("depID", depId);
       localStorage.setItem("userN", username);
-      localStorage.setItem("Gender", gender);
+      localStorage.setItem("userGender", gender);
       router.push("/");
       return "success";
     } catch (error) {
@@ -53,7 +53,7 @@ const useResidentAuth = () => {
     localStorage.removeItem("resLastname");
     localStorage.removeItem("depID");
     localStorage.removeItem("userN");
-    localStorage.removeItem("Gender");
+    localStorage.removeItem("userGender");
     await axiosInstance.get("/logout");
     router.push("/authentication/login");
   };
