@@ -25,7 +25,7 @@ const Profile = () => {
   useEffect(() => {
     const storedUserRole = localStorage.getItem("userRole");
     const storedUserName = localStorage.getItem("userN");
-    const storedUserGender = localStorage.getItem("Gender"); // Retrieve user gender
+    const storedUserGender = localStorage.getItem("userGender"); // Retrieve user gender
 
     if (storedUserRole) {
       setUserRole(storedUserRole);
