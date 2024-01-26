@@ -19,7 +19,7 @@ const useResidentAuth = () => {
       const resident_fName = response.data.resident_fName;
       const resident_lName = response.data.resident_lName;
       const depId = response.data.department_id;
-      const resident_gender = response.data.resident_gender;
+      const resideznt_gender = response.data.resident_gender;
 
       console.log("Resident ID:", resident_id);
 
@@ -30,7 +30,7 @@ const useResidentAuth = () => {
       localStorage.setItem("resLastname", resident_lName);
       localStorage.setItem("depID", depId);
       localStorage.setItem("userN", username);
-      localStorage.setItem("userGender", resident_gender);
+      localStorage.setItem("userGender", resideznt_gender);
       router.push("/");
       return "success";
     } catch (error) {
