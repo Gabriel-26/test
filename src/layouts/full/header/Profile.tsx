@@ -5,12 +5,14 @@ import useAdminAuth from "../../../components/utils/useAdminAuth";
 import useResidentAuth from "../../../components/utils/useResidentAuth";
 
 // Import the image
-import doctorImage from "../../../assets/images/profile/doctorm.png";
+import doctorMaleImage from "../../../assets/images/profile/doctorm.png";
+import doctorFemaleImage from "../../../assets/images/profile/femaledoc.png";
 
 const Profile = () => {
   const [anchorEl2, setAnchorEl2] = useState(null);
   const [userRole, setUserRole] = useState("");
   const [userNameInitial, setUserNameInitial] = useState("");
+  const [userGender, setUserGender] = useState(""); // Added state for user gender
 
   const handleClick2 = (event) => {
     setAnchorEl2(event.currentTarget);
@@ -23,6 +25,7 @@ const Profile = () => {
   useEffect(() => {
     const storedUserRole = localStorage.getItem("userRole");
     const storedUserName = localStorage.getItem("userN");
+    const storedUserGender = localStorage.getItem("Gender"); // Retrieve user gender
 
     if (storedUserRole) {
       setUserRole(storedUserRole);
@@ -30,6 +33,10 @@ const Profile = () => {
 
     if (storedUserName) {
       setUserNameInitial(storedUserName.charAt(0).toUpperCase());
+    }
+
+    if (storedUserGender) {
+      setUserGender(storedUserGender);
     }
   }, []);
 
@@ -54,9 +61,13 @@ const Profile = () => {
         }}
         onClick={handleClick2}
       >
-        {/* Use the imported image as the src for Avatar */}
+        {/* Conditionally render the Avatar based on user gender */}
         <Avatar
-          src={doctorImage.src} // Use .src to get the string
+          src={
+            userGender === "Female"
+              ? doctorFemaleImage.src
+              : doctorMaleImage.src
+          }
           alt="Doctor"
           sx={{
             width: 35,
