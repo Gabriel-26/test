@@ -22,6 +22,7 @@ const useResidentAuth = () => {
       const resident_gender = response.data.resident_gender;
 
       console.log("Resident ID:", resident_id);
+      console.log("Gender:", resident_gender);
 
       localStorage.setItem("authToken", token);
       localStorage.setItem("userRole", role); // Save the role in the session
