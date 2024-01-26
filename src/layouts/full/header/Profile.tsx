@@ -93,7 +93,6 @@ const Profile = () => {
         <Box mt={1} py={1} px={2}>
           <Button
             variant="outlined"
-            s
             color="primary"
             fullWidth
             onClick={handleLogout}
