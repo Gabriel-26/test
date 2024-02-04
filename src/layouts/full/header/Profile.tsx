@@ -38,7 +38,7 @@ const Profile = () => {
     const storedUserName = localStorage.getItem("userN");
     const storedUserGender = localStorage.getItem("userGender"); // Retrieve user gender
     const storedResidentFName = localStorage.getItem("resFirstName"); // Retrieve resident first name
-    const storedResidentLName = localStorage.getItem("resLastName"); // Retrieve resident last name
+    const storedResidentLName = localStorage.getItem("resLastname"); // Retrieve resident last name
 
     if (storedUserRole) {
       setUserRole(storedUserRole);
