@@ -41,6 +41,7 @@ const Doctors = () => {
     department_id: "",
   });
   const [searchQuery, setSearchQuery] = useState("");
+  const [noResults, setNoResults] = useState(false); // State to track if there are no search results
 
   const [isEditing, setIsEditing] = useState(false);
   const [editDoctor, setEditDoctor] = useState({
@@ -71,6 +72,7 @@ const Doctors = () => {
 
       const response = await axios.get(endpoint);
       setDoctors(response.data);
+      setNoResults(false); // Reset noResults state when fetching data
 
       setLoading(false);
     } catch (error) {
@@ -84,6 +86,8 @@ const Doctors = () => {
   };
 
   useEffect(() => {
+    setPage(0); // Reset page to 0 when search query changes
+
     fetchDoctors(); // Initial data fetch when the component is mounted
   }, []);
 
@@ -118,7 +122,29 @@ const Doctors = () => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
-  // Avoid a layout jump when reaching the last page with empty rows.
+  const filteredDoctors = doctors.filter(
+    (doctor) =>
+      doctor.role === "resident" &&
+      (searchQuery === "" ||
+        doctor.resident_userName
+          ?.toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        doctor.resident_fName
+          ?.toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        doctor.resident_lName
+          ?.toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        doctor.resident_mName
+          ?.toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        doctor.department_id
+          ?.toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        doctor.resident_gender
+          ?.toLowerCase()
+          .includes(searchQuery.toLowerCase()))
+  );
 
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
@@ -130,8 +156,8 @@ const Doctors = () => {
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setRowsPerPage(parseInt(event.target.value, 5));
-    setPage(0);
+    setRowsPerPage(parseInt(event.target.value, 10)); // Change the base to 10
+    setPage(0); // Reset page to 0 when rows per page changes
   };
 
   return (
@@ -139,13 +165,7 @@ const Doctors = () => {
       <DashboardCard title="Residents">
         <Spin spinning={loading}>
           <Box sx={{ overflow: "auto", width: { xs: "600px", sm: "auto" } }}>
-            <Button
-              onClick={handleAddDoctor}
-              // icon={<PlusOutlined />}
-              // sx={{ marginBottom: "10px" }}
-            >
-              New Resident
-            </Button>
+            <Button onClick={handleAddDoctor}>New Resident</Button>
             <Stack direction="column" spacing={2}>
               <TextField
                 label="Search"
@@ -166,30 +186,21 @@ const Doctors = () => {
               }}
               open={isAddingDoctor || isEditing}
               bodyStyle={{ paddingBottom: 80 }}
-              // extra={
-              //   <Space>
-              //     <Button onClick={handleCancel}>Cancel</Button>
-              //     <Button onClick={handleSubmit} type="primary">
-              //       Submit
-              //     </Button>
-              //   </Space>
-              // }
             >
-              {isAddingDoctor ? ( // Render add form
+              {isAddingDoctor ? (
                 <AddDoctorForm
                   onUpdate={handleUpdate}
                   newDoctor={newDoctor}
                   handleInputChange={handleInputChange}
                   onFinish={handleCancel}
                 />
-              ) : isEditing ? ( // Render edit form
+              ) : isEditing ? (
                 <EditDoctorForm
                   editDoctor={editDoctor}
                   onUpdate={handleUpdate}
                   onFinish={handleCancel}
                 />
-              ) : null}{" "}
-              {/* Render nothing when neither adding nor editing */}
+              ) : null}
             </Drawer>
 
             <Table
@@ -245,24 +256,7 @@ const Doctors = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {doctors
-                  .filter(
-                    (doctor) =>
-                      doctor.role === "resident" &&
-                      (searchQuery === "" ||
-                        doctor.resident_userName
-                          .toLowerCase()
-                          .includes(searchQuery.toLowerCase()) ||
-                        doctor.resident_fName
-                          .toLowerCase()
-                          .includes(searchQuery.toLowerCase()) ||
-                        doctor.resident_lName
-                          .toLowerCase()
-                          .includes(searchQuery.toLowerCase()) ||
-                        doctor.resident_gender
-                          .toLowerCase()
-                          .includes(searchQuery.toLowerCase())) // Adjust filtering to consider gender
-                  )
+                {filteredDoctors
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((doctor) => (
                     <TableRow key={doctor.resident_id}>
@@ -327,7 +321,6 @@ const Doctors = () => {
                       </TableCell>
                       <TableCell>
                         <Button
-                          // variant="text"
                           color="primary"
                           onClick={() => handleEditDoctor(doctor)}
                         >
@@ -336,20 +329,30 @@ const Doctors = () => {
                       </TableCell>
                     </TableRow>
                   ))}
+                {/* Display a message if there are no search results */}
+                {filteredDoctors.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={8} align="center">
+                      No residents with those credentials.
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
+            {/* Conditionally render the TablePagination component */}
+            {filteredDoctors.length > 0 && (
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 25, 50, 100]}
+                component="div"
+                count={filteredDoctors.length}
+                page={page}
+                onPageChange={handleChangePage}
+                rowsPerPage={rowsPerPage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
+            )}
           </Box>
         </Spin>
-
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25, 50, 100]}
-          component="div"
-          count={doctors.filter((doctor) => doctor.role === "resident").length}
-          page={page}
-          onPageChange={handleChangePage}
-          rowsPerPage={rowsPerPage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
       </DashboardCard>
     </PageContainer>
   );

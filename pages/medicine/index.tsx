@@ -47,6 +47,7 @@ const MedicineList = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setPage(0); // Reset page to 0 when search query changes
     fetchMedicines();
   }, [searchQuery]);
 
@@ -140,7 +141,7 @@ const MedicineList = () => {
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setRowsPerPage(parseInt(event.target.value, 10)); // Change the base to 10
-    setPage(0);
+    setPage(1); // Reset page to 0 when rows per page changes
   };
 
   return (
@@ -163,7 +164,7 @@ const MedicineList = () => {
           />
           {medicines.length > 0 ? (
             <TableContainer component={Paper}>
-              <Table>
+              <Table className="custom-table">
                 <TableHead>
                   <TableRow>
                     <TableCell>ID</TableCell>
@@ -208,7 +209,11 @@ const MedicineList = () => {
               </Table>
             </TableContainer>
           ) : (
-            <p>No medicines available.</p>
+            <TableRow>
+              <TableCell align="center">
+                No medicine found that matches your search in the database.
+              </TableCell>
+            </TableRow>
           )}
         </Spin>
         <TablePagination

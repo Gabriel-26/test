@@ -13,10 +13,6 @@ import {
   Stack,
 } from "@mui/material";
 import DashboardCard from "../../../src/components/shared/DashboardCard";
-import BorderColorIcon from "@mui/icons-material/BorderColor";
-import EditIcon from "@mui/icons-material/Edit";
-import { green, red } from "@mui/material/colors";
-import SearchIcon from "@mui/icons-material/Search";
 import axios from "../../../src/components/utils/axiosInstance";
 import type { ReactElement } from "react";
 import PageContainer from "../../../src/components/container/PageContainer";
@@ -29,7 +25,6 @@ const ChiefResident = () => {
   const [doctors, setDoctors] = useState([]);
   const [isAddingDoctor, setIsAddingDoctor] = useState(false);
   const [loading, setLoading] = useState(true); // Loading state
-
   const [newDoctor, setNewDoctor] = useState({
     resident_id: "",
     resident_userName: "",
@@ -41,7 +36,6 @@ const ChiefResident = () => {
     department_id: "",
   });
   const [searchQuery, setSearchQuery] = useState("");
-
   const [isEditing, setIsEditing] = useState(false);
   const [editDoctor, setEditDoctor] = useState({
     resident_id: "",
@@ -53,11 +47,17 @@ const ChiefResident = () => {
     role: "",
     department_id: "",
   });
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  useEffect(() => {
+    setPage(0); // Reset page to 0 when search query changes
+    fetchDoctors(); // Initial data fetch when the component is mounted
+  }, [searchQuery]);
 
   const fetchDoctors = async () => {
     try {
       setLoading(true); // Set loading to true when starting data fetch
-
       const token = localStorage.getItem("authToken");
       const role = localStorage.getItem("userRole"); // Assuming user role is stored in localStorage
 
@@ -84,10 +84,6 @@ const ChiefResident = () => {
     fetchDoctors(); // Fetch data when an update is needed
   };
 
-  useEffect(() => {
-    fetchDoctors(); // Initial data fetch when the component is mounted
-  }, []);
-
   const handleAddDoctor = () => {
     setIsAddingDoctor(!isAddingDoctor);
   };
@@ -102,18 +98,7 @@ const ChiefResident = () => {
     setIsEditing(false);
   };
 
-  const handleEditDoctor = (
-    doctor: React.SetStateAction<{
-      resident_id: string;
-      resident_userName: string;
-      resident_fName: string;
-      resident_lName: string;
-      resident_mName: string;
-      resident_password: string;
-      role: string;
-      department_id: string;
-    }>
-  ) => {
+  const handleEditDoctor = (doctor) => {
     if (isEditing && editDoctor.resident_id) {
       // If the edit form is already open for the same doctor, close it
       setIsEditing(false);
@@ -124,7 +109,7 @@ const ChiefResident = () => {
     }
   };
 
-  const handleInputChange = (e: { target: { name: any; value: any } }) => {
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewDoctor((prevDoctor) => ({
       ...prevDoctor,
@@ -132,75 +117,45 @@ const ChiefResident = () => {
     }));
   };
 
-  const handleSubmit = async () => {
-    try {
-      const token = localStorage.getItem("authToken");
-      // Set the token in Axios headers for this request
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      // Set role to 1, as all residents being added are Chiefs
-      const newDoctorWithrole = {
-        ...newDoctor,
-        role: "chiefResident",
-      };
-
-      // Send a POST request to the API endpoint with the new doctor data
-      const response = await axios.post("admin/residents", newDoctorWithrole);
-
-      // Handle the response as needed
-      console.log("New doctor added successfully:", response.data);
-
-      // Fetch the updated list of doctors
-      fetchDoctors();
-
-      // Clear the form and close the collapsible form section
-      setNewDoctor({
-        resident_id: "",
-        resident_userName: "",
-        resident_fName: "",
-        resident_lName: "",
-        resident_mName: "",
-        resident_password: "",
-        role: "chiefResident",
-        department_id: "",
-      });
-      setIsAddingDoctor(false);
-    } catch (error) {
-      console.log("Error adding new doctor:", error);
-      // Handle any error that occurred during the request
-    }
-  };
-
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
-  // Avoid a layout jump when reaching the last page with empty rows.
-
-  const handleChangePage = (
-    event: React.MouseEvent<HTMLButtonElement> | null,
-    newPage: number
-  ) => {
+  const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 5));
     setPage(0);
   };
+
+  const filteredDoctors = doctors.filter(
+    (doctor) =>
+      doctor.role === "chiefResident" &&
+      (searchQuery === "" ||
+        doctor.resident_userName
+          ?.toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        doctor.resident_fName
+          ?.toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        doctor.resident_lName
+          ?.toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        doctor.resident_mName
+          ?.toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        doctor.department_id
+          ?.toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        doctor.resident_gender
+          ?.toLowerCase()
+          .includes(searchQuery.toLowerCase()))
+  );
 
   return (
     <PageContainer>
       <DashboardCard title="Chief Residents">
         <Spin spinning={loading}>
           <Box sx={{ overflow: "auto", width: { xs: "600px", sm: "auto" } }}>
-            <Button
-              onClick={handleAddDoctor}
-              // icon={<PlusOutlined />}
-              // sx={{ marginBottom: "10px" }}
-            >
-              New Resident
-            </Button>
+            <Button onClick={handleAddDoctor}>New Resident</Button>
             <Stack direction="column" spacing={2}>
               <TextField
                 label="Search"
@@ -217,31 +172,24 @@ const ChiefResident = () => {
                 isAddingDoctor ? "Add Chief Resident" : "Edit Chief Resident"
               }
               width={720}
-              onClose={() => {
-                setIsAddingDoctor(false);
-                setIsEditing(false);
-              }}
+              onClose={handleDrawerClose}
               open={isAddingDoctor || isEditing}
               bodyStyle={{ paddingBottom: 80 }}
             >
-              {isAddingDoctor ? ( // Render add form
+              {isAddingDoctor ? (
                 <AddChiefResidentForm
                   newChiefResident={newDoctor}
                   onUpdate={handleUpdate}
                   handleInputChange={handleInputChange}
-                  onFinish={() => {
-                    handleDrawerClose(); // Close the Drawer
-                    // Additional actions you may want to perform on finish
-                  }}
+                  onFinish={handleCancel}
                 />
-              ) : isEditing ? ( // Render edit form
+              ) : isEditing ? (
                 <EditChiefResidentForm
                   editChiefResident={editDoctor}
-                  onFinish={handleDrawerClose}
-                  onUpdate={fetchDoctors}
+                  onUpdate={handleUpdate}
+                  onFinish={handleCancel}
                 />
-              ) : null}{" "}
-              {/* Render nothing when neither adding nor editing */}
+              ) : null}
             </Drawer>
 
             <Table
@@ -297,24 +245,7 @@ const ChiefResident = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {doctors
-                  .filter(
-                    (doctor) =>
-                      doctor.role === "chiefResident" && // Filter condition
-                      (searchQuery === "" ||
-                        doctor.resident_userName
-                          .toLowerCase()
-                          .includes(searchQuery.toLowerCase()) ||
-                        doctor.resident_fName
-                          .toLowerCase()
-                          .includes(searchQuery.toLowerCase()) ||
-                        doctor.resident_lName
-                          .toLowerCase()
-                          .includes(searchQuery.toLowerCase()) ||
-                        doctor.resident_gender
-                          .toLowerCase()
-                          .includes(searchQuery.toLowerCase())) // Adjust filtering to consider gender
-                  )
+                {filteredDoctors
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((doctor) => (
                     <TableRow key={doctor.resident_id}>
@@ -339,12 +270,6 @@ const ChiefResident = () => {
                             <Typography variant="subtitle2" fontWeight={600}>
                               {doctor.resident_userName}
                             </Typography>
-                            <Typography
-                              color="textSecondary"
-                              sx={{
-                                fontSize: "13px",
-                              }}
-                            ></Typography>
                           </Box>
                         </Box>
                       </TableCell>
@@ -379,7 +304,6 @@ const ChiefResident = () => {
                       </TableCell>
                       <TableCell>
                         <Button
-                          // variant="text"
                           color="primary"
                           onClick={() => handleEditDoctor(doctor)}
                         >
@@ -388,22 +312,29 @@ const ChiefResident = () => {
                       </TableCell>
                     </TableRow>
                   ))}
+                {filteredDoctors.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={8} align="center">
+                      No residents with those credentials.
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </Box>
         </Spin>
 
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25, 50, 100]}
-          component="div"
-          count={
-            doctors.filter((doctor) => doctor.role === "chiefResident").length
-          }
-          page={page}
-          onPageChange={handleChangePage}
-          rowsPerPage={rowsPerPage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
+        {filteredDoctors.length > 0 && (
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25, 50, 100]}
+            component="div"
+            count={filteredDoctors.length}
+            page={page}
+            onPageChange={handleChangePage}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        )}
       </DashboardCard>
     </PageContainer>
   );
