@@ -174,8 +174,8 @@ const MedicineList = () => {
                     <TableCell>Type</TableCell>
                     <TableCell>Price</TableCell>
                     {/* <TableCell>Created At</TableCell>
-                <TableCell>Updated At</TableCell> */}
-                    {userRole === "admin" && <TableCell>Action</TableCell>}{" "}
+    <TableCell>Updated At</TableCell> */}
+                    {userRole === "admin" && <TableCell>Action</TableCell>}
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -189,20 +189,21 @@ const MedicineList = () => {
                         <TableCell>{medicine.medicine_dosage}</TableCell>
                         <TableCell>{medicine.medicine_type}</TableCell>
                         <TableCell>{medicine.medicine_price}</TableCell>
-                        {/* <TableCell>{medicine.created_at}</TableCell>
-                  <TableCell>{medicine.updated_at}</TableCell> */}
-                        <TableCell>
-                          <Button
-                            // variant="text"
-                            color="primary"
-                            onClick={() => showDrawer(medicine)}
-                            style={{
-                              display: userRole === "admin" ? "block" : "none",
-                            }}
-                          >
-                            Edit
-                          </Button>
-                        </TableCell>
+                        {userRole === "admin" && (
+                          <TableCell>
+                            <Button
+                              // variant="text"
+                              color="primary"
+                              onClick={() => showDrawer(medicine)}
+                              style={{
+                                display:
+                                  userRole === "admin" ? "block" : "none",
+                              }}
+                            >
+                              Edit
+                            </Button>
+                          </TableCell>
+                        )}
                       </TableRow>
                     ))}
                 </TableBody>
