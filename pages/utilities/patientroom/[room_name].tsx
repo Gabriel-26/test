@@ -14,6 +14,7 @@ import { Modal, Button, message } from "antd";
 import Medication from "./Medications";
 import HumanFigureEvaluation from "./PhysicalExam";
 import FileViewer from "./FileViewer";
+import LabResultsPage from "./LabResults";
 
 const Item = styled(Paper)(({ theme }) => ({
   ...theme.typography.body1,
@@ -277,6 +278,16 @@ const RoomView = () => {
                 style={{ width: "100%" }}
               />
             </TabsTrigger>
+            <TabsTrigger
+              value="labresults"
+              className="tab-trigger relative group cursor-pointer"
+            >
+              <span className="inline-block py-2 px-4">Lab Results</span>
+              <span
+                className="absolute bottom-0 left-0 h-1 transition-transform duration-300 transform scale-x-0 group-hover:scale-x-100 group-focus:scale-x-100 group-active:scale-x-100 bg-blue-500"
+                style={{ width: "100%" }}
+              />
+            </TabsTrigger>
           </TabsList>
           <TabsContent value="pninfo">
             <PatientInfo
@@ -303,6 +314,11 @@ const RoomView = () => {
           </TabsContent>
           <TabsContent value="medication">
             <Medication patientId={patientData[0]?.patient_id} />
+          </TabsContent>
+          <TabsContent value="labresults">
+            <LabResultsPage
+              patientData={{ patient_id: patientData[0]?.patient_id }}
+            />
           </TabsContent>
         </Tabs>
         <div style={{ display: "flex", flexWrap: "wrap", gap: "16px" }}>
