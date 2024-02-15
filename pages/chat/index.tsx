@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Input, List, Avatar, Modal, Button } from "antd";
+import { List, Avatar, Modal, Button } from "antd";
 import FullLayout from "../../src/layouts/full/FullLayout";
 import axiosInstance from "../../src/components/utils/axiosInstance";
 import ResidentsList from "./residentsList";
+import { TextareaAutosize } from "@mui/material";
 import { useRouter } from "next/router";
 import PatientListPage from "./patientList";
 
@@ -278,7 +279,7 @@ const ChatPage: React.FC = () => {
             Create Chat Group
           </button>
         </div>
-        <div className="w-2/3">
+        <div className="w-full">
           {selectedConversation ? (
             <ChatWithChatmate
               selectedConversation={selectedConversation}
@@ -358,7 +359,6 @@ const ChatWithChatmate: React.FC<{
   const [lastReceivedMessageId, setLastReceivedMessageId] = useState<
     string | null
   >(null);
-  const { TextArea } = Input;
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
@@ -421,7 +421,7 @@ const ChatWithChatmate: React.FC<{
     currentConversation?.other_resident_lName || "Resident";
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full overflow-hidden">
       <div className="flex justify-between p-2 bg-blue-500 text-white">
         <h1 className="text-xl font-semibold">
           {`${otherResidentFirstName} ${otherResidentLastName}`}
@@ -433,8 +433,8 @@ const ChatWithChatmate: React.FC<{
         </div>
       )}
       <div
-        className="flex-grow p-4 overflow-y-auto"
-        style={{ maxHeight: "500px" }}
+        className="flex-grow p-4"
+        style={{ height: "612px", overflowY: "auto" }}
       >
         <List
           dataSource={messages}
@@ -535,11 +535,11 @@ const ChatWithChatmate: React.FC<{
             }
           }}
         />
-        <div ref={messagesEndRef} />
+        {isNewMessage && <div ref={messagesEndRef} />}
       </div>
       <div className="p-4 border-t">
         <div className="flex items-center space-x-4">
-          <TextArea
+          <TextareaAutosize
             placeholder="Type a message..."
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
@@ -548,8 +548,15 @@ const ChatWithChatmate: React.FC<{
                 handleSendMessage();
               }
             }}
-            autoSize={{ minRows: 1, maxRows: 6 }}
+            style={{
+              width: "calc(100% - 120px)", // Adjust the width as needed
+              resize: "none", // Disable resizing
+              border: "1px solid #ccc", // Add border
+              borderRadius: "4px", // Add border radius for a rounded appearance
+              padding: "8px", // Add padding for better spacing
+            }}
           />
+
           <button
             className="bg-blue-500 text-white py-2 px-4 rounded mr-2"
             onClick={handleSendMessage}
