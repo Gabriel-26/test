@@ -96,7 +96,7 @@ const Profile = () => {
     userRole === "resident" || userRole === "chiefResident"
       ? userRole === "chiefResident"
         ? "Chief Resident"
-        : "resident"
+        : "Resident"
       : "";
 
   return (

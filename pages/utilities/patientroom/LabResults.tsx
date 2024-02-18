@@ -8,13 +8,15 @@ import {
   Grid,
 } from "@mui/material";
 import axiosInstance from "../../../src/components/utils/axiosInstance";
-import { Spin, Alert } from "antd";
+import { Spin, Alert, Pagination } from "antd";
 import moment from "moment-timezone";
 
 const LabResultsPage = ({ patientData }) => {
   const [labResults, setLabResults] = useState("");
   const [fetchedResults, setFetchedResults] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(3); // Set the number of items per page
 
   useEffect(() => {
     fetchLabResults(patientData);
@@ -81,47 +83,53 @@ const LabResultsPage = ({ patientData }) => {
       setLoading(false);
     }
   };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
   return (
     <div style={{ maxWidth: "800px", margin: "auto" }}>
       <Typography variant="h3" align="center" gutterBottom>
         Hospital Lab Results
       </Typography>
-      <Paper elevation={3} sx={{ padding: 3 }}>
-        <Grid container spacing={3}>
-          <Grid item xs={12}>
-            <Typography variant="h6" gutterBottom>
-              Enter Lab Results:
-            </Typography>
-            <TextareaAutosize
-              aria-label="results"
-              placeholder="Enter lab results here..."
-              value={labResults}
-              onChange={handleInputChange}
-              style={{ width: "100%", fontSize: "1.2rem" }}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <Box display="flex" justifyContent="center">
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleSubmit}
-                disabled={loading}
-                className="bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300"
-              >
-                {loading ? "Submitting..." : "Submit"}
-              </Button>
-            </Box>
-          </Grid>
-          <Grid item xs={12}>
-            {loading ? (
-              <Spin size="large" />
-            ) : fetchedResults.length > 0 ? (
-              <div>
-                <Typography variant="h6" gutterBottom>
-                  Fetched Lab Results:
-                </Typography>
-                {fetchedResults.map((result, index) => (
+      <Grid container spacing={3}>
+        <Grid item xs={12}>
+          <Typography variant="h6" gutterBottom>
+            Enter Lab Results:
+          </Typography>
+          <TextareaAutosize
+            aria-label="results"
+            placeholder="Enter lab results here..."
+            value={labResults}
+            onChange={handleInputChange}
+            style={{ width: "100%", fontSize: "1.2rem" }}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <Box display="flex" justifyContent="center">
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSubmit}
+              disabled={loading}
+              className="bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300"
+            >
+              {loading ? "Submitting..." : "Submit"}
+            </Button>
+          </Box>
+        </Grid>
+        <Grid item xs={12}>
+          {loading ? (
+            <Spin size="large" />
+          ) : fetchedResults.length > 0 ? (
+            <div>
+              <Typography variant="h6" gutterBottom>
+                Fetched Lab Results:
+              </Typography>
+              {fetchedResults
+                .slice((currentPage - 1) * pageSize, currentPage * pageSize)
+                .map((result, index) => (
                   <div
                     key={index}
                     style={{
@@ -134,9 +142,9 @@ const LabResultsPage = ({ patientData }) => {
                       wordWrap: "break-word", // Add word wrap
                     }}
                   >
-                    <p style={{ marginBottom: "8px" }}>
+                    {/* <p style={{ marginBottom: "8px" }}>
                       <strong>Lab Results ID:</strong> {result.labResults_id}
-                    </p>
+                    </p> */}
                     <p style={{ marginBottom: "8px" }}>
                       <strong>Lab Result Date:</strong>{" "}
                       {moment(result.labResultDate)
@@ -146,10 +154,10 @@ const LabResultsPage = ({ patientData }) => {
                     <p style={{ marginBottom: "8px" }}>
                       <strong>Results:</strong> {result.results}
                     </p>
-                    <p style={{ marginBottom: "8px" }}>
+                    {/* <p style={{ marginBottom: "8px" }}>
                       <strong>Patient ID:</strong> {result.patient_id}
-                    </p>
-                    <p style={{ marginBottom: "8px" }}>
+                    </p> */}
+                    {/* <p style={{ marginBottom: "8px" }}>
                       <strong>Created At:</strong>{" "}
                       {moment(result.created_at)
                         .tz("Asia/Manila")
@@ -160,20 +168,26 @@ const LabResultsPage = ({ patientData }) => {
                       {moment(result.updated_at)
                         .tz("Asia/Manila")
                         .format("dddd, MMMM D, YYYY HH:mm:ss")}
-                    </p>
+                    </p> */}
                   </div>
                 ))}
-              </div>
-            ) : (
-              <Alert
-                message="No Lab Results Found"
-                description="There are no lab results recorded for this patient."
-                type="info"
+              <Pagination
+                current={currentPage}
+                total={fetchedResults.length}
+                pageSize={pageSize}
+                onChange={handlePageChange}
+                style={{ marginTop: "16px", textAlign: "center" }}
               />
-            )}
-          </Grid>
+            </div>
+          ) : (
+            <Alert
+              message="No Lab Results Found"
+              description="There are no lab results recorded for this patient."
+              type="info"
+            />
+          )}
         </Grid>
-      </Paper>
+      </Grid>
     </div>
   );
 };

@@ -1,4 +1,3 @@
-// components/medication/Medication.tsx
 import React, { useState, useEffect } from "react";
 import {
   Typography,
@@ -11,13 +10,12 @@ import {
   Spin,
   Alert,
   message,
+  Pagination,
 } from "antd";
 import axiosInstance from "../../../src/components/utils/axiosInstance";
-import { LoadingOutlined, DeleteOutlined } from "@ant-design/icons";
 import moment from "moment-timezone";
 
 const { Title } = Typography;
-const { Option } = Select;
 
 const Medication = (props: any) => {
   const [form] = Form.useForm();
@@ -26,6 +24,8 @@ const Medication = (props: any) => {
   const [dosages, setDosages] = useState({});
   const [patientMedications, setPatientMedications] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(3); // Set the number of items per page
 
   useEffect(() => {
     const fetchMedications = async () => {
@@ -80,12 +80,10 @@ const Medication = (props: any) => {
 
   const handleAddMedication = async (values, selectedDate) => {
     try {
-      // Use the selected date from the DatePicker and current time
       const selectedDateTime = selectedDate;
       const currentHour = moment().tz("Asia/Manila").hours();
       const currentMinute = moment().tz("Asia/Manila").minutes();
 
-      // Set the time part to the current time
       selectedDateTime.set({
         hour: currentHour,
         minute: currentMinute,
@@ -115,14 +113,12 @@ const Medication = (props: any) => {
 
           form.resetFields();
 
-          // Fetch the updated list of patient medications
           const updatedMedicationsResponse = await axiosInstance.get(
             `/patientMedicines/patient/${patientId}`
           );
 
           const updatedMedications = updatedMedicationsResponse.data;
 
-          // Update patientMedications state with the updated list
           setPatientMedications(updatedMedications);
           message.success("Medication added successfully!");
         } else {
@@ -138,28 +134,6 @@ const Medication = (props: any) => {
       message.error("Error saving medication. Please try again.");
     }
   };
-
-  // const handleDeleteMedication = async (medicationId) => {
-  //   try {
-  //     const response = await axiosInstance.delete(
-  //       `/patientMedicines/${medicationId}`
-  //     );
-
-  //     if (response.status === 200) {
-  //       console.log("Medication deleted successfully.");
-  //       // Update patientMedications state to exclude the deleted medication
-  //       setPatientMedications(
-  //         patientMedications.filter(
-  //           (medication) => medication.patientMedicine_id !== medicationId
-  //         )
-  //       );
-  //     } else {
-  //       console.error("Failed to delete medication.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error deleting medication:", error);
-  //   }
-  // };
 
   return (
     <div style={{ maxWidth: "800px", margin: "auto" }}>
@@ -193,7 +167,6 @@ const Medication = (props: any) => {
                 .indexOf(inputValue.toUpperCase()) !== -1
             }
             onSelect={(value, option) => {
-              // Store the selected medicine_name in the form
               form.setFieldsValue({
                 medicine_id: value,
               });
@@ -238,87 +211,90 @@ const Medication = (props: any) => {
           <Title level={4} style={{ marginBottom: "16px", color: "#2c3e50" }}>
             Patient's Medications
           </Title>
-          {patientMedications.map((medication, index) => (
-            <div
-              key={index}
-              style={{
-                border: "1px solid #ecf0f1",
-                borderRadius: "8px",
-                padding: "20px",
-                marginBottom: "20px",
-                background: "#fff",
-                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-              }}
-            >
-              <p
+          {patientMedications
+            .slice((currentPage - 1) * pageSize, currentPage * pageSize)
+            .map((medication, index) => (
+              <div
+                key={index}
                 style={{
-                  color: "#3498db",
-                  marginBottom: "8px",
-                  fontSize: "18px",
+                  border: "1px solid #ecf0f1",
+                  borderRadius: "8px",
+                  padding: "20px",
+                  marginBottom: "20px",
+                  background: "#fff",
+                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                 }}
               >
-                {`Medicine: ${medication.medicine_name}`}
-              </p>
-              <p
-                style={{ marginBottom: "8px" }}
-              >{`Dosage: ${medication.medicine_dosage}`}</p>
-              <p
-                style={{ marginBottom: "8px" }}
-              >{`Type: ${medication.medicine_type}`}</p>
-              <p
-                style={{ marginBottom: "8px" }}
-              >{`Frequency: ${medication.medicine_frequency}`}</p>
-              <p
-                style={{ marginBottom: "8px" }}
-              >{`Patient ID: ${medication.patient_id}`}</p>
-              <p style={{ marginBottom: "8px" }}>{`Date: ${new Date(
-                medication.patientMedicineDate
-              ).toLocaleString("en-US", {
-                weekday: "long",
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-                hour: "numeric",
-                minute: "numeric",
-                second: "numeric",
-                timeZone: "Asia/Manila", // Set the timezone for the Philippines
-              })}`}</p>
-
-              <p style={{ marginBottom: "8px" }}>{`Created At: ${new Date(
-                medication.created_at
-              ).toLocaleString("en-US", {
-                weekday: "long",
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-                hour: "numeric",
-                minute: "numeric",
-                second: "numeric",
-              })}`}</p>
-              <p style={{ marginBottom: "8px" }}>{`Updated At: ${new Date(
-                medication.updated_at
-              ).toLocaleString("en-US", {
-                weekday: "long",
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-                hour: "numeric",
-                minute: "numeric",
-                second: "numeric",
-              })}`}</p>
-
-              {/* <Button
-                type="danger"
-                onClick={() =>
-                  handleDeleteMedication(medication.patientMedicine_id)
-                }
-                className="bg-red-500 hover:bg-red-600 focus:outline-none focus:ring focus:border-red-300"
-                style={{ marginTop: "12px" }}
-              >
-                <DeleteOutlined /> Delete Medication
-              </Button> */}
-            </div>
-          ))}
+                <p
+                  style={{
+                    color: "#3498db",
+                    marginBottom: "8px",
+                    fontSize: "18px",
+                  }}
+                >
+                  {`Medicine: ${medication.medicine_name}`}
+                </p>
+                <p style={{ marginBottom: "8px" }}>
+                  {`Dosage: ${medication.medicine_dosage}`}
+                </p>
+                <p style={{ marginBottom: "8px" }}>
+                  {`Type: ${medication.medicine_type}`}
+                </p>
+                <p style={{ marginBottom: "8px" }}>
+                  {`Frequency: ${medication.medicine_frequency}`}
+                </p>
+                <p style={{ marginBottom: "8px" }}>
+                  {`Patient ID: ${medication.patient_id}`}
+                </p>
+                <p style={{ marginBottom: "8px" }}>
+                  {`Date: ${new Date(
+                    medication.patientMedicineDate
+                  ).toLocaleString("en-US", {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                    hour: "numeric",
+                    minute: "numeric",
+                    second: "numeric",
+                    timeZone: "Asia/Manila",
+                  })}`}
+                </p>
+                <p style={{ marginBottom: "8px" }}>
+                  {`Created At: ${new Date(
+                    medication.created_at
+                  ).toLocaleString("en-US", {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                    hour: "numeric",
+                    minute: "numeric",
+                    second: "numeric",
+                  })}`}
+                </p>
+                <p style={{ marginBottom: "8px" }}>
+                  {`Updated At: ${new Date(
+                    medication.updated_at
+                  ).toLocaleString("en-US", {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                    hour: "numeric",
+                    minute: "numeric",
+                    second: "numeric",
+                  })}`}
+                </p>
+              </div>
+            ))}
+          <Pagination
+            current={currentPage}
+            total={patientMedications.length}
+            pageSize={pageSize}
+            onChange={(page) => setCurrentPage(page)}
+            style={{ marginTop: "16px", textAlign: "center" }}
+          />
         </div>
       ) : (
         <Alert
