@@ -76,10 +76,28 @@ const Profile = () => {
       : adminImage.src;
 
   // Determine the name to display based on whether it's a resident or admin
-  const displayName =
-    residentFName && residentLName
-      ? `${residentFName} ${residentLName}`
-      : "Admin";
+  const maxLength = 20; // Maximum length for displaying the resident's name
+
+  // Truncate the resident's name if it exceeds the maximum length
+  const truncatedName =
+    residentFName.length + residentLName.length > maxLength
+      ? `${residentFName.substring(
+          0,
+          maxLength / 2
+        )}... ${residentLName.substring(0, maxLength / 2)}`
+      : `${residentFName} ${residentLName}`;
+
+  // Determine the name to display based on whether it's a resident or admin
+  const displayName = truncatedName || "Admin";
+
+  // Display the role based on userRole
+  // Display the role based on userRole
+  const displayRole =
+    userRole === "resident" || userRole === "chiefResident"
+      ? userRole === "chiefResident"
+        ? "Chief Resident"
+        : "resident"
+      : "";
 
   return (
     <Box>
@@ -106,10 +124,15 @@ const Profile = () => {
             backgroundColor: "primary.main",
           }}
         />
-        {/* Display the user's name */}
-        <Typography variant="body1" sx={{ marginLeft: 1 }}>
-          {displayName}
-        </Typography>
+        {/* Display the user's name and role */}
+        <Box sx={{ marginLeft: 1, display: "flex", flexDirection: "column" }}>
+          <Typography variant="body1">{displayName}</Typography>
+          {displayRole && (
+            <Typography variant="body2" sx={{ color: "text.secondary" }}>
+              {displayRole}
+            </Typography>
+          )}
+        </Box>
       </IconButton>
       <Menu
         id="msgs-menu"
