@@ -3,29 +3,29 @@
 @tailwind utilities;
 
 /* Custom styles for the table */
-.custom-table {
+/* .custom-table {
     border-collapse: collapse;
     width: 100%;
   }
   
   .custom-table th,
   .custom-table td {
-    border: 1px solid #ddd; /* Set border color */
+    border: 1px solid #ddd; 
     padding: 8px;
     text-align: left;
   }
   
   .custom-table th {
-    background-color: #f2f2f2; /* Set header background color */
+    background-color: #f2f2f2; 
   }
   
   .custom-table tr:nth-child(even) {
-    background-color: #f2f2f2; /* Alternate row background color */
+    background-color: #f2f2f2; 
   }
   
-  /* Style for buttons */
+  
   .custom-button {
-    background-color: #4caf50; /* Green */
+    background-color: #4caf50; 
     border: none;
     color: white;
     padding: 8px 12px;
@@ -36,4 +36,4 @@
     margin: 4px 2px;
     cursor: pointer;
   }
-  
+   */

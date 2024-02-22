@@ -17,13 +17,14 @@ import {
 import { Input, Form, Modal, Drawer, Spin, Select, message } from "antd";
 import { getUserRole } from "../../../src/components/utils/roles";
 import dynamic from "next/dynamic";
+import useFloorStore from "../../../src/components/utils/zustandStore";
 
 const Button = dynamic(() => import("antd/lib/button"));
 const { Option } = Select;
 
 const Rooms = () => {
   const [rooms, setRooms] = useState([]);
-  const [floors, setFloors] = useState([]);
+  const { floors, setFloors } = useFloorStore(); // Replace floors state with useFloorStore
   const [floorName, setFloorName] = useState("");
   const router = useRouter();
   const { floor_name: queryFloorName, floor_id: queryFloorId } = router.query;
@@ -167,8 +168,8 @@ const Rooms = () => {
     }
 
     // Reset state
-    setEditFloorId("");
-    setEditFloorName("");
+    setEditFloorId(""); // Resetting editFloorId
+    setEditFloorName(""); // Resetting editFloorName
     setShowEditFloorModal(false);
   };
 

@@ -108,6 +108,9 @@ const MedicineList = () => {
       ] = `Bearer ${token}`;
 
       if (editingMedicine) {
+        // Ensure medicine_id is provided when updating a record
+        values.medicine_id = editingMedicine.medicine_id;
+
         await axiosInstance.put(
           `admin/medicines/${editingMedicine.medicine_id}`,
           values
