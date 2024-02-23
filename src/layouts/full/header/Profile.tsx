@@ -89,9 +89,11 @@ const Profile = () => {
       : `${residentFName} ${residentLName}`;
 
   // Determine the name to display based on whether it's a resident or admin
-  const displayName = truncatedName || "Admin";
+  const displayName =
+    (truncatedName && truncatedName.trim()) || userRole === "admin"
+      ? "Admin"
+      : "";
 
-  // Display the role based on userRole
   // Display the role based on userRole
   const displayRole =
     userRole === "resident" || userRole === "chiefResident"
