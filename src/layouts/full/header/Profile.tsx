@@ -11,6 +11,7 @@ import {
 import { IconUser } from "@tabler/icons-react";
 import useAdminAuth from "../../../components/utils/useAdminAuth";
 import useResidentAuth from "../../../components/utils/useResidentAuth";
+import LogoutIcon from "@mui/icons-material/Logout"; // Import the LogoutIcon component
 
 // Import the images
 import doctorMaleImage from "../../../assets/images/profile/doctorm.png";
@@ -154,6 +155,7 @@ const Profile = () => {
             color="primary"
             fullWidth
             onClick={handleLogout}
+            startIcon={<LogoutIcon />} // Add the LogoutIcon as the startIcon
           >
             Logout
           </Button>

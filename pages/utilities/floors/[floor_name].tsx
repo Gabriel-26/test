@@ -391,7 +391,9 @@ const Rooms = () => {
                     <TableCell>Floor ID</TableCell>
                     <TableCell>Room Price</TableCell>
                     {userRole === "admin" && ( // Only render Actions column for admin role
-                      <TableCell>Actions</TableCell>
+                      <TableCell style={{ textAlign: "center" }}>
+                        Actions
+                      </TableCell>
                     )}
                   </TableRow>
                 </TableHead>
