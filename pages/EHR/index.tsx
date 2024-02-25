@@ -5,12 +5,32 @@ import FullLayout from "../../src/layouts/full/FullLayout";
 import { useForm } from "react-hook-form";
 import axios from "../../src/components/utils/axiosInstance";
 import { message, Button } from "antd";
+import { Grid } from "@mui/material";
 
 export function EHRForm() {
   const [roomData, setRoomData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [allergiesChecked, setAllergiesChecked] = useState(false);
+  const [othersChecked, setOthersChecked] = useState(false);
+  const [maintenanceMedsChecked, setMaintenanceMedsChecked] = useState(false);
+  const [malignancy, setMalignancy] = useState("");
+  const [surgeries, setSurgeries] = useState("");
+  const [tobacco, setTobacco] = useState("");
+  const [recDrugs, setRecDrugs] = useState("");
+  const [alcohol, setAlcohol] = useState("");
 
+  const handleMaintenanceMedsChange = (e) => {
+    setMaintenanceMedsChecked(e.target.checked);
+  };
+
+  const handleAllergiesChange = (e) => {
+    setAllergiesChecked(e.target.checked);
+  };
+
+  const handleOthersChange = (e) => {
+    setOthersChecked(e.target.checked);
+  };
   // Step 2: Fetch room data from the API
   useEffect(() => {
     fetchRoomData();
@@ -338,369 +358,402 @@ export function EHRForm() {
       <DashboardCard title="">
         <form id="myForm" onSubmit={handleSubmit(onSubmit)}>
           <h1 className="text-3xl">EHR Form</h1>
-
-          <div className="my-4">
-            <label className="flex flex-col">
-              <span className="mb-2">First Name</span>
-              <input
-                {...register("patient_fName")}
-                className="border border-gray-300 px-4 py-2 rounded-lg"
-                placeholder="First Name"
-                type="text"
-              />
-            </label>
-          </div>
-
-          <div className="my-4">
-            <label className="flex flex-col">
-              <span className="mb-2">Last Name</span>
-              <input
-                {...register("patient_lName")}
-                className="border border-gray-300 px-4 py-2 rounded-lg"
-                placeholder="Name"
-                type="text"
-              />
-            </label>
-          </div>
-
-          <div className="my-4">
-            <label className="flex flex-col">
-              <span className="mb-2">Middle Name</span>
-              <input
-                {...register("patient_mName")}
-                className="border border-gray-300 px-4 py-2 rounded-lg"
-                placeholder="Name"
-                type="text"
-              />
-            </label>
-          </div>
-
-          <div className="my-4">
-            <label className="flex flex-col">
-              <span className="mb-2">Age</span>
-              <input
-                {...register("patient_age")}
-                className="border border-gray-300 px-4 py-2 rounded-lg"
-                placeholder="Age"
-                type="number"
-              />
-            </label>
-          </div>
-
-          <div className="my-4">
-            <p className="mb-2">Gender</p>
-            {[
-              { label: "Male", value: "M" },
-              { label: "Female", value: "F" },
-            ].map(({ label, value }, index) => {
-              return (
-                <label key={value} className="flex items-center">
-                  <span className="mr-2">{label}</span>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={6}>
+              <div className="my-4">
+                <label className="flex flex-col">
+                  <span className="mb-2">First Name</span>
                   <input
-                    {...register("patient_sex")}
-                    className="border border-gray-300 rounded-lg"
-                    aria-invalid={errors["patient_sex"] ? "true" : "false"}
-                    value={value}
-                    type="radio"
+                    {...register("patient_fName")}
+                    className="border border-gray-300 px-4 py-2 rounded-lg"
+                    placeholder="First Name"
+                    type="text"
                   />
                 </label>
-              );
-            })}
-            {errors["patient_sex"] && (
-              <p role="alert">{errors["patient_sex"]?.message}</p>
-            )}
-          </div>
+              </div>
+            </Grid>
 
-          <div className="my-4">
-            <label className="flex flex-col">
-              <span className="mb-2">Room</span>
-              <select
-                {...register("room_id")}
-                className="border border-gray-300 px-4 py-2 rounded-lg"
-              >
-                <option value="">Select a room</option>
-                {roomData.map((room) => (
-                  <option key={room.room_id} value={room.room_id}>
-                    {room.room_id}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-
-          <div className="my-4">
-            <label className="flex flex-col">
-              <span className="mb-2">Chief Complaint</span>
-              <textarea
-                {...register("phr_chiefComplaint")}
-                className="border border-gray-300 px-4 py-2 rounded-lg"
-                placeholder="Input"
-              />
-            </label>
-          </div>
-          <div className="my-4">
-            <label className="flex flex-col">
-              <span>Vaccination Status (Covid)</span>
-              <textarea
-                {...register("patient_vaccination_stat")}
-                className="border border-gray-300 px-4 py-2 rounded-lg"
-              />
-            </label>
-          </div>
-          <div className="my-4">
-            <label className="flex flex-col">
-              <span className="mb-2">Date</span>
-              <input
-                {...register("date")}
-                className="border border-gray-300 px-4 py-2 rounded-lg"
-                type="date"
-              />
-            </label>
-          </div>
-
-          <div className="my-4">
-            <label className="flex flex-col">
-              <span className="mb-2">Start Time</span>
-              <input
-                {...register("phr_startTime")}
-                className="border border-gray-300 px-4 py-2 rounded-lg"
-                type="time"
-              />
-            </label>
-          </div>
-
-          <div className="my-4">
-            <label className="flex flex-col">
-              <span className="mb-2">Stop Time</span>
-              <input
-                {...register("phr_endTime")}
-                className="border border-gray-300 px-4 py-2 rounded-lg"
-                type="time"
-              />
-            </label>
-          </div>
-          <div className="my-4">
-            <label className="flex flex-col">
-              <span className="mb-2">History of Present Illness</span>
-              <textarea
-                {...register("phr_historyOfPresentIllness")}
-                className="border border-gray-300 px-4 py-2 rounded-lg"
-              />
-            </label>
-          </div>
-
-          <div className="my-4">
-            <label className="flex items-center">
-              <span className="mr-2">Patient is nonverbal</span>
-              <input
-                {...register("phr_nonVerbalPatient")}
-                className="form-checkbox h-5 w-5 text-indigo-600 rounded"
-                type="checkbox"
-              />
-            </label>
-          </div>
-
-          <div className="my-4">
-            <p className="mb-2">Hx obtained from</p>
-            {[
-              { label: "Parent", field: "phr_HxFromParent" },
-              { label: "Family", field: "phr_HxFromFamily" },
-            ].map(({ label, field }, index) => {
-              return (
-                <label key={field} className="flex items-center">
-                  <span className="mr-2">{label}</span>
+            <Grid item xs={12} md={6}>
+              <div className="my-4">
+                <label className="flex flex-col">
+                  <span className="mb-2">Last Name</span>
                   <input
-                    //@ts-ignore
-                    {...register(field)}
-                    className="form-radio h-5 w-5 text-indigo-600 rounded"
-                    aria-invalid={errors[field] ? "true" : "false"}
-                    value={1}
-                    type="radio"
+                    {...register("patient_lName")}
+                    className="border border-gray-300 px-4 py-2 rounded-lg"
+                    placeholder="Name"
+                    type="text"
                   />
                 </label>
-              );
-            })}
-            {/* {errors["phr_HxFrom"] && (
-              <p role="alert">{errors["phr_HxFrom"]?.message}</p>
-            )} */}
-          </div>
+              </div>
+            </Grid>
 
-          <div className="my-4">
-            <label className="flex items-center">
-              <span className="mr-2">Med Records</span>
-              <input
-                {...register("phr_medRecAvailable")}
-                className="form-checkbox h-5 w-5 text-indigo-600 rounded"
-                type="checkbox"
-              />
-            </label>
-          </div>
-
-          <div className="my-4">
-            <label className="flex items-center">
-              <span className="mr-2">Allergies</span>
-              <input
-                {...register("phr_allergies")}
-                className="form-checkbox h-5 w-5 text-indigo-600 rounded"
-                type="checkbox"
-              />
-            </label>
-          </div>
-
-          <div className="my-4">
-            <label className="flex flex-col">
-              <span className="mb-2">Allergies</span>
-              <textarea
-                {...register("phr_specifyAllergies")}
-                className="border border-gray-300 px-4 py-2 rounded-lg"
-              />
-            </label>
-          </div>
-
-          <div className="my-4">
-            <p className="mb-2 font-medium">Past Medical History</p>
-            {[
-              { label: "Asthma", field: "phr_PMH_Asthma" },
-              { label: "HTN", field: "phr_PMH_HTN" },
-              { label: "Thyroid", field: "phr_PMH_Thyroid" },
-              { label: "Diabetes", field: "phr_PMH_Diabetes" },
-              { label: "Hepatic, Renal", field: "phr_PMH_HepaticRenal" },
-              { label: "Tuberculosis", field: "phr_PMH_Tuberculosis" },
-              { label: "Psychiatric", field: "phr_PMH_Psychiatric" },
-              { label: "CAD", field: "phr_PMH_CAD" },
-              { label: "CHF", field: "phr_PMH_CHF" },
-              { label: "Others", field: "phr_PMH_otherIllness" },
-            ].map(({ label, field }, index) => {
-              return (
-                <label key={field} className="flex items-center mt-2">
+            <Grid item xs={12} md={6}>
+              <div className="my-4">
+                <label className="flex flex-col">
+                  <span className="mb-2">Middle Name</span>
                   <input
-                    //@ts-ignore
-                    {...register(field)}
-                    className="form-checkbox h-4 w-4 text-indigo-600 rounded mr-2"
-                    aria-invalid={[] ? "true" : "false"}
-                    value={1} // Set the default value to 0
+                    {...register("patient_mName")}
+                    className="border border-gray-300 px-4 py-2 rounded-lg"
+                    placeholder="Name"
+                    type="text"
+                  />
+                </label>
+              </div>
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              <div className="my-4">
+                <label className="flex flex-col">
+                  <span className="mb-2">Age</span>
+                  <input
+                    {...register("patient_age")}
+                    className="border border-gray-300 px-4 py-2 rounded-lg"
+                    placeholder="Age"
+                    type="number"
+                  />
+                </label>
+              </div>
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              <div className="my-4">
+                <p className="mb-2">Gender</p>
+                {[
+                  { label: "Male", value: "M" },
+                  { label: "Female", value: "F" },
+                ].map(({ label, value }, index) => {
+                  return (
+                    <label key={value} className="flex items-center">
+                      <span className="mr-2">{label}</span>
+                      <input
+                        {...register("patient_sex")}
+                        className="border border-gray-300 rounded-lg"
+                        aria-invalid={errors["patient_sex"] ? "true" : "false"}
+                        value={value}
+                        type="radio"
+                      />
+                    </label>
+                  );
+                })}
+                {errors["patient_sex"] && (
+                  <p role="alert">{errors["patient_sex"]?.message}</p>
+                )}
+              </div>
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              <div className="my-4">
+                <label className="flex flex-col">
+                  <span className="mb-2">Room</span>
+                  <select
+                    {...register("room_id")}
+                    className="border border-gray-300 px-4 py-2 rounded-lg"
+                  >
+                    <option value="">Select a room</option>
+                    {roomData.map((room) => (
+                      <option key={room.room_id} value={room.room_id}>
+                        {room.room_id}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+            </Grid>
+
+            <Grid item xs={12}>
+              <div className="my-4">
+                <label className="flex flex-col">
+                  <span className="mb-2">Chief Complaint</span>
+                  <textarea
+                    {...register("phr_chiefComplaint")}
+                    className="border border-gray-300 px-4 py-2 rounded-lg"
+                    placeholder="Input"
+                  />
+                </label>
+              </div>
+            </Grid>
+
+            <Grid item xs={12}>
+              <div className="my-4">
+                <label className="flex flex-col">
+                  <span>Vaccination Status (Covid)</span>
+                  <textarea
+                    {...register("patient_vaccination_stat")}
+                    className="border border-gray-300 px-4 py-2 rounded-lg"
+                  />
+                </label>
+              </div>
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              <div className="my-4">
+                <label className="flex flex-col">
+                  <span className="mb-2">Date</span>
+                  <input
+                    {...register("date")}
+                    className="border border-gray-300 px-4 py-2 rounded-lg"
+                    type="date"
+                  />
+                </label>
+              </div>
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              <div className="my-4">
+                <label className="flex flex-col">
+                  <span className="mb-2">Start Time</span>
+                  <input
+                    {...register("phr_startTime")}
+                    className="border border-gray-300 px-4 py-2 rounded-lg"
+                    type="time"
+                  />
+                </label>
+              </div>
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              <div className="my-4">
+                <label className="flex flex-col">
+                  <span className="mb-2">Stop Time</span>
+                  <input
+                    {...register("phr_endTime")}
+                    className="border border-gray-300 px-4 py-2 rounded-lg"
+                    type="time"
+                  />
+                </label>
+              </div>
+            </Grid>
+
+            <Grid item xs={12}>
+              <div className="my-4">
+                <label className="flex flex-col">
+                  <span className="mb-2">History of Present Illness</span>
+                  <textarea
+                    {...register("phr_historyOfPresentIllness")}
+                    className="border border-gray-300 px-4 py-2 rounded-lg"
+                  />
+                </label>
+              </div>
+            </Grid>
+
+            <Grid item xs={12}>
+              <div className="my-4">
+                <label className="flex items-center">
+                  <span className="mr-2">Patient is nonverbal</span>
+                  <input
+                    {...register("phr_nonVerbalPatient")}
+                    className="form-checkbox h-5 w-5 text-indigo-600 rounded"
                     type="checkbox"
-                    defaultChecked={false} // Set defaultChecked to false
                   />
-
-                  <span>{label}</span>
                 </label>
-              );
-            })}
-            {/* {errors["med-records"] && (
-              <p role="alert">{errors["med-records"]?.message}</p>
-            )} */}
-          </div>
+              </div>
+            </Grid>
 
-          <div className="my-4">
-            <label className="flex flex-col">
-              <span className="mb-2">Others</span>
-              <textarea
-                {...register("phr_PMH_specifyOtherIllness")}
-                className="border border-gray-300 px-4 py-2 rounded-lg"
-              />
-            </label>
-          </div>
+            <Grid item xs={12}>
+              <div className="my-4">
+                <p className="mb-2">Hx obtained from</p>
+                {[
+                  { label: "Parent", field: "phr_HxFromParent" },
+                  { label: "Family", field: "phr_HxFromFamily" },
+                ].map(({ label, field }, index) => {
+                  return (
+                    <label key={field} className="flex items-center">
+                      <span className="mr-2">{label}</span>
+                      <input
+                        //@ts-ignore
+                        {...register("hxObtainedFrom")}
+                        className="form-radio h-5 w-5 text-indigo-600 rounded"
+                        aria-invalid={errors[field] ? "true" : "false"}
+                        value={field} // Use unique values for each radio button
+                        type="radio"
+                      />
+                    </label>
+                  );
+                })}
+              </div>
+            </Grid>
 
-          <div className="my-4">
-            <label className="flex flex-col">
-              <span className="mb-2">Previous Hospitalizations</span>
-              <textarea
-                {...register("phr_specifyPrevHospitalization")}
-                className="border border-gray-300 px-4 py-2 rounded-lg"
-              />
-            </label>
-          </div>
+            <Grid item xs={12}>
+              <div className="my-4">
+                <label className="flex items-center">
+                  <span className="mr-2">Med Records</span>
+                  <input
+                    {...register("phr_medRecAvailable")}
+                    className="form-checkbox h-5 w-5 text-indigo-600 rounded"
+                    type="checkbox"
+                  />
+                </label>
+              </div>
+            </Grid>
 
-          <div className="my-4">
-            <label className="flex items-center">
-              <input
-                {...register("phr_maintenanceMeds")}
-                type="checkbox"
-                className="form-checkbox h-4 w-4 text-indigo-600 rounded mr-2"
-              />
-              <span className="font-bold">
-                Maintenance Medications/Herbal drug use
-              </span>
-            </label>
-            <label className="flex flex-col">
-              <input
-                {...register("phr_specifyMaintenanceMeds")}
-                type="text"
-                className="border border-gray-300 px-4 py-2 rounded-lg mt-2"
-                placeholder="Enter additional information"
-              />
-            </label>
-          </div>
+            <Grid item xs={12}>
+              <div className="my-4">
+                <label className="flex items-center">
+                  <span className="mr-2">Allergies</span>
+                  <input
+                    {...register("phr_allergies")}
+                    className="form-checkbox h-5 w-5 text-indigo-600 rounded"
+                    type="checkbox"
+                    onChange={handleAllergiesChange}
+                  />
+                </label>
+              </div>
+            </Grid>
 
+            {allergiesChecked && (
+              <Grid item xs={12}>
+                <div className="my-4">
+                  <label className="flex flex-col">
+                    <span className="mb-2">Allergies</span>
+                    <textarea
+                      {...register("phr_specifyAllergies")}
+                      className="border border-gray-300 px-4 py-2 rounded-lg"
+                    />
+                  </label>
+                </div>
+              </Grid>
+            )}
+
+            <Grid item xs={12}>
+              <div className="my-4">
+                <p className="mb-2 font-medium">Past Medical History</p>
+                {[
+                  { label: "Asthma", field: "phr_PMH_Asthma" },
+                  { label: "HTN", field: "phr_PMH_HTN" },
+                  { label: "Thyroid", field: "phr_PMH_Thyroid" },
+                  { label: "Diabetes", field: "phr_PMH_Diabetes" },
+                  { label: "Hepatic, Renal", field: "phr_PMH_HepaticRenal" },
+                  { label: "Tuberculosis", field: "phr_PMH_Tuberculosis" },
+                  { label: "Psychiatric", field: "phr_PMH_Psychiatric" },
+                  { label: "CAD", field: "phr_PMH_CAD" },
+                  { label: "CHF", field: "phr_PMH_CHF" },
+                  { label: "Others", field: "phr_PMH_otherIllness" },
+                ].map(({ label, field }, index) => {
+                  const isOthers = field === "phr_PMH_otherIllness";
+                  return (
+                    <label key={field} className="flex items-center mt-2">
+                      <input
+                        //@ts-ignore
+                        {...register(field)}
+                        className="form-checkbox h-4 w-4 text-indigo-600 rounded mr-2"
+                        aria-invalid={[] ? "true" : "false"}
+                        value={1}
+                        type="checkbox"
+                        defaultChecked={false}
+                        onChange={isOthers ? handleOthersChange : undefined}
+                      />
+                      <span>{label}</span>
+                    </label>
+                  );
+                })}
+              </div>
+            </Grid>
+
+            {othersChecked && (
+              <Grid item xs={12}>
+                <div className="my-4">
+                  <label className="flex flex-col">
+                    <span className="mb-2">Others</span>
+                    <textarea
+                      {...register("phr_PMH_specifyOtherIllness")}
+                      className="border border-gray-300 px-4 py-2 rounded-lg"
+                    />
+                  </label>
+                </div>
+              </Grid>
+            )}
+
+            <Grid item xs={12}>
+              <div className="my-4">
+                <label className="flex items-center">
+                  <input
+                    {...register("phr_maintenanceMeds")}
+                    type="checkbox"
+                    className="form-checkbox h-4 w-4 text-indigo-600 rounded mr-2"
+                    onChange={handleMaintenanceMedsChange}
+                  />
+                  <span className="font-bold">
+                    Maintenance Medications/Herbal drug use
+                  </span>
+                </label>
+                {maintenanceMedsChecked && (
+                  <label className="flex flex-col">
+                    <textarea
+                      {...register("phr_specifyMaintenanceMeds")}
+                      className="border border-gray-300 px-4 py-2 rounded-lg mt-2"
+                      placeholder="Enter additional information"
+                    />
+                  </label>
+                )}
+              </div>
+            </Grid>
+          </Grid>
           <div className="my-4">
             <p className="mb-2 font-medium">Malignancy</p>
-            {[
-              { label: "Yes", field: "Yes" },
-              { label: "No", field: "No" },
-            ].map(({ label, field }, index) => {
-              return (
-                <label key={field} className="flex items-center">
-                  <input
-                    {...register("phr_malignancy")}
-                    className="form-radio h-4 w-4 text-indigo-600 rounded mr-2"
-                    aria-invalid={errors["phr_malignancy"] ? "true" : "false"}
-                    value={errors[field] ? 0 : 1}
-                    type="radio"
+            <Grid container spacing={3}>
+              {[
+                { label: "Yes", field: "Yes" },
+                { label: "No", field: "No" },
+              ].map(({ label, field }, index) => (
+                <Grid item key={field}>
+                  <label className="flex items-center">
+                    <input
+                      className="form-radio h-4 w-4 text-indigo-600 rounded mr-2"
+                      value={field}
+                      type="radio"
+                      checked={malignancy === field}
+                      onChange={() => setMalignancy(field)}
+                    />
+                    <span>{label}</span>
+                  </label>
+                </Grid>
+              ))}
+            </Grid>
+            {malignancy === "Yes" && (
+              <div className="my-4">
+                <label className="flex flex-col">
+                  <span className="mb-2">Specify Malignancy</span>
+                  <textarea
+                    className="border border-gray-300 px-4 py-2 rounded-lg"
+                    placeholder="Specify Malignancy..."
                   />
-                  <span>{label}</span>
                 </label>
-              );
-            })}
-            {errors["phr_malignancy"] && (
-              <p role="alert">{errors["phr_malignancy"]?.message}</p>
+              </div>
             )}
           </div>
-
-          <div className="my-4">
-            <label className="flex flex-col">
-              <span className="mb-2">Malignancy</span>
-              <textarea
-                {...register("phr_specifyMalignancy")}
-                className="border border-gray-300 px-4 py-2 rounded-lg"
-              />
-            </label>
-          </div>
-
           <div className="my-4">
             <p className="mb-2 font-medium">Surgeries</p>
-            {[
-              { label: "Yes", field: "Yes" },
-              { label: "No", field: "No" },
-            ].map(({ label, field }, index) => {
-              return (
-                <label key={field} className="flex items-center">
-                  <input
-                    {...register("phr_surgeries")}
-                    className="form-radio h-4 w-4 text-indigo-600 rounded mr-2"
-                    aria-invalid={errors["phr_surgeries"] ? "true" : "false"}
-                    value={errors[field] ? 0 : 1}
-                    type="radio"
+            <Grid container spacing={3}>
+              {[
+                { label: "Yes", field: "Yes" },
+                { label: "No", field: "No" },
+              ].map(({ label, field }, index) => (
+                <Grid item key={field}>
+                  <label className="flex items-center">
+                    <input
+                      className="form-radio h-4 w-4 text-indigo-600 rounded mr-2"
+                      value={field}
+                      type="radio"
+                      checked={surgeries === field}
+                      onChange={() => setSurgeries(field)}
+                    />
+                    <span>{label}</span>
+                  </label>
+                </Grid>
+              ))}
+            </Grid>
+            {surgeries === "Yes" && (
+              <div className="my-4">
+                <label className="flex flex-col">
+                  <span className="mb-2">Specify Surgeries</span>
+                  <textarea
+                    className="border border-gray-300 px-4 py-2 rounded-lg"
+                    placeholder="Specify Surgeries..."
                   />
-                  <span>{label}</span>
                 </label>
-              );
-            })}
-            {errors["phr_surgeries"] && (
-              <p role="alert">{errors["phr_surgeries"]?.message}</p>
+              </div>
             )}
           </div>
-
-          <div className="my-4">
-            <label className="flex flex-col">
-              <span>Surgeries</span>
-              <textarea
-                {...register("phr_specifySurgeries")}
-                className="border border-gray-300 px-4 py-2 rounded-lg"
-              />
-            </label>
-          </div>
-
           <div className="my-4">
             <label className="flex flex-col">
               <span>Vaccination History</span>
@@ -710,181 +763,190 @@ export function EHRForm() {
               />
             </label>
           </div>
-
           <div className="my-4">
             <p>Tobacco/Cigarette</p>
-            {[
-              { label: "Yes", field: "Yes" },
-              { label: "No", field: "No" },
-            ].map(({ label, field }, index) => {
-              return (
-                <label key={field} className="flex items-center">
-                  <span className="mr-2">{label}</span>
-                  <input
-                    {...register("phr_tobacco")}
-                    aria-invalid={errors["phr_tobacco"] ? "true" : "false"}
-                    value={errors[field] ? 0 : 1}
-                    type="radio"
-                    className="form-radio h-4 w-4 text-indigo-600 rounded"
-                  />
-                </label>
-              );
-            })}
-            {errors["phr_tobacco"] && (
-              <p role="alert">{errors["phr_tobacco"]?.message}</p>
+            <Grid container spacing={3}>
+              {[
+                { label: "Yes", field: "Yes" },
+                { label: "No", field: "No" },
+              ].map(({ label, field }, index) => (
+                <Grid item key={field}>
+                  <label className="flex items-center">
+                    <span className="mr-2">{label}</span>
+                    <input
+                      className="form-radio h-4 w-4 text-indigo-600 rounded"
+                      value={field}
+                      type="radio"
+                      checked={tobacco === field}
+                      onChange={() => setTobacco(field)}
+                    />
+                  </label>
+                </Grid>
+              ))}
+            </Grid>
+            {tobacco === "Yes" && (
+              <>
+                <div className="my-4">
+                  <label className="flex flex-col">
+                    <span>Pack Years</span>
+                    <input
+                      placeholder="0"
+                      type="number"
+                      className="border border-gray-300 px-4 py-2 rounded-lg"
+                    />
+                  </label>
+                </div>
+                <div className="my-4">
+                  <label className="flex flex-col">
+                    <span>Quit Date</span>
+                    <input
+                      type="date"
+                      className="border border-gray-300 px-4 py-2 rounded-lg"
+                    />
+                  </label>
+                </div>
+              </>
             )}
           </div>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <div className="my-4">
+                <p>Recreational Drugs</p>
+                {[
+                  { label: "Yes", field: "1" },
+                  { label: "No", field: "0" },
+                ].map(({ label, field }) => (
+                  <label key={field} className="flex items-center">
+                    <span className="mr-2">{label}</span>
+                    <input
+                      {...register("phr_recDrugs")}
+                      aria-invalid={errors["phr_recDrugs"] ? "true" : "false"}
+                      value={recDrugs === field ? 1 : 0}
+                      type="radio"
+                      className="form-radio h-4 w-4 text-indigo-600 rounded"
+                      onChange={() => setRecDrugs(field)}
+                    />
+                  </label>
+                ))}
+                {errors["phr_recDrugs"] && (
+                  <p role="alert">{errors["phr_recDrugs"]?.message}</p>
+                )}
+              </div>
+            </Grid>
 
-          <div className="my-4">
-            <label className="flex flex-col">
-              <span>Pack Years</span>
-              <input
-                {...register("phr_tobaccoPacks")}
-                placeholder="0"
-                type="number"
-                className="border border-gray-300 px-4 py-2 rounded-lg"
-              />
-            </label>
-          </div>
+            {recDrugs === "1" && (
+              <Grid item xs={12}>
+                <div className="my-4">
+                  <label className="flex flex-col">
+                    <span>Recreational Drugs taken</span>
+                    <textarea
+                      {...register("phr_specifyRecDrugs")}
+                      className="border border-gray-300 px-4 py-2 rounded-lg"
+                    />
+                  </label>
+                </div>
+              </Grid>
+            )}
 
-          <div className="my-4">
-            <label className="flex flex-col">
-              <span>Quit Date</span>
-              <input
-                {...register("phr_tobaccoQuit")}
-                type="date"
-                className="border border-gray-300 px-4 py-2 rounded-lg"
-              />
-            </label>
-          </div>
+            <Grid item xs={12}>
+              <div className="my-4">
+                <p>Alcohol</p>
+                {["Yes", "No"].map((label, index) => (
+                  <label key={label} className="flex items-center">
+                    <span className="mr-2">{label}</span>
+                    <input
+                      type="radio"
+                      value={label === "Yes" ? "1" : "0"}
+                      checked={alcohol === (label === "Yes" ? "1" : "0")}
+                      onChange={(e) => setAlcohol(e.target.value)}
+                      className="form-radio h-4 w-4 text-indigo-600 rounded"
+                    />
+                  </label>
+                ))}
+                {errors["phr_alcohol"] && (
+                  <p role="alert">{errors["phr_alcohol"]?.message}</p>
+                )}
+              </div>
+            </Grid>
 
-          <div className="my-4">
-            <p>Recreational Drugs</p>
-            {[
-              { label: "Yes", field: "1" },
-              { label: "No", field: "0" },
-            ].map(({ label, field }, index) => {
-              return (
-                <label key={field} className="flex items-center">
-                  <span className="mr-2">{label}</span>
-                  <input
-                    {...register("phr_recDrugs")}
-                    aria-invalid={errors["phr_recDrugs"] ? "true" : "false"}
-                    value={errors[field] ? 0 : 1}
-                    type="radio"
-                    className="form-radio h-4 w-4 text-indigo-600 rounded"
+            {alcohol === "1" && (
+              <>
+                <Grid item xs={12}>
+                  <div className="my-4">
+                    <p>Drinks per</p>
+                    {["Day", "Week"].map((label, index) => (
+                      <label key={label} className="flex items-center">
+                        <span>{label}</span>
+                        <input
+                          type="checkbox"
+                          {...register(
+                            label === "Day"
+                              ? "phr_alcoholDrinksFrequencyDay"
+                              : "phr_alcoholDrinksFrequencyWeek"
+                          )}
+                          className="form-checkbox h-4 w-4 text-indigo-600 rounded"
+                        />
+                      </label>
+                    ))}
+                    {errors["phr_alcoholDrinksFrequency"] && (
+                      <p role="alert">
+                        {errors["phr_alcoholDrinksFrequency"]?.message}
+                      </p>
+                    )}
+                  </div>
+                </Grid>
+
+                <Grid item xs={12}>
+                  <div className="my-4">
+                    <label className="flex flex-col">
+                      <span>No. of Drinks</span>
+                      <input
+                        {...register("phr_noOfAlcoholDrinks")}
+                        placeholder="0"
+                        type="number"
+                        className="border border-gray-300 px-4 py-2 rounded-lg"
+                      />
+                    </label>
+                  </div>
+                </Grid>
+              </>
+            )}
+            <Grid item xs={12}>
+              <div className="my-4">
+                <label className="flex flex-col">
+                  <span>Family History(Heredofamilial Diseases)</span>
+                  <textarea
+                    {...register("phr_specifyFamilialDisease")}
+                    className="border border-gray-300 px-4 py-2 rounded-lg"
                   />
                 </label>
-              );
-            })}
-            {errors["phr_recDrugs"] && (
-              <p role="alert">{errors["phr_recDrugs"]?.message}</p>
-            )}
-          </div>
+              </div>
+            </Grid>
 
-          <div className="my-4">
-            <label className="flex flex-col">
-              <span>Recreational Drugs taken</span>
-              <textarea
-                {...register("phr_specifyRecDrugs")}
-                className="border border-gray-300 px-4 py-2 rounded-lg"
-              />
-            </label>
-          </div>
-
-          <div className="my-4">
-            <p>Alcohol</p>
-            {[
-              { label: "Yes", field: "1" },
-              { label: "No", field: "0" },
-            ].map(({ label, field }, index) => {
-              return (
-                <label key={field} className="flex items-center">
-                  <span className="mr-2">{label}</span>
-                  <input
-                    {...register("phr_alcohol")}
-                    aria-invalid={errors["phr_alcohol"] ? "true" : "false"}
-                    value={errors[field] ? 0 : 1}
-                    type="radio"
-                    className="form-radio h-4 w-4 text-indigo-600 rounded"
+            <Grid item xs={12}>
+              <div className="my-4">
+                <label className="flex flex-col">
+                  <span>Civil Status/Children</span>
+                  <textarea
+                    {...register("phr_specifyCivilStatus")}
+                    className="border border-gray-300 px-4 py-2 rounded-lg"
                   />
                 </label>
-              );
-            })}
-            {errors["phr_alcohol"] && (
-              <p role="alert">{errors["phr_alcohol"]?.message}</p>
-            )}
-          </div>
+              </div>
+            </Grid>
 
-          <div className="my-4">
-            <p>Drinks per</p>
-            {[
-              { label: "Day", field: "phr_alcoholDrinksFrequencyDay" },
-              { label: "Week", field: "phr_alcoholDrinksFrequencyWeek" },
-            ].map(({ label, field }, index) => {
-              return (
-                <label key={field} className="flex items-center">
-                  <span>{label}</span>
-                  <input
-                    //@ts-ignore
-                    {...register(field)}
-                    aria-invalid={errors[field] ? "true" : "false"}
-                    value={errors[field] ? 0 : 1}
-                    type="checkbox"
-                    className="form-radio h-4 w-4 text-indigo-600 rounded"
+            <Grid item xs={12}>
+              <div className="my-4">
+                <label className="flex flex-col">
+                  <span>Other Pertinent History</span>
+                  <textarea
+                    {...register("phr_specifyPertinentHistory")}
+                    className="border border-gray-300 px-4 py-2 rounded-lg"
                   />
                 </label>
-              );
-            })}
-            {errors["phr_alcoholDrinksFrequency"] && (
-              <p role="alert">
-                {errors["phr_alcoholDrinksFrequency"]?.message}
-              </p>
-            )}
-          </div>
-
-          <div className="my-4">
-            <label className="flex flex-col">
-              <span>No. of Drinks</span>
-              <input
-                {...register("phr_noOfAlcoholDrinks")}
-                placeholder="0"
-                type="number"
-                className="border border-gray-300 px-4 py-2 rounded-lg"
-              />
-            </label>
-          </div>
-
-          <div className="my-4">
-            <label className="flex flex-col">
-              <span>Family History(Heredofamilial Diseases)</span>
-              <textarea
-                {...register("phr_specifyFamilialDisease")}
-                className="border border-gray-300 px-4 py-2 rounded-lg"
-              />
-            </label>
-          </div>
-
-          <div className="my-4">
-            <label className="flex flex-col">
-              <span>Civil Status/Children</span>
-              <textarea
-                {...register("phr_specifyCivilStatus")}
-                className="border border-gray-300 px-4 py-2 rounded-lg"
-              />
-            </label>
-          </div>
-
-          <div className="my-4">
-            <label className="flex flex-col">
-              <span>Other Pertinent History</span>
-              <textarea
-                {...register("phr_specifyPertinentHistory")}
-                className="border border-gray-300 px-4 py-2 rounded-lg"
-              />
-            </label>
-          </div>
-
+              </div>
+            </Grid>
+          </Grid>
           <div>
             <h2>Blood Pressure</h2>
 
@@ -921,7 +983,6 @@ export function EHRForm() {
               </label>
             </div>
           </div>
-
           <div className="my-4">
             <p>HR</p>
             {[
@@ -946,7 +1007,6 @@ export function EHRForm() {
               <p role="alert">{errors["phr_heartRate"]?.message}</p>
             )}
           </div>
-
           <div className="my-4">
             <label className="flex flex-col">
               <span>RR</span>
@@ -957,7 +1017,6 @@ export function EHRForm() {
               />
             </label>
           </div>
-
           <div className="my-4">
             <label className="flex flex-col">
               <span>T*</span>
@@ -968,7 +1027,6 @@ export function EHRForm() {
               />
             </label>
           </div>
-
           <div className="my-4">
             <label className="flex flex-col">
               <span>SpO2</span>
@@ -979,7 +1037,6 @@ export function EHRForm() {
               />
             </label>
           </div>
-
           <div className="my-4">
             <p>Body Habitus</p>
             {[
@@ -1005,7 +1062,6 @@ export function EHRForm() {
               <p role="alert">{errors["body-habitus"]?.message}</p>
             )}
           </div>
-
           <div className="my-4">
             <label className="flex flex-col">
               <span>Height (cm)</span>
@@ -1016,7 +1072,6 @@ export function EHRForm() {
               />
             </label>
           </div>
-
           <div className="my-4">
             <label className="flex flex-col">
               <span>Weight (kg)</span>
@@ -1027,7 +1082,6 @@ export function EHRForm() {
               />
             </label>
           </div>
-
           <div className="my-4">
             <label className="flex flex-col">
               <span>BMI</span>
@@ -1038,7 +1092,6 @@ export function EHRForm() {
               />
             </label>
           </div>
-
           <div className="my-4">
             <p className="font-bold">Nasal mucosa, septum, & turbinates</p>
             {[
@@ -1068,7 +1121,6 @@ export function EHRForm() {
               </p>
             )}
           </div>
-
           <div className="my-4">
             <p className="font-bold">Dentition & gums</p>
             {[
@@ -1099,300 +1151,564 @@ export function EHRForm() {
               </p>
             )}
           </div>
+          <div>
+            <h2 className="font-bold">Blood Pressure</h2>
 
-          <div className="my-4">
-            <p className="font-bold">Oropharynx</p>
-            {[
-              { label: "WNL", field: "phr_oropharynxWNL" },
-              {
-                label: "Edema or erythema present",
-                field: "phr_oropharynxEdeOrEryPresent",
-              },
-              { label: "Oral ulcers", field: "phr_oropharynxOralUlcers" },
-              {
-                label: "Oral petechiae",
-                field: "phr_oropharynxOralPetachie",
-              },
-            ].map(({ label, field }, index) => {
-              return (
-                <label key={field} className="flex items-center">
-                  <span>{label}</span>
-                  <input
-                    //@ts-ignore
-                    {...register(field)}
-                    aria-invalid={errors[field] ? "true" : "false"}
-                    value={errors[field] ? 0 : 1}
-                    type="checkbox"
-                    className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
-                  />
-                </label>
-              );
-            })}
-            {errors["oropharynx"] && (
-              <p role="alert" className="text-red-500 text-sm">
-                {errors["oropharynx"]?.message}
-              </p>
-            )}
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={4}>
+                <div className="my-4">
+                  <label className="flex flex-col">
+                    <span>Sitting</span>
+                    <input
+                      {...register("phr_bpSitting")}
+                      type="number"
+                      className="border border-gray-300 px-4 py-2 rounded-lg"
+                    />
+                  </label>
+                </div>
+              </Grid>
+
+              <Grid item xs={12} sm={4}>
+                <div className="my-4">
+                  <label className="flex flex-col">
+                    <span>Standing</span>
+                    <input
+                      {...register("phr_bpStanding")}
+                      type="number"
+                      className="border border-gray-300 px-4 py-2 rounded-lg"
+                    />
+                  </label>
+                </div>
+              </Grid>
+
+              <Grid item xs={12} sm={4}>
+                <div className="my-4">
+                  <label className="flex flex-col">
+                    <span>Lying</span>
+                    <input
+                      {...register("phr_bpLying")}
+                      type="number"
+                      className="border border-gray-300 px-4 py-2 rounded-lg"
+                    />
+                  </label>
+                </div>
+              </Grid>
+            </Grid>
+
+            <div className="my-4">
+              <p className="font-bold">HR</p>
+              {[
+                { label: "Regular", field: "phr_hrRegular" },
+                { label: "Irregular", field: "phr_hrIrregular" },
+              ].map(({ label, field }, index) => {
+                return (
+                  <label key={field} className="flex items-center">
+                    <span>{label}</span>
+                    <input
+                      //@ts-ignore
+                      {...register(field)}
+                      aria-invalid={errors[field] ? "true" : "false"}
+                      value={errors[field] ? 0 : 1}
+                      type="radio"
+                      className="form-radio h-4 w-4 text-indigo-600 rounded"
+                    />
+                  </label>
+                );
+              })}
+              {errors["phr_heartRate"] && (
+                <p role="alert">{errors["phr_heartRate"]?.message}</p>
+              )}
+            </div>
+
+            <div className="my-4">
+              <label className="flex flex-col">
+                <span>RR</span>
+                <input
+                  {...register("phr_rr")}
+                  type="number"
+                  className="border border-gray-300 px-4 py-2 rounded-lg"
+                />
+              </label>
+            </div>
+
+            <div className="my-4">
+              <label className="flex flex-col">
+                <span>T*</span>
+                <input
+                  {...register("phr_T*")}
+                  type="number"
+                  className="border border-gray-300 px-4 py-2 rounded-lg"
+                />
+              </label>
+            </div>
+
+            <div className="my-4">
+              <label className="flex flex-col">
+                <span>SpO2</span>
+                <input
+                  {...register("phr_Sp-02")}
+                  type="number"
+                  className="border border-gray-300 px-4 py-2 rounded-lg"
+                />
+              </label>
+            </div>
+
+            <div className="my-4">
+              <p className="font-bold">Body Habitus</p>
+              {[
+                { label: "WNL", field: "phr_bodyHabitusWNL" },
+                { label: "Cathetic", field: "phr_bodyHabitusCathetic" },
+                { label: "Obese", field: "phr_bodyHabitusObese" },
+              ].map(({ label, field }, index) => {
+                return (
+                  <label key={field} className="flex items-center">
+                    <span>{label}</span>
+                    <input
+                      //@ts-ignore
+                      {...register(field)}
+                      aria-invalid={errors[field] ? "true" : "false"}
+                      value={1}
+                      type="radio"
+                      className="form-radio h-4 w-4 text-indigo-600 rounded"
+                    />
+                  </label>
+                );
+              })}
+              {errors["body-habitus"] && (
+                <p role="alert">{errors["body-habitus"]?.message}</p>
+              )}
+            </div>
+
+            <div className="my-4">
+              <label className="flex flex-col">
+                <span>Height (cm)</span>
+                <input
+                  {...register("phr_heightCM")}
+                  type="text"
+                  className="border border-gray-300 px-4 py-2 rounded-lg"
+                />
+              </label>
+            </div>
+
+            <div className="my-4">
+              <label className="flex flex-col">
+                <span>Weight (kg)</span>
+                <input
+                  {...register("phr_weightKG")}
+                  type="text"
+                  className="border border-gray-300 px-4 py-2 rounded-lg"
+                />
+              </label>
+            </div>
+
+            <div className="my-4">
+              <label className="flex flex-col">
+                <span>BMI</span>
+                <input
+                  {...register("phr_BMI")}
+                  type="number"
+                  className="border border-gray-300 px-4 py-2 rounded-lg"
+                />
+              </label>
+            </div>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={6}>
+                <div className="my-4">
+                  <p className="font-bold">
+                    Nasal mucosa, septum, & turbinates
+                  </p>
+                  {[
+                    {
+                      label: "WNL",
+                      field: "phr_nasalMucosaSeptumTurbinatesWNL",
+                    },
+                    {
+                      label: "Edema or erythema present",
+                      field: "phr_nasalMucosaSeptumTurbinatesEdeOrEryPresent",
+                    },
+                  ].map(({ label, field }, index) => {
+                    return (
+                      <label key={field} className="flex items-center">
+                        <span>{label}</span>
+                        <input
+                          //@ts-ignore
+                          {...register(field)}
+                          aria-invalid={errors[field] ? "true" : "false"}
+                          value={errors[field] ? 0 : 1}
+                          type="checkbox"
+                          className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
+                        />
+                      </label>
+                    );
+                  })}
+                  {errors["nasal-mucosa-septum-turbinates"] && (
+                    <p role="alert" className="text-red-500 text-sm">
+                      {errors["nasal-mucosa-septum-turbinates"]?.message}
+                    </p>
+                  )}
+                </div>
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <div className="my-4">
+                  <p className="font-bold">Dentition & gums</p>
+                  {[
+                    { label: "WNL", field: "phr_dentionAndGumsWNL" },
+                    {
+                      label: "Dental canes",
+                      field: "phr_dentionAndGumsDentalCanes",
+                    },
+                    {
+                      label: "Gingivitis",
+                      field: "phr_dentionAndGumsGingivitis",
+                    },
+                  ].map(({ label, field }, index) => {
+                    return (
+                      <label key={field} className="flex items-center">
+                        <span>{label}</span>
+                        <input
+                          //@ts-ignore
+                          {...register(field)}
+                          aria-invalid={errors[field] ? "true" : "false"}
+                          value={errors[field] ? 0 : 1}
+                          type="checkbox"
+                          className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
+                        />
+                      </label>
+                    );
+                  })}
+                  {errors["dentition-gums"] && (
+                    <p role="alert" className="text-red-500 text-sm">
+                      {errors["dentition-gums"]?.message}
+                    </p>
+                  )}
+                </div>
+              </Grid>
+            </Grid>
           </div>
 
-          <div className="my-4">
-            <p className="font-bold">Mallampati</p>
-            {[
-              { label: "I", field: "phr_mallampati1" },
-              { label: "II", field: "phr_mallampati2" },
-              { label: "III", field: "phr_mallampati3" },
-              { label: "IV", field: "phr_mallampati4" },
-            ].map(({ label, field }, index) => {
-              return (
-                <label key={field} className="flex items-center">
-                  <span>{label}</span>
-                  <input
-                    //@ts-ignore
-                    {...register(field)}
-                    aria-invalid={errors[field] ? "true" : "false"}
-                    value={errors[field] ? 0 : 1}
-                    type="checkbox"
-                    className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
-                  />
-                </label>
-              );
-            })}
-            {errors["mallampati"] && (
-              <p role="alert" className="text-red-500 text-sm">
-                {errors["mallampati"]?.message}
-              </p>
-            )}
-          </div>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={6}>
+              <div className="my-4">
+                <p className="font-bold">Oropharynx</p>
+                {[
+                  { label: "WNL", field: "phr_oropharynxWNL" },
+                  {
+                    label: "Edema or erythema present",
+                    field: "phr_oropharynxEdeOrEryPresent",
+                  },
+                  { label: "Oral ulcers", field: "phr_oropharynxOralUlcers" },
+                  {
+                    label: "Oral petechiae",
+                    field: "phr_oropharynxOralPetachie",
+                  },
+                ].map(({ label, field }, index) => {
+                  return (
+                    <label key={field} className="flex items-center">
+                      <span>{label}</span>
+                      <input
+                        //@ts-ignore
+                        {...register(field)}
+                        aria-invalid={errors[field] ? "true" : "false"}
+                        value={errors[field] ? 0 : 1}
+                        type="checkbox"
+                        className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
+                      />
+                    </label>
+                  );
+                })}
+                {errors["oropharynx"] && (
+                  <p role="alert" className="text-red-500 text-sm">
+                    {errors["oropharynx"]?.message}
+                  </p>
+                )}
+              </div>
+            </Grid>
 
-          <div className="my-4">
-            <p className="font-bold">Neck</p>
-            {[
-              { label: "WNL", field: "phr_neckWNL" },
-              { label: "Lymphadenopathy", field: "phr_neckLymphadenopathy" },
-            ].map(({ label, field }, index) => {
-              return (
-                <label key={field} className="flex items-center">
-                  <span>{label}</span>
+            <Grid item xs={12} md={6}>
+              <div className="my-4">
+                <p className="font-bold">Mallampati</p>
+                {[
+                  { label: "I", field: "phr_mallampati1" },
+                  { label: "II", field: "phr_mallampati2" },
+                  { label: "III", field: "phr_mallampati3" },
+                  { label: "IV", field: "phr_mallampati4" },
+                ].map(({ label, field }, index) => {
+                  return (
+                    <label key={field} className="flex items-center">
+                      <span>{label}</span>
+                      <input
+                        //@ts-ignore
+                        {...register(field)}
+                        aria-invalid={errors[field] ? "true" : "false"}
+                        value={errors[field] ? 0 : 1}
+                        type="checkbox"
+                        className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
+                      />
+                    </label>
+                  );
+                })}
+                {errors["mallampati"] && (
+                  <p role="alert" className="text-red-500 text-sm">
+                    {errors["mallampati"]?.message}
+                  </p>
+                )}
+              </div>
+            </Grid>
+          </Grid>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={6}>
+              <div className="my-4">
+                <p className="font-bold">Neck</p>
+                {[
+                  { label: "WNL", field: "phr_neckWNL" },
+                  {
+                    label: "Lymphadenopathy",
+                    field: "phr_neckLymphadenopathy",
+                  },
+                ].map(({ label, field }, index) => {
+                  return (
+                    <label key={field} className="flex items-center">
+                      <span>{label}</span>
+                      <input //@ts-ignore
+                        {...register(field)}
+                        aria-invalid={errors[field] ? "true" : "false"}
+                        value={errors[field] ? 0 : 1}
+                        type="checkbox"
+                        className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
+                      />
+                    </label>
+                  );
+                })}
+                {errors["neck"] && (
+                  <p role="alert" className="text-red-500 text-sm">
+                    {errors["neck"]?.message}
+                  </p>
+                )}
+              </div>
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              <div className="my-4">
+                <p className="font-bold">Thyroid</p>
+                {[
+                  { label: "WNL", field: "phr_thyroidWNL" },
+                  { label: "Thyromegaly", field: "phr_thyroidThyromegaly" },
+                  {
+                    label: "Nodules Palpable",
+                    field: "phr_thyroidNodulesPalpable",
+                  },
+                  { label: "Neck mass", field: "phr_thyroidNeckMass" },
+                ].map(({ label, field }, index) => {
+                  return (
+                    <label key={field} className="flex items-center">
+                      <span>{label}</span>
+                      <input //@ts-ignore
+                        {...register(field)}
+                        aria-invalid={errors[field] ? "true" : "false"}
+                        value={errors[field] ? 0 : 1}
+                        type="checkbox"
+                        className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
+                      />
+                    </label>
+                  );
+                })}
+                {errors["thyroid"] && (
+                  <p role="alert" className="text-red-500 text-sm">
+                    {errors["thyroid"]?.message}
+                  </p>
+                )}
+              </div>
+            </Grid>
+          </Grid>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={6}>
+              <div className="my-4">
+                <label className="flex items-center">
+                  <span className="font-bold">
+                    Chest (Equal chest expansion & symmetrical){" "}
+                  </span>
                   <input //@ts-ignore
-                    {...register(field)}
-                    aria-invalid={errors[field] ? "true" : "false"}
-                    value={errors[field] ? 0 : 1}
+                    {...register("phr_chestExpansionAndSymmetrical")}
+                    aria-invalid={
+                      errors["phr_chestExpansionAndSymmetrical"]
+                        ? "true"
+                        : "false"
+                    }
                     type="checkbox"
                     className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
                   />
                 </label>
-              );
-            })}
-            {errors["neck"] && (
-              <p role="alert" className="text-red-500 text-sm">
-                {errors["neck"]?.message}
-              </p>
-            )}
-          </div>
+              </div>
+            </Grid>
 
-          <div className="my-4">
-            <p className="font-bold">Thyroid</p>
-            {[
-              { label: "WNL", field: "phr_thyroidWNL" },
-              { label: "Thyromegaly", field: "phr_thyroidThyromegaly" },
-              {
-                label: "Nodules Palpable",
-                field: "phr_thyroidNodulesPalpable",
-              },
-              { label: "Neck mass", field: "phr_thyroidNeckMass" },
-            ].map(({ label, field }, index) => {
-              return (
-                <label key={field} className="flex items-center">
-                  <span>{label}</span>
-                  <input //@ts-ignore
-                    {...register(field)}
-                    aria-invalid={errors[field] ? "true" : "false"}
-                    value={errors[field] ? 0 : 1}
-                    type="checkbox"
-                    className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
-                  />
-                </label>
-              );
-            })}
-            {errors["thyroid"] && (
-              <p role="alert" className="text-red-500 text-sm">
-                {errors["thyroid"]?.message}
-              </p>
-            )}
-          </div>
-
-          <div className="my-4">
-            <p className="font-bold">Jugular Veins</p>
-            {[
-              { label: "WNL", field: "phr_jugularVeinsWNL" },
-              { label: "Engorged", field: "phr_jugularVeinsEngorged" },
-            ].map(({ label, field }, index) => {
-              return (
-                <label key={field} className="flex items-center">
-                  <span>{label}</span>
-                  <input //@ts-ignore
-                    {...register(field)}
-                    aria-invalid={errors[field] ? "true" : "false"}
-                    value={errors[field] ? 0 : 1}
-                    type="checkbox"
-                    className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
-                  />
-                </label>
-              );
-            })}
-            {errors["jugular-veins"] && (
-              <p role="alert" className="text-red-500 text-sm">
-                {errors["jugular-veins"]?.message}
-              </p>
-            )}
-          </div>
-
-          <div className="my-4">
-            <label className="flex items-center">
-              <span className="font-bold">
-                Chest (Equal chest expansion & symmetrical){" "}
-              </span>
-              <input //@ts-ignore
-                {...register("phr_chestExpansionAndSymmetrical")}
-                aria-invalid={
-                  errors["phr_chestExpansionAndSymmetrical"] ? "true" : "false"
-                }
-                type="checkbox"
-                className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
-              />
-            </label>
-          </div>
-
-          <div className="my-4">
-            <p className="font-bold">Respiratory effort</p>
-            {[
-              { label: "WNL", field: "phr_respiratoryEffortWNL" },
-              {
-                label: "Accessory muscle use",
-                field: "phr_respiratoryEffortAccessoryMuscleUse",
-              },
-              {
-                label: "Intercostal retractions",
-                field: "phr_respiratoryEffortIntercostalRetractions",
-              },
-              {
-                label: "Paradoxic movements",
-                field: "phr_respiratoryEffortParadoxicMovements",
-              },
-            ].map(({ label, field }, index) => {
-              return (
-                <label key={field} className="flex items-center">
-                  <span>{label}</span>
-                  <input //@ts-ignore
-                    {...register(field)}
-                    aria-invalid={errors[field] ? "true" : "false"}
-                    value={errors[field] ? 0 : 1}
-                    type="checkbox"
-                    className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
-                  />
-                </label>
-              );
-            })}
-            {errors["respiratory-effort"] && (
-              <p role="alert" className="text-red-500 text-sm">
-                {errors["respiratory-effort"]?.message}
-              </p>
-            )}
-          </div>
-
-          <div className="my-4">
-            <p className="font-bold">Chest percussion</p>
-            {[
-              { label: "WNL", field: "phr_chestPercussionWNL" },
-              {
-                label: "Dullness to percussion",
-                field: "phr_chestPercussionDullnessToPercussion",
-              },
-              {
-                label: "Hyperresonance",
-                field: "phr_chestPercussionHyperResonance",
-              },
-            ].map(({ label, field }, index) => {
-              return (
-                <label key={field} className="flex items-center">
-                  <span>{label}</span>
-                  <input //@ts-ignore
-                    {...register(field)}
-                    aria-invalid={errors[field] ? "true" : "false"}
-                    value={errors[field] ? 0 : 1}
-                    type="checkbox"
-                    className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
-                  />
-                </label>
-              );
-            })}
-            {errors["chest-percussion"] && (
-              <p role="alert" className="text-red-500 text-sm">
-                {errors["chest-percussion"]?.message}
-              </p>
-            )}
-          </div>
-
-          <div className="my-4">
-            <p className="font-bold">Tactile fremitus</p>
-            {[
-              { label: "WNL", field: "phr_tactileFremitusWNL" },
-              { label: "Increased", field: "phr_tactileFremitusIncreased" },
-              { label: "Decreased", field: "phr_tactileFremitusDecreased" },
-            ].map(({ label, field }, index) => {
-              return (
-                <label key={field} className="flex items-center">
-                  <span>{label}</span>
-                  <input //@ts-ignore
-                    {...register(field)}
-                    aria-invalid={errors[field] ? "true" : "false"}
-                    value={errors[field] ? 0 : 1}
-                    type="checkbox"
-                    className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
-                  />
-                </label>
-              );
-            })}
-            {errors["tactile-fremitus"] && (
-              <p role="alert" className="text-red-500 text-sm">
-                {errors["tactile-fremitus"]?.message}
-              </p>
-            )}
-          </div>
-
-          <div className="my-4">
-            <p className="font-bold">Auscultation</p>
-            {[
-              { label: "WNL", field: "phr_AuscultationWNL" },
-              {
-                label: "Bronchial breath sounds",
-                field: "phr_AuscultationBronchialBreathSounds",
-              },
-              { label: "Egophony", field: "phr_AuscultationEgophony" },
-              { label: "Rales", field: "phr_AuscultationRales" },
-              { label: "Rhonchi", field: "phr_AuscultationRhonchi" },
-              { label: "Wheezes", field: "phr_AuscultationWheezes" },
-              { label: "Rub", field: "phr_AuscultationRub" },
-            ].map(({ label, field }, index) => {
-              return (
-                <label key={field} className="flex items-center">
-                  <span>{label}</span>
-                  <input //@ts-ignore
-                    {...register(field)}
-                    aria-invalid={errors[field] ? "true" : "false"}
-                    value={1}
-                    type="checkbox"
-                    className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
-                  />
-                </label>
-              );
-            })}
-            {errors["auscultation"] && (
-              <p role="alert" className="text-red-500 text-sm">
-                {errors["auscultation"]?.message}
-              </p>
-            )}
-          </div>
+            <Grid item xs={12} md={6}>
+              <div className="my-4">
+                <p className="font-bold">Jugular Veins</p>
+                {[
+                  { label: "WNL", field: "phr_jugularVeinsWNL" },
+                  { label: "Engorged", field: "phr_jugularVeinsEngorged" },
+                ].map(({ label, field }, index) => {
+                  return (
+                    <label key={field} className="flex items-center">
+                      <span>{label}</span>
+                      <input //@ts-ignore
+                        {...register(field)}
+                        aria-invalid={errors[field] ? "true" : "false"}
+                        value={errors[field] ? 0 : 1}
+                        type="checkbox"
+                        className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
+                      />
+                    </label>
+                  );
+                })}
+                {errors["jugular-veins"] && (
+                  <p role="alert" className="text-red-500 text-sm">
+                    {errors["jugular-veins"]?.message}
+                  </p>
+                )}
+              </div>
+            </Grid>
+          </Grid>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={6}>
+              <div className="my-4">
+                <p className="font-bold">Respiratory effort</p>
+                {[
+                  { label: "WNL", field: "phr_respiratoryEffortWNL" },
+                  {
+                    label: "Accessory muscle use",
+                    field: "phr_respiratoryEffortAccessoryMuscleUse",
+                  },
+                  {
+                    label: "Intercostal retractions",
+                    field: "phr_respiratoryEffortIntercostalRetractions",
+                  },
+                  {
+                    label: "Paradoxic movements",
+                    field: "phr_respiratoryEffortParadoxicMovements",
+                  },
+                ].map(({ label, field }, index) => {
+                  return (
+                    <label key={field} className="flex items-center">
+                      <span>{label}</span>
+                      <input //@ts-ignore
+                        {...register(field)}
+                        aria-invalid={errors[field] ? "true" : "false"}
+                        value={errors[field] ? 0 : 1}
+                        type="checkbox"
+                        className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
+                      />
+                    </label>
+                  );
+                })}
+                {errors["respiratory-effort"] && (
+                  <p role="alert" className="text-red-500 text-sm">
+                    {errors["respiratory-effort"]?.message}
+                  </p>
+                )}
+              </div>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <div className="my-4">
+                <p className="font-bold">Chest percussion</p>
+                {[
+                  { label: "WNL", field: "phr_chestPercussionWNL" },
+                  {
+                    label: "Dullness to percussion",
+                    field: "phr_chestPercussionDullnessToPercussion",
+                  },
+                  {
+                    label: "Hyperresonance",
+                    field: "phr_chestPercussionHyperResonance",
+                  },
+                ].map(({ label, field }, index) => {
+                  return (
+                    <label key={field} className="flex items-center">
+                      <span>{label}</span>
+                      <input //@ts-ignore
+                        {...register(field)}
+                        aria-invalid={errors[field] ? "true" : "false"}
+                        value={errors[field] ? 0 : 1}
+                        type="checkbox"
+                        className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
+                      />
+                    </label>
+                  );
+                })}
+                {errors["chest-percussion"] && (
+                  <p role="alert" className="text-red-500 text-sm">
+                    {errors["chest-percussion"]?.message}
+                  </p>
+                )}
+              </div>
+            </Grid>
+          </Grid>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={6}>
+              <div className="my-4">
+                <p className="font-bold">Auscultation</p>
+                {[
+                  { label: "WNL", field: "phr_AuscultationWNL" },
+                  {
+                    label: "Bronchial breath sounds",
+                    field: "phr_AuscultationBronchialBreathSounds",
+                  },
+                  { label: "Egophony", field: "phr_AuscultationEgophony" },
+                  { label: "Rales", field: "phr_AuscultationRales" },
+                  { label: "Rhonchi", field: "phr_AuscultationRhonchi" },
+                  { label: "Wheezes", field: "phr_AuscultationWheezes" },
+                  { label: "Rub", field: "phr_AuscultationRub" },
+                ].map(({ label, field }, index) => {
+                  return (
+                    <label key={field} className="flex items-center">
+                      <span>{label}</span>
+                      <input //@ts-ignore
+                        {...register(field)}
+                        aria-invalid={errors[field] ? "true" : "false"}
+                        value={1}
+                        type="checkbox"
+                        className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
+                      />
+                    </label>
+                  );
+                })}
+                {errors["auscultation"] && (
+                  <p role="alert" className="text-red-500 text-sm">
+                    {errors["auscultation"]?.message}
+                  </p>
+                )}
+              </div>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <div className="my-4">
+                <p className="font-bold">Tactile fremitus</p>
+                {[
+                  { label: "WNL", field: "phr_tactileFremitusWNL" },
+                  { label: "Increased", field: "phr_tactileFremitusIncreased" },
+                  { label: "Decreased", field: "phr_tactileFremitusDecreased" },
+                ].map(({ label, field }, index) => {
+                  return (
+                    <label key={field} className="flex items-center">
+                      <span>{label}</span>
+                      <input //@ts-ignore
+                        {...register(field)}
+                        aria-invalid={errors[field] ? "true" : "false"}
+                        value={errors[field] ? 0 : 1}
+                        type="checkbox"
+                        className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
+                      />
+                    </label>
+                  );
+                })}
+                {errors["tactile-fremitus"] && (
+                  <p role="alert" className="text-red-500 text-sm">
+                    {errors["tactile-fremitus"]?.message}
+                  </p>
+                )}
+              </div>
+            </Grid>
+          </Grid>
 
           <div className="my-4">
             <label className="flex flex-col">
@@ -1403,7 +1719,6 @@ export function EHRForm() {
               />
             </label>
           </div>
-
           <div className="my-4">
             <p className="font-bold">Heart sounds</p>
             {[
@@ -1450,7 +1765,6 @@ export function EHRForm() {
               </p>
             )}
           </div>
-
           <div className="my-4">
             <label className="flex flex-col">
               <span className="font-bold">Grade</span>
@@ -1461,7 +1775,6 @@ export function EHRForm() {
               />
             </label>
           </div>
-
           <div className="my-4">
             <label className="flex flex-col">
               <span className="font-bold">Additional Findings</span>
@@ -1471,7 +1784,6 @@ export function EHRForm() {
               ></textarea>
             </label>
           </div>
-
           <div className="my-4">
             <label className="font-bold">Abdomen</label>
             <div className="flex items-center">
@@ -1483,7 +1795,6 @@ export function EHRForm() {
               />
             </div>
           </div>
-
           <div className="my-4">
             <label className="flex items-center">
               <input //@ts-ignore
@@ -1502,97 +1813,108 @@ export function EHRForm() {
               />
             </label>
           </div>
-
-          <div className="my-4">
-            <p className="font-bold">Bowel Sounds</p>
-            {[
-              { label: "normoactive", field: "phr_bowelSoundsNormaoactive" },
-              { label: "Up", field: "phr_bowelSoundsUp" },
-              { label: "Down", field: "phr_bowelSoundsDown" },
-            ].map(({ label, field }, index) => {
-              return (
-                <label key={field} className="flex items-center">
-                  <span>{label}</span>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={6}>
+              <div className="my-4">
+                <p className="font-bold">Bowel Sounds</p>
+                {[
+                  {
+                    label: "normoactive",
+                    field: "phr_bowelSoundsNormaoactive",
+                  },
+                  { label: "Up", field: "phr_bowelSoundsUp" },
+                  { label: "Down", field: "phr_bowelSoundsDown" },
+                ].map(({ label, field }, index) => {
+                  return (
+                    <label key={field} className="flex items-center">
+                      <span>{label}</span>
+                      <input //@ts-ignore
+                        {...register(field)}
+                        aria-invalid={errors[field] ? "true" : "false"}
+                        value={1}
+                        type="checkbox"
+                        className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
+                      />
+                    </label>
+                  );
+                })}
+                {errors["bowel-sounds"] && (
+                  <p role="alert" className="text-red-500 text-sm">
+                    {errors["bowel-sounds"]?.message}
+                  </p>
+                )}
+              </div>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <div className="my-4">
+                <label className="font-bold">Liver & Spleen</label>
+                <div className="flex items-center">
+                  <p className="mr-4">Palpable and WNL</p>
                   <input //@ts-ignore
-                    {...register(field)}
-                    aria-invalid={errors[field] ? "true" : "false"}
-                    value={1}
+                    {...register("liver-spleen")}
                     type="checkbox"
-                    className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
+                    className="form-checkbox h-4 w-4 text-indigo-600 rounded"
                   />
-                </label>
-              );
-            })}
-            {errors["bowel-sounds"] && (
-              <p role="alert" className="text-red-500 text-sm">
-                {errors["bowel-sounds"]?.message}
-              </p>
-            )}
-          </div>
-
-          <div className="my-4">
-            <label className="font-bold">Liver & Spleen</label>
-            <div className="flex items-center">
-              <p className="mr-4">Palpable and WNL</p>
-              <input //@ts-ignore
-                {...register("liver-spleen")}
-                type="checkbox"
-                className="form-checkbox h-4 w-4 text-indigo-600 rounded"
-              />
-            </div>
-          </div>
-
-          <div className="my-4">
-            <p className="font-bold">Unable to palpate</p>
-            {[
-              { label: "Liver", field: "phr_unableToPalpateLiver" },
-              { label: "Spleen", field: "phr_unableToPalpateSpleen" },
-            ].map(({ label, field }, index) => {
-              return (
-                <label key={field} className="flex items-center">
-                  <span>{label}</span>
-                  <input //@ts-ignore
-                    {...register(field)}
-                    aria-invalid={errors[field] ? "true" : "false"}
-                    value={errors[field] ? 0 : 1}
-                    type="checkbox"
-                    className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
-                  />
-                </label>
-              );
-            })}
-            {errors["liver-spleen"] && (
-              <p role="alert" className="text-red-500 text-sm">
-                {errors["liver-spleen"]?.message}
-              </p>
-            )}
-          </div>
-
-          <div className="my-4">
-            <p className="font-bold">Organomegaly</p>
-            {[
-              { label: "Liver", field: "phr_organomegalyLiver" },
-              { label: "Spleen", field: "phr_organomegalySpleen" },
-            ].map(({ label, field }, index) => {
-              return (
-                <label key={field} className="flex items-center">
-                  <span>{label}</span>
-                  <input //@ts-ignore
-                    {...register(field)}
-                    aria-invalid={errors[field] ? "true" : "false"}
-                    value={errors[field] ? 0 : 1}
-                    type="checkbox"
-                    className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
-                  />
-                </label>
-              );
-            })}
-            {errors["organomegaly"] && (
-              <p role="alert" className="text-red-500 text-sm">
-                {errors["organomegaly"]?.message}
-              </p>
-            )}
-          </div>
+                </div>
+              </div>
+            </Grid>
+          </Grid>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={6}>
+              <div className="my-4">
+                <p className="font-bold">Organomegaly</p>
+                {[
+                  { label: "Liver", field: "phr_organomegalyLiver" },
+                  { label: "Spleen", field: "phr_organomegalySpleen" },
+                ].map(({ label, field }, index) => {
+                  return (
+                    <label key={field} className="flex items-center">
+                      <span>{label}</span>
+                      <input //@ts-ignore
+                        {...register(field)}
+                        aria-invalid={errors[field] ? "true" : "false"}
+                        value={errors[field] ? 0 : 1}
+                        type="checkbox"
+                        className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
+                      />
+                    </label>
+                  );
+                })}
+                {errors["organomegaly"] && (
+                  <p role="alert" className="text-red-500 text-sm">
+                    {errors["organomegaly"]?.message}
+                  </p>
+                )}
+              </div>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <div className="my-4">
+                <p className="font-bold">Unable to palpate</p>
+                {[
+                  { label: "Liver", field: "phr_unableToPalpateLiver" },
+                  { label: "Spleen", field: "phr_unableToPalpateSpleen" },
+                ].map(({ label, field }, index) => {
+                  return (
+                    <label key={field} className="flex items-center">
+                      <span>{label}</span>
+                      <input //@ts-ignore
+                        {...register(field)}
+                        aria-invalid={errors[field] ? "true" : "false"}
+                        value={errors[field] ? 0 : 1}
+                        type="checkbox"
+                        className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
+                      />
+                    </label>
+                  );
+                })}
+                {errors["liver-spleen"] && (
+                  <p role="alert" className="text-red-500 text-sm">
+                    {errors["liver-spleen"]?.message}
+                  </p>
+                )}
+              </div>
+            </Grid>
+          </Grid>
 
           <div className="my-4">
             <label className="flex flex-col">
@@ -1603,7 +1925,6 @@ export function EHRForm() {
               ></textarea>
             </label>
           </div>
-
           <div className="my-4">
             <p className="font-bold">Kidney punch sign</p>
             {[
@@ -1629,7 +1950,6 @@ export function EHRForm() {
               </p>
             )}
           </div>
-
           <div className="my-4">
             <p className="font-bold">If Positive</p>
             {[
@@ -1655,7 +1975,6 @@ export function EHRForm() {
               </p>
             )}
           </div>
-
           <div className="my-4">
             <p className="font-bold">Extremities</p>
             {[
@@ -1683,7 +2002,6 @@ export function EHRForm() {
               </p>
             )}
           </div>
-
           <div className="my-4">
             <label className="flex flex-col">
               <span className="font-bold">Capillary refill time</span>
@@ -1694,7 +2012,6 @@ export function EHRForm() {
               />
             </label>
           </div>
-
           <div className="my-4">
             <p className="font-bold">Skin</p>
             {[
@@ -1723,7 +2040,6 @@ export function EHRForm() {
               </p>
             )}
           </div>
-
           <div className="my-4">
             <label className="flex flex-col">
               <span className="font-bold">Assessment</span>
@@ -1733,7 +2049,6 @@ export function EHRForm() {
               ></textarea>
             </label>
           </div>
-
           <Button
             type="primary"
             htmlType="submit"

@@ -8,6 +8,8 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Button,
+  TextField,
 } from "@mui/material";
 import axiosInstance from "../../../src/components/utils/axiosInstance";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -18,32 +20,32 @@ const PatientHistory = ({ patientData }) => {
   const [patientHistory, setPatientHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5; // Number of items to display per page
+  const [editingEntry, setEditingEntry] = useState(null); // Entry being edited
+  const [editedValue, setEditedValue] = useState("");
+  // Function to fetch patient history
+  const fetchPatientHistory = async (patientID) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      axiosInstance.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${token}`;
+
+      const phrResponse = await axiosInstance.get(
+        `/attributeValues/getPHR/${patientID}`
+      );
+
+      const phrData = phrResponse.data;
+      console.log(phrData);
+      setPatientHistory(phrData);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching patient history data:", error);
+      setError(error);
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchPatientHistory = async (patientID) => {
-      try {
-        const token = localStorage.getItem("authToken");
-        axiosInstance.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${token}`;
-
-        const phrResponse = await axiosInstance.get(
-          `/attributeValues/getPHR/${patientID}`
-        );
-
-        const phrData = phrResponse.data;
-        console.log(phrData);
-        setPatientHistory(phrData);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching patient history data:", error);
-        setError(error);
-        setLoading(false);
-      }
-    };
-
     if (patient_id) {
       console.log("Fetching patient history for patient ID:", patient_id);
       fetchPatientHistory(patient_id);
@@ -295,6 +297,43 @@ const PatientHistory = ({ patientData }) => {
     return attributeNames[attributeName] || attributeName;
   };
 
+  const startEditing = (entry) => {
+    setEditedValue(entry.attributeVal_values);
+    setEditingEntry(entry);
+  };
+
+  // Function to cancel editing
+  const cancelEditing = () => {
+    setEditedValue("");
+    setEditingEntry(null);
+  };
+
+  // Function to save edited value
+  const saveEditedValue = async () => {
+    try {
+      const token = localStorage.getItem("authToken");
+      axiosInstance.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${token}`;
+
+      await axiosInstance.put(
+        `/attributeValues/${patient_id}/updateField/${editingEntry.attributeVal_id}`,
+        {
+          attributeVal_values: editedValue,
+        }
+      );
+
+      // Refresh patient history data after edit
+      await fetchPatientHistory(patient_id);
+
+      // Reset edit state
+      cancelEditing();
+    } catch (error) {
+      console.error("Error updating patient history:", error);
+      // Handle error...
+    }
+  };
+
   return (
     <Card style={{ padding: "20px", margin: "20px", borderRadius: "15px" }}>
       {Object.keys(groupedHistory).length === 0 ? (
@@ -319,23 +358,60 @@ const PatientHistory = ({ patientData }) => {
                       borderRadius="8px"
                       boxShadow="0 2px 4px rgba(0, 0, 0, 0.1)"
                     >
-                      <Typography variant="body2">
-                        <strong>
-                          {formatAttributeName(
-                            historyEntry.categoryAtt_name,
-                            historyEntry.attributeVal_values
-                          )}
-                          :
-                        </strong>{" "}
-                        {/* Display "Yes" or "No" for boolean attributes */}
-                        {booleanAttributes.includes(
-                          historyEntry.categoryAtt_name.replace(/^phr_/, "")
-                        )
-                          ? historyEntry.attributeVal_values === "1"
-                            ? "Yes"
-                            : "No"
-                          : historyEntry.attributeVal_values}
-                      </Typography>
+                      {editingEntry &&
+                      editingEntry.attributeVal_id ===
+                        historyEntry.attributeVal_id ? (
+                        <>
+                          <TextField
+                            label={formatAttributeName(
+                              historyEntry.categoryAtt_name,
+                              historyEntry.attributeVal_values
+                            )}
+                            value={editedValue}
+                            onChange={(e) => setEditedValue(e.target.value)}
+                            fullWidth
+                          />
+                          <Button
+                            onClick={saveEditedValue}
+                            variant="contained"
+                            style={{
+                              backgroundColor: "#0096FF	",
+                              // "&:hover": { backgroundColor: "orange" },
+                            }}
+                          >
+                            Save
+                          </Button>
+                          <Button onClick={cancelEditing} variant="outlined">
+                            Cancel
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <Typography variant="body2">
+                            <strong>
+                              {formatAttributeName(
+                                historyEntry.categoryAtt_name,
+                                historyEntry.attributeVal_values
+                              )}
+                              :
+                            </strong>{" "}
+                            {/* Display "Yes" or "No" for boolean attributes */}
+                            {booleanAttributes.includes(
+                              historyEntry.categoryAtt_name.replace(/^phr_/, "")
+                            )
+                              ? historyEntry.attributeVal_values === "1"
+                                ? "Yes"
+                                : "No"
+                              : historyEntry.attributeVal_values}
+                          </Typography>
+                          <Button
+                            onClick={() => startEditing(historyEntry)}
+                            variant="outlined"
+                          >
+                            Edit
+                          </Button>
+                        </>
+                      )}
                     </Box>
                   </Grid>
                 ))}
