@@ -125,7 +125,8 @@ const FileViewer = ({ patientData }) => {
             Download
           </Button>,
         ]}
-        width={1200} // Set the modal width to 1200px
+        width={window.innerWidth > 1200 ? 1000 : "90%"} // Set the modal width to 1200px if the viewport width is greater than 1200px, otherwise set it to 90% of the viewport width
+        style={{ right: "-135px" }} // Move the modal 10px to the right
       >
         {selectedFile && (
           <div className="iframe-container">

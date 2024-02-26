@@ -19,6 +19,35 @@ export function EHRForm() {
   const [tobacco, setTobacco] = useState("");
   const [recDrugs, setRecDrugs] = useState("");
   const [alcohol, setAlcohol] = useState("");
+  const [maxDigits] = useState(3); // Maximum number of digits allowed
+  const [massPresentChecked, setMassPresentChecked] = useState(false);
+
+  const handleInput = (e) => {
+    const input = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
+    const maxLengthInput = input.slice(0, maxDigits); // Limit input to maxDigits
+    e.target.value = maxLengthInput; // Update input field value
+  };
+
+  const handleBMIInput = (e) => {
+    let input = e.target.value.replace(/[^\d.]/g, ""); // Remove non-numeric and non-decimal point characters
+    const decimalIndex = input.indexOf("."); // Check if a decimal point exists
+
+    if (decimalIndex !== -1) {
+      // If a decimal point exists, limit the input before and after the decimal point
+      const integerPart = input.slice(0, decimalIndex);
+      const decimalPart = input.slice(decimalIndex + 1, decimalIndex + 2); // Limit decimal part to one digit
+      input = `${integerPart}.${decimalPart}`;
+    } else {
+      // If there's no decimal point, limit the input to max 4 digits
+      input = input.slice(0, 4);
+    }
+
+    e.target.value = input; // Update input field value
+  };
+
+  const handleMassPresentChange = (e) => {
+    setMassPresentChecked(e.target.checked);
+  };
 
   const handleMaintenanceMedsChange = (e) => {
     setMaintenanceMedsChecked(e.target.checked);
@@ -947,44 +976,9 @@ export function EHRForm() {
               </div>
             </Grid>
           </Grid>
-          <div>
-            <h2>Blood Pressure</h2>
 
-            <div className="my-4">
-              <label className="flex flex-col">
-                <span>Sitting</span>
-                <input
-                  {...register("phr_bpSitting")}
-                  type="number"
-                  className="border border-gray-300 px-4 py-2 rounded-lg"
-                />
-              </label>
-            </div>
-
-            <div className="my-4">
-              <label className="flex flex-col">
-                <span>Standing</span>
-                <input
-                  {...register("phr_bpStanding")}
-                  type="number"
-                  className="border border-gray-300 px-4 py-2 rounded-lg"
-                />
-              </label>
-            </div>
-
-            <div className="my-4">
-              <label className="flex flex-col">
-                <span>Lying</span>
-                <input
-                  {...register("phr_bpLying")}
-                  type="number"
-                  className="border border-gray-300 px-4 py-2 rounded-lg"
-                />
-              </label>
-            </div>
-          </div>
           <div className="my-4">
-            <p>HR</p>
+            <p className="font-bold">HR</p>
             {[
               { label: "Regular", field: "phr_hrRegular" },
               { label: "Irregular", field: "phr_hrIrregular" },
@@ -1007,150 +1001,44 @@ export function EHRForm() {
               <p role="alert">{errors["phr_heartRate"]?.message}</p>
             )}
           </div>
-          <div className="my-4">
-            <label className="flex flex-col">
-              <span>RR</span>
-              <input
-                {...register("phr_rr")}
-                type="number"
-                className="border border-gray-300 px-4 py-2 rounded-lg"
-              />
-            </label>
-          </div>
-          <div className="my-4">
-            <label className="flex flex-col">
-              <span>T*</span>
-              <input
-                {...register("phr_T*")}
-                type="number"
-                className="border border-gray-300 px-4 py-2 rounded-lg"
-              />
-            </label>
-          </div>
-          <div className="my-4">
-            <label className="flex flex-col">
-              <span>SpO2</span>
-              <input
-                {...register("phr_Sp-02")}
-                type="number"
-                className="border border-gray-300 px-4 py-2 rounded-lg"
-              />
-            </label>
-          </div>
-          <div className="my-4">
-            <p>Body Habitus</p>
-            {[
-              { label: "WNL", field: "phr_bodyHabitusWNL" },
-              { label: "Cathetic", field: "phr_bodyHabitusCathetic" },
-              { label: "Obese", field: "phr_bodyHabitusObese" },
-            ].map(({ label, field }, index) => {
-              return (
-                <label key={field} className="flex items-center">
-                  <span>{label}</span>
+          <Grid container spacing={2}>
+            <Grid item xs={4}>
+              <div className="my-4">
+                <label className="flex flex-col">
+                  <span>RR</span>
                   <input
-                    //@ts-ignore
-                    {...register(field)}
-                    aria-invalid={errors[field] ? "true" : "false"}
-                    value={1}
-                    type="radio"
-                    className="form-radio h-4 w-4 text-indigo-600 rounded"
+                    {...register("phr_rr")}
+                    type="number"
+                    className="border border-gray-300 px-4 py-2 rounded-lg"
                   />
                 </label>
-              );
-            })}
-            {errors["body-habitus"] && (
-              <p role="alert">{errors["body-habitus"]?.message}</p>
-            )}
-          </div>
-          <div className="my-4">
-            <label className="flex flex-col">
-              <span>Height (cm)</span>
-              <input
-                {...register("phr_heightCM")}
-                type="text"
-                className="border border-gray-300 px-4 py-2 rounded-lg"
-              />
-            </label>
-          </div>
-          <div className="my-4">
-            <label className="flex flex-col">
-              <span>Weight (kg)</span>
-              <input
-                {...register("phr_weightKG")}
-                type="text"
-                className="border border-gray-300 px-4 py-2 rounded-lg"
-              />
-            </label>
-          </div>
-          <div className="my-4">
-            <label className="flex flex-col">
-              <span>BMI</span>
-              <input
-                {...register("phr_BMI")}
-                type="number"
-                className="border border-gray-300 px-4 py-2 rounded-lg"
-              />
-            </label>
-          </div>
-          <div className="my-4">
-            <p className="font-bold">Nasal mucosa, septum, & turbinates</p>
-            {[
-              { label: "WNL", field: "phr_nasalMucosaSeptumTurbinatesWNL" },
-              {
-                label: "Edema or erythema present",
-                field: "phr_nasalMucosaSeptumTurbinatesEdeOrEryPresent",
-              },
-            ].map(({ label, field }, index) => {
-              return (
-                <label key={field} className="flex items-center">
-                  <span>{label}</span>
+              </div>
+            </Grid>
+            <Grid item xs={4}>
+              <div className="my-4">
+                <label className="flex flex-col">
+                  <span>T*</span>
                   <input
-                    //@ts-ignore
-                    {...register(field)}
-                    aria-invalid={errors[field] ? "true" : "false"}
-                    value={errors[field] ? 0 : 1}
-                    type="checkbox"
-                    className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
+                    {...register("phr_T*")}
+                    type="number"
+                    className="border border-gray-300 px-4 py-2 rounded-lg"
                   />
                 </label>
-              );
-            })}
-            {errors["nasal-mucosa-septum-turbinates"] && (
-              <p role="alert" className="text-red-500 text-sm">
-                {errors["nasal-mucosa-septum-turbinates"]?.message}
-              </p>
-            )}
-          </div>
-          <div className="my-4">
-            <p className="font-bold">Dentition & gums</p>
-            {[
-              { label: "WNL", field: "phr_dentionAndGumsWNL" },
-              {
-                label: "Dental canes",
-                field: "phr_dentionAndGumsDentalCanes",
-              },
-              { label: "Gingivitis", field: "phr_dentionAndGumsGingivitis" },
-            ].map(({ label, field }, index) => {
-              return (
-                <label key={field} className="flex items-center">
-                  <span>{label}</span>
+              </div>
+            </Grid>
+            <Grid item xs={4}>
+              <div className="my-4">
+                <label className="flex flex-col">
+                  <span>SpO2</span>
                   <input
-                    //@ts-ignore
-                    {...register(field)}
-                    aria-invalid={errors[field] ? "true" : "false"}
-                    value={errors[field] ? 0 : 1}
-                    type="checkbox"
-                    className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
+                    {...register("phr_Sp-02")}
+                    type="number"
+                    className="border border-gray-300 px-4 py-2 rounded-lg"
                   />
                 </label>
-              );
-            })}
-            {errors["dentition-gums"] && (
-              <p role="alert" className="text-red-500 text-sm">
-                {errors["dentition-gums"]?.message}
-              </p>
-            )}
-          </div>
+              </div>
+            </Grid>
+          </Grid>
           <div>
             <h2 className="font-bold">Blood Pressure</h2>
 
@@ -1194,12 +1082,82 @@ export function EHRForm() {
                 </div>
               </Grid>
             </Grid>
-
             <div className="my-4">
-              <p className="font-bold">HR</p>
+              <p className="font-bold">Body Habitus</p>
               {[
-                { label: "Regular", field: "phr_hrRegular" },
-                { label: "Irregular", field: "phr_hrIrregular" },
+                { label: "WNL", field: "phr_bodyHabitusWNL" },
+                { label: "Cathetic", field: "phr_bodyHabitusCathetic" },
+                { label: "Obese", field: "phr_bodyHabitusObese" },
+              ].map(({ label, field }, index) => {
+                return (
+                  <label key={field} className="flex items-center">
+                    <span>{label}</span>
+                    <input
+                      //@ts-ignore
+                      {...register(field)}
+                      aria-invalid={errors[field] ? "true" : "false"}
+                      value={1}
+                      type="radio"
+                      className="form-radio h-4 w-4 text-indigo-600 rounded"
+                    />
+                  </label>
+                );
+              })}
+              {errors["body-habitus"] && (
+                <p role="alert">{errors["body-habitus"]?.message}</p>
+              )}
+            </div>
+            <Grid container spacing={2}>
+              <Grid item xs={4}>
+                <div className="my-4">
+                  <label className="flex flex-col">
+                    <span>Height (cm)</span>
+                    <input
+                      {...register("phr_heightCM")}
+                      type="text"
+                      pattern="[0-9]*"
+                      onInput={handleInput}
+                      className="border border-gray-300 px-4 py-2 rounded-lg"
+                    />
+                  </label>
+                </div>
+              </Grid>
+              <Grid item xs={4}>
+                <div className="my-4">
+                  <label className="flex flex-col">
+                    <span>Weight (kg)</span>
+                    <input
+                      {...register("phr_weightKG")}
+                      type="text"
+                      pattern="[0-9]*"
+                      onInput={handleInput}
+                      className="border border-gray-300 px-4 py-2 rounded-lg"
+                    />
+                  </label>
+                </div>
+              </Grid>
+              <Grid item xs={4}>
+                <div className="my-4">
+                  <label className="flex flex-col">
+                    <span>BMI</span>
+                    <input
+                      {...register("phr_BMI")}
+                      type="text"
+                      onInput={handleBMIInput} // Call the custom input handler
+                      className="border border-gray-300 px-4 py-2 rounded-lg"
+                    />
+                  </label>
+                </div>
+              </Grid>
+            </Grid>
+            <div className="my-4">
+              <p className="font-bold">Nasal mucosa, septum, & turbinates</p>
+              {[
+                { label: "WNL", field: "phr_nasalMucosaSeptumTurbinatesWNL" },
+                {
+                  label: "Edema or erythema present",
+                  field: "phr_nasalMucosaSeptumTurbinatesEdeOrEryPresent",
+                },
               ].map(({ label, field }, index) => {
                 return (
                   <label key={field} className="flex items-center">
@@ -1209,48 +1167,47 @@ export function EHRForm() {
                       {...register(field)}
                       aria-invalid={errors[field] ? "true" : "false"}
                       value={errors[field] ? 0 : 1}
-                      type="radio"
-                      className="form-radio h-4 w-4 text-indigo-600 rounded"
+                      type="checkbox"
+                      className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
                     />
                   </label>
                 );
               })}
-              {errors["phr_heartRate"] && (
-                <p role="alert">{errors["phr_heartRate"]?.message}</p>
+              {errors["nasal-mucosa-septum-turbinates"] && (
+                <p role="alert" className="text-red-500 text-sm">
+                  {errors["nasal-mucosa-septum-turbinates"]?.message}
+                </p>
               )}
             </div>
-
             <div className="my-4">
-              <label className="flex flex-col">
-                <span>RR</span>
-                <input
-                  {...register("phr_rr")}
-                  type="number"
-                  className="border border-gray-300 px-4 py-2 rounded-lg"
-                />
-              </label>
-            </div>
-
-            <div className="my-4">
-              <label className="flex flex-col">
-                <span>T*</span>
-                <input
-                  {...register("phr_T*")}
-                  type="number"
-                  className="border border-gray-300 px-4 py-2 rounded-lg"
-                />
-              </label>
-            </div>
-
-            <div className="my-4">
-              <label className="flex flex-col">
-                <span>SpO2</span>
-                <input
-                  {...register("phr_Sp-02")}
-                  type="number"
-                  className="border border-gray-300 px-4 py-2 rounded-lg"
-                />
-              </label>
+              <p className="font-bold">Dentition & gums</p>
+              {[
+                { label: "WNL", field: "phr_dentionAndGumsWNL" },
+                {
+                  label: "Dental canes",
+                  field: "phr_dentionAndGumsDentalCanes",
+                },
+                { label: "Gingivitis", field: "phr_dentionAndGumsGingivitis" },
+              ].map(({ label, field }, index) => {
+                return (
+                  <label key={field} className="flex items-center">
+                    <span>{label}</span>
+                    <input
+                      //@ts-ignore
+                      {...register(field)}
+                      aria-invalid={errors[field] ? "true" : "false"}
+                      value={errors[field] ? 0 : 1}
+                      type="checkbox"
+                      className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
+                    />
+                  </label>
+                );
+              })}
+              {errors["dentition-gums"] && (
+                <p role="alert" className="text-red-500 text-sm">
+                  {errors["dentition-gums"]?.message}
+                </p>
+              )}
             </div>
 
             <div className="my-4">
@@ -1279,38 +1236,6 @@ export function EHRForm() {
               )}
             </div>
 
-            <div className="my-4">
-              <label className="flex flex-col">
-                <span>Height (cm)</span>
-                <input
-                  {...register("phr_heightCM")}
-                  type="text"
-                  className="border border-gray-300 px-4 py-2 rounded-lg"
-                />
-              </label>
-            </div>
-
-            <div className="my-4">
-              <label className="flex flex-col">
-                <span>Weight (kg)</span>
-                <input
-                  {...register("phr_weightKG")}
-                  type="text"
-                  className="border border-gray-300 px-4 py-2 rounded-lg"
-                />
-              </label>
-            </div>
-
-            <div className="my-4">
-              <label className="flex flex-col">
-                <span>BMI</span>
-                <input
-                  {...register("phr_BMI")}
-                  type="number"
-                  className="border border-gray-300 px-4 py-2 rounded-lg"
-                />
-              </label>
-            </div>
             <Grid container spacing={2}>
               <Grid item xs={12} md={6}>
                 <div className="my-4">
@@ -1797,21 +1722,24 @@ export function EHRForm() {
           </div>
           <div className="my-4">
             <label className="flex items-center">
-              <input //@ts-ignore
+              <input
                 {...register("phr_massPresent")}
                 type="checkbox"
                 className="form-checkbox h-4 w-4 text-indigo-600 rounded mr-2"
+                onChange={handleMassPresentChange}
               />
               <span className="font-bold">Mass Present</span>
             </label>
-            <label className="flex flex-col">
-              <input //@ts-ignore
-                {...register("phr_specifyMassPresent")}
-                type="text"
-                className="border border-gray-300 px-4 py-2 rounded-lg mt-2"
-                placeholder="Enter additional information"
-              />
-            </label>
+            {massPresentChecked && (
+              <label className="flex flex-col">
+                <input
+                  {...register("phr_specifyMassPresent")}
+                  type="text"
+                  className="border border-gray-300 px-4 py-2 rounded-lg mt-2"
+                  placeholder="Enter additional information"
+                />
+              </label>
+            )}
           </div>
           <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
