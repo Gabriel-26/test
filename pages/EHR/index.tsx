@@ -567,6 +567,18 @@ export function EHRForm() {
 
             <Grid item xs={12}>
               <div className="my-4">
+                <label className="flex flex-col">
+                  <span className="mb-2">Previous Hospitalizations</span>
+                  <textarea
+                    {...register("phr_specifyPrevHospitalization")}
+                    className="border border-gray-300 px-4 py-2 rounded-lg"
+                  />
+                </label>
+              </div>
+            </Grid>
+
+            <Grid item xs={12}>
+              <div className="my-4">
                 <label className="flex items-center">
                   <span className="mr-2">Patient is nonverbal</span>
                   <input
@@ -727,8 +739,9 @@ export function EHRForm() {
                 <Grid item key={field}>
                   <label className="flex items-center">
                     <input
+                      {...register("phr_malignancy")}
                       className="form-radio h-4 w-4 text-indigo-600 rounded mr-2"
-                      value={field}
+                      value={errors[field] ? 0 : 1}
                       type="radio"
                       checked={malignancy === field}
                       onChange={() => setMalignancy(field)}
@@ -743,6 +756,7 @@ export function EHRForm() {
                 <label className="flex flex-col">
                   <span className="mb-2">Specify Malignancy</span>
                   <textarea
+                    {...register("phr_specifyMalignancy")}
                     className="border border-gray-300 px-4 py-2 rounded-lg"
                     placeholder="Specify Malignancy..."
                   />
@@ -760,8 +774,9 @@ export function EHRForm() {
                 <Grid item key={field}>
                   <label className="flex items-center">
                     <input
+                      {...register("phr_surgeries")}
                       className="form-radio h-4 w-4 text-indigo-600 rounded mr-2"
-                      value={field}
+                      value={errors[field] ? 0 : 1}
                       type="radio"
                       checked={surgeries === field}
                       onChange={() => setSurgeries(field)}
@@ -776,6 +791,7 @@ export function EHRForm() {
                 <label className="flex flex-col">
                   <span className="mb-2">Specify Surgeries</span>
                   <textarea
+                    {...register("phr_specifySurgeries")}
                     className="border border-gray-300 px-4 py-2 rounded-lg"
                     placeholder="Specify Surgeries..."
                   />
@@ -803,8 +819,9 @@ export function EHRForm() {
                   <label className="flex items-center">
                     <span className="mr-2">{label}</span>
                     <input
+                      {...register("phr_tobacco")}
                       className="form-radio h-4 w-4 text-indigo-600 rounded"
-                      value={field}
+                      value={errors[field] ? 0 : 1}
                       type="radio"
                       checked={tobacco === field}
                       onChange={() => setTobacco(field)}
@@ -819,6 +836,7 @@ export function EHRForm() {
                   <label className="flex flex-col">
                     <span>Pack Years</span>
                     <input
+                      {...register("phr_tobaccoPacks")}
                       placeholder="0"
                       type="number"
                       className="border border-gray-300 px-4 py-2 rounded-lg"
@@ -829,6 +847,7 @@ export function EHRForm() {
                   <label className="flex flex-col">
                     <span>Quit Date</span>
                     <input
+                      {...register("phr_tobaccoQuit")}
                       type="date"
                       className="border border-gray-300 px-4 py-2 rounded-lg"
                     />
@@ -884,6 +903,7 @@ export function EHRForm() {
                   <label key={label} className="flex items-center">
                     <span className="mr-2">{label}</span>
                     <input
+                      {...register("phr_alcohol")}
                       type="radio"
                       value={label === "Yes" ? "1" : "0"}
                       checked={alcohol === (label === "Yes" ? "1" : "0")}
