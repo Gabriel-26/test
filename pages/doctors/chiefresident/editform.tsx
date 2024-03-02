@@ -35,7 +35,7 @@ const EditChiefResidentForm = ({ editChiefResident, onFinish, onUpdate }) => {
       ] = `Bearer ${token}`;
       // Send a PUT request to the API endpoint with the updated chief resident data
       const response = await axiosInstance.put(
-        `/admin/residents/updateResident/${editChiefResident.resident_id}`,
+        `/admin/residents/${editChiefResident.resident_id}`,
         values
       );
 
