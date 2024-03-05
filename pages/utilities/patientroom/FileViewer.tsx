@@ -163,7 +163,7 @@ const FileViewer = ({ patientData }) => {
           <div className="iframe-container">
             <iframe
               title="File Viewer"
-              src={`http://127.0.0.1:8000/api/fileUpload/viewFile/${selectedFile.file_id}`}
+              src={`https://ipimsbe.online/api/fileUpload/viewFile/${selectedFile.file_id}`}
               className="iframe-content w-full h-auto max-h-screen"
               style={{ width: "100%", height: "100%", aspectRatio: "16/9" }}
             />
