@@ -109,8 +109,7 @@ const AssignedRoomsPage: React.FC = () => {
           columns={columns}
           rowKey={(record) => record.resAssRoom_id}
           loading={loading}
-          pagination={false}
-          scroll={{ y: 400 }}
+          pagination={{ pageSize: 5 }} // Set the page size as per your requirement
         />
       </DashboardCard>
     </PageContainer>

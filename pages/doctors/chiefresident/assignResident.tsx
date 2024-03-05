@@ -39,11 +39,11 @@ const AssignResidentRoom = () => {
   const [selectedRooms, setSelectedRooms] = useState({});
 
   const assignedColumns = [
-    {
-      title: "Assigned Room ID",
-      dataIndex: "resAssRoom_id",
-      key: "resAssRoom_id",
-    },
+    // {
+    //   title: "Assigned Room ID",
+    //   dataIndex: "resAssRoom_id",
+    //   key: "resAssRoom_id",
+    // },
     {
       title: "Room ID",
       dataIndex: "room_id",
@@ -68,7 +68,7 @@ const AssignResidentRoom = () => {
           type="default"
           onClick={() => {
             console.log("Delete button clicked");
-            handleDeleteAssignment(record.resAssRoom_id);
+            showDeleteConfirmation(record.resAssRoom_id);
           }}
           style={{ zIndex: 1 }} // Set a higher z-index
         >
@@ -154,7 +154,7 @@ const AssignResidentRoom = () => {
 
       setLoading(true);
       const response = await axiosInstance.delete(
-        `/resAssRooms/${resAssRoomId}`
+        `resAssRooms/delete/${resAssRoomId}`
       );
 
       if (response.status === 200) {
@@ -168,6 +168,18 @@ const AssignResidentRoom = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const showDeleteConfirmation = (resAssRoomId) => {
+    Modal.confirm({
+      title: "Are you sure you want to delete this assignment?",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      onOk() {
+        handleDeleteAssignment(resAssRoomId);
+      },
+    });
   };
 
   const showConfirmationModal = () => {
@@ -370,6 +382,16 @@ const AssignResidentRoom = () => {
           </Col>
           <Col span={12}>{/* Additional content for the right column */}</Col>
         </Row>
+        <Modal
+          title="Confirm Assignment Deletion"
+          open={isModalVisible}
+          onOk={showDeleteConfirmation}
+          onCancel={showDeleteConfirmation}
+          okText="Yes"
+          cancelText="No"
+        >
+          <p>Are you sure you want to delete this assignment?</p>
+        </Modal>
         <Modal
           title="Confirm Assignment"
           open={isModalVisible}

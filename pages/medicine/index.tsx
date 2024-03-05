@@ -10,6 +10,8 @@ import {
   InputNumber,
   Spin,
   message,
+  Alert,
+  Modal,
 } from "antd";
 import FullLayout from "../../src/layouts/full/FullLayout";
 import {
@@ -26,6 +28,7 @@ import { getUserRole } from "../../src/components/utils/roles";
 import DashboardCard from "../../src/components/shared/DashboardCard";
 
 const userRole = getUserRole();
+const { confirm } = Modal;
 
 interface Medicine {
   medicine_id: number;
@@ -45,7 +48,9 @@ const MedicineList = () => {
   const [form] = Form.useForm();
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
-
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteError, setDeleteError] = useState(null);
   useEffect(() => {
     setPage(0); // Reset page to 0 when search query changes
     fetchMedicines();
@@ -86,6 +91,52 @@ const MedicineList = () => {
       console.error("Error fetching medicines:", error);
       setLoading(false);
     }
+  };
+
+  const handleDeleteMedicine = async (medicineId) => {
+    try {
+      const token = localStorage.getItem("authToken");
+
+      axiosInstance.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${token}`;
+
+      confirm({
+        title: "Are you sure you want to delete this medicine?",
+        content: "This action cannot be undone.",
+        okText: "Yes",
+        okType: "danger",
+        cancelText: "No",
+        onOk() {
+          setDeleteLoading(true);
+
+          axiosInstance
+            .delete(`admin/medicines/delete/${medicineId}`)
+            .then(() => {
+              handleUpdate();
+              message.success("Medicine deleted successfully");
+            })
+            .catch((error) => {
+              message.error("Failed to delete medicine");
+              console.error("Error deleting medicine:", error);
+              setDeleteError(error.message || "Failed to delete medicine");
+            })
+            .finally(() => {
+              setDeleteLoading(false);
+              setDeleteModalVisible(false);
+            });
+        },
+        onCancel() {
+          // Do nothing if cancelled
+        },
+      });
+    } catch (error) {
+      console.error("Error deleting medicine:", error);
+    }
+  };
+
+  const handleUpdate = () => {
+    fetchMedicines();
   };
 
   const showDrawer = (medicine?: Medicine) => {
@@ -152,6 +203,16 @@ const MedicineList = () => {
       <DashboardCard title="Medicines">
         <Spin spinning={loading}>
           <h1>Medicine Formulary</h1>
+          <Modal
+            title="Confirm Deletion"
+            open={deleteModalVisible}
+            onOk={() => setDeleteModalVisible(false)}
+            onCancel={() => setDeleteModalVisible(false)}
+            confirmLoading={deleteLoading}
+          >
+            <p>Are you sure you want to delete this medicine?</p>
+            {deleteError && <Alert message={deleteError} type="error" />}
+          </Modal>
           <Button
             // variant="contained"
             color="primary"
@@ -170,15 +231,21 @@ const MedicineList = () => {
               <Table className="custom-table">
                 <TableHead>
                   <TableRow>
-                    <TableCell>ID</TableCell>
-                    <TableCell>Name</TableCell>
-                    <TableCell>Brand</TableCell>
-                    <TableCell>Dosage</TableCell>
-                    <TableCell>Type</TableCell>
-                    <TableCell>Price</TableCell>
+                    <TableCell style={{ textAlign: "center" }}>ID</TableCell>
+                    <TableCell style={{ textAlign: "center" }}>Name</TableCell>
+                    <TableCell style={{ textAlign: "center" }}>Brand</TableCell>
+                    <TableCell style={{ textAlign: "center" }}>
+                      Dosage
+                    </TableCell>
+                    <TableCell style={{ textAlign: "center" }}>Type</TableCell>
+                    <TableCell style={{ textAlign: "center" }}>Price</TableCell>
                     {/* <TableCell>Created At</TableCell>
     <TableCell>Updated At</TableCell> */}
-                    {userRole === "admin" && <TableCell>Action</TableCell>}
+                    {userRole === "admin" && (
+                      <TableCell style={{ textAlign: "center" }}>
+                        Action
+                      </TableCell>
+                    )}
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -186,24 +253,44 @@ const MedicineList = () => {
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((medicine) => (
                       <TableRow key={medicine.medicine_id}>
-                        <TableCell>{medicine.medicine_id}</TableCell>
-                        <TableCell>{medicine.medicine_name}</TableCell>
-                        <TableCell>{medicine.medicine_brand}</TableCell>
-                        <TableCell>{medicine.medicine_dosage}</TableCell>
-                        <TableCell>{medicine.medicine_type}</TableCell>
-                        <TableCell>{medicine.medicine_price}</TableCell>
+                        <TableCell style={{ textAlign: "center" }}>
+                          {medicine.medicine_id}
+                        </TableCell>
+                        <TableCell style={{ textAlign: "center" }}>
+                          {medicine.medicine_name}
+                        </TableCell>
+                        <TableCell style={{ textAlign: "center" }}>
+                          {medicine.medicine_brand}
+                        </TableCell>
+                        <TableCell style={{ textAlign: "center" }}>
+                          {medicine.medicine_dosage}
+                        </TableCell>
+                        <TableCell style={{ textAlign: "center" }}>
+                          {medicine.medicine_type}
+                        </TableCell>
+                        <TableCell style={{ textAlign: "center" }}>
+                          {medicine.medicine_price}
+                        </TableCell>
                         {userRole === "admin" && (
-                          <TableCell>
+                          <TableCell style={{ textAlign: "center" }}>
                             <Button
                               // variant="text"
                               color="primary"
                               onClick={() => showDrawer(medicine)}
                               style={{
-                                display:
-                                  userRole === "admin" ? "block" : "none",
+                                // display: "block",
+                                margin: "auto",
                               }}
                             >
                               Edit
+                            </Button>
+                            <Button
+                              color="error"
+                              onClick={() =>
+                                handleDeleteMedicine(medicine.medicine_id)
+                              }
+                            >
+                              Delete
                             </Button>
                           </TableCell>
                         )}

@@ -1,15 +1,10 @@
 import React, { useState, useEffect } from "react";
-import {
-  Typography,
-  Box,
-  Paper,
-  TextareaAutosize,
-  Button,
-  Grid,
-} from "@mui/material";
+import { Typography, Box, Paper, TextareaAutosize, Grid } from "@mui/material";
 import axiosInstance from "../../../src/components/utils/axiosInstance";
-import { Spin, Alert, Pagination } from "antd";
+import { Spin, Alert, Pagination, Modal, message, Button } from "antd";
 import moment from "moment-timezone";
+
+const { confirm } = Modal;
 
 const LabResultsPage = ({ patientData }) => {
   const [labResults, setLabResults] = useState("");
@@ -17,10 +12,6 @@ const LabResultsPage = ({ patientData }) => {
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(3); // Set the number of items per page
-
-  useEffect(() => {
-    fetchLabResults(patientData);
-  }, []);
 
   const fetchLabResults = async (patientData) => {
     setLoading(true);
@@ -88,6 +79,41 @@ const LabResultsPage = ({ patientData }) => {
     setCurrentPage(page);
   };
 
+  const handleDeleteResult = async (selectedResultId) => {
+    confirm({
+      title: "Are you sure you want to delete this lab result?",
+      content: "This action cannot be undone.",
+      onOk() {
+        axiosInstance
+          .delete(`/results/delete/${selectedResultId}`)
+          .then((response) => {
+            if (response.status === 200) {
+              // Filter out the deleted result from the fetchedResults array
+              const updatedResults = fetchedResults.filter(
+                (result) => result.labResults_id !== selectedResultId
+              );
+              // Update the fetchedResults state with the new array
+              setFetchedResults(updatedResults);
+              message.success("Lab result deleted successfully!");
+            } else {
+              console.error("Failed to delete lab result.");
+              message.error("Failed to delete lab result. Please try again.");
+            }
+          })
+          .catch((error) => {
+            console.error("Error deleting lab result:", error);
+            message.error("Failed to delete lab result. Please try again.");
+          });
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+  };
+
+  useEffect(() => {
+    fetchLabResults(patientData);
+  }, []);
   return (
     <div style={{ maxWidth: "800px", margin: "auto" }}>
       <Typography variant="h3" align="center" gutterBottom>
@@ -96,7 +122,7 @@ const LabResultsPage = ({ patientData }) => {
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <Typography variant="h6" gutterBottom>
-            Enter Lab Results:
+            Lab Results:
           </Typography>
           <TextareaAutosize
             aria-label="results"
@@ -109,11 +135,10 @@ const LabResultsPage = ({ patientData }) => {
         <Grid item xs={12}>
           <Box display="flex" justifyContent="center">
             <Button
-              variant="contained"
               color="primary"
               onClick={handleSubmit}
               disabled={loading}
-              className="bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300"
+              className="bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300"
             >
               {loading ? "Submitting..." : "Submit"}
             </Button>
@@ -154,21 +179,14 @@ const LabResultsPage = ({ patientData }) => {
                     <p style={{ marginBottom: "8px" }}>
                       <strong>Results:</strong> {result.results}
                     </p>
-                    {/* <p style={{ marginBottom: "8px" }}>
-                      <strong>Patient ID:</strong> {result.patient_id}
-                    </p> */}
-                    {/* <p style={{ marginBottom: "8px" }}>
-                      <strong>Created At:</strong>{" "}
-                      {moment(result.created_at)
-                        .tz("Asia/Manila")
-                        .format("dddd, MMMM D, YYYY HH:mm:ss")}
-                    </p>
-                    <p style={{ marginBottom: "8px" }}>
-                      <strong>Updated At:</strong>{" "}
-                      {moment(result.updated_at)
-                        .tz("Asia/Manila")
-                        .format("dddd, MMMM D, YYYY HH:mm:ss")}
-                    </p> */}
+
+                    <Button
+                      key="delete"
+                      onClick={() => handleDeleteResult(result.labResults_id)}
+                      danger
+                    >
+                      Delete
+                    </Button>
                   </div>
                 ))}
               <Pagination

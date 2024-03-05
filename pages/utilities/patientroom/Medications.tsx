@@ -11,11 +11,13 @@ import {
   Alert,
   message,
   Pagination,
+  Modal,
 } from "antd";
 import axiosInstance from "../../../src/components/utils/axiosInstance";
 import moment from "moment-timezone";
 
 const { Title } = Typography;
+const { confirm } = Modal;
 
 const Medication = (props: any) => {
   const [form] = Form.useForm();
@@ -27,38 +29,33 @@ const Medication = (props: any) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(3); // Set the number of items per page
 
-  useEffect(() => {
-    const fetchMedications = async () => {
-      try {
-        setLoading(true);
-        const response = await axiosInstance.get("/medicines");
-        const medicationsData = response.data;
-        setMedications(medicationsData);
-      } catch (error) {
-        console.error("Error fetching medications:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchMedications = async () => {
+    try {
+      setLoading(true);
+      const response = await axiosInstance.get("/medicines");
+      const medicationsData = response.data;
+      setMedications(medicationsData);
+    } catch (error) {
+      console.error("Error fetching medications:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const fetchPatientMedications = async () => {
-      try {
-        setLoading(true);
-        const response = await axiosInstance.get(
-          `/patientMedicines/patient/${patientId}`
-        );
-        const patientMedicationsData = response.data;
-        setPatientMedications(patientMedicationsData);
-      } catch (error) {
-        console.error("Error fetching patient medications:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMedications();
-    fetchPatientMedications();
-  }, [patientId]);
+  const fetchPatientMedications = async () => {
+    try {
+      setLoading(true);
+      const response = await axiosInstance.get(
+        `/patientMedicines/patient/${patientId}`
+      );
+      const patientMedicationsData = response.data;
+      setPatientMedications(patientMedicationsData);
+    } catch (error) {
+      console.error("Error fetching patient medications:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleMedicineChange = async (selectedMedicine) => {
     try {
@@ -135,6 +132,42 @@ const Medication = (props: any) => {
     }
   };
 
+  const handleDeleteMedication = (medicationId) => {
+    confirm({
+      title: "Are you sure you want to delete this medication?",
+      content: "This action cannot be undone.",
+      onOk() {
+        axiosInstance
+          .delete(`/patientMedicines/delete/${medicationId}`)
+          .then((response) => {
+            if (response.status === 200) {
+              message.success("Medication deleted successfully!");
+              const updatedMedications = patientMedications.filter(
+                (medication) => medication.patientMedicine_id !== medicationId,
+
+                console.log("Medication ID:", medicationId)
+              );
+              setPatientMedications(updatedMedications);
+            } else {
+              console.error("Failed to delete medication.");
+              message.error("Failed to delete medication. Please try again.");
+            }
+          })
+          .catch((error) => {
+            console.error("Error deleting medication:", error);
+            message.error("Failed to delete medication. Please try again.");
+          });
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+  };
+
+  useEffect(() => {
+    fetchMedications();
+    fetchPatientMedications();
+  }, [patientId]);
   return (
     <div style={{ maxWidth: "800px", margin: "auto" }}>
       <Title level={3} style={{ marginBottom: "16px" }}>
@@ -235,9 +268,6 @@ const Medication = (props: any) => {
                   {`Medicine: ${medication.medicine_name}`}
                 </p>
                 <p style={{ marginBottom: "8px" }}>
-                  {`Dosage: ${medication.medicine_dosage}`}
-                </p>
-                <p style={{ marginBottom: "8px" }}>
                   {`Type: ${medication.medicine_type}`}
                 </p>
                 <p style={{ marginBottom: "8px" }}>
@@ -286,6 +316,15 @@ const Medication = (props: any) => {
                     second: "numeric",
                   })}`}
                 </p>
+                <Button
+                  key="delete"
+                  onClick={() =>
+                    handleDeleteMedication(medication.patientMedicine_id)
+                  }
+                  danger
+                >
+                  Delete
+                </Button>
               </div>
             ))}
           <Pagination

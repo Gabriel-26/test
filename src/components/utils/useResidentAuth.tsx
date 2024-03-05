@@ -20,9 +20,11 @@ const useResidentAuth = () => {
       const resident_lName = response.data.resident_lName;
       const depId = response.data.department_id;
       const resident_gender = response.data.resident_gender;
+      const depName = response.data.department_name;
 
       console.log("Resident ID:", resident_id);
       console.log("Gender:", resident_gender);
+      console.log("Department Name:", response.data.department_name);
 
       localStorage.setItem("authToken", token);
       localStorage.setItem("userRole", role); // Save the role in the session
@@ -30,6 +32,7 @@ const useResidentAuth = () => {
       localStorage.setItem("resFirstName", resident_fName);
       localStorage.setItem("resLastname", resident_lName);
       localStorage.setItem("depID", depId);
+      localStorage.setItem("depName", depName);
       localStorage.setItem("userN", username);
       localStorage.setItem("userGender", resident_gender);
       router.push("/");
@@ -53,6 +56,7 @@ const useResidentAuth = () => {
     localStorage.removeItem("resFirstName");
     localStorage.removeItem("resLastname");
     localStorage.removeItem("depID");
+    localStorage.removeItem("depName");
     localStorage.removeItem("userN");
     localStorage.removeItem("userGender");
     await axiosInstance.get("/logout");

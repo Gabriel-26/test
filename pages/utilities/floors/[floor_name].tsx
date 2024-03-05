@@ -384,12 +384,22 @@ const Rooms = () => {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell>Room ID</TableCell>
-                    <TableCell>Room Name</TableCell>
-                    <TableCell>Floor</TableCell>
-                    <TableCell>Room Type</TableCell>
-                    <TableCell>Floor ID</TableCell>
-                    <TableCell>Room Price</TableCell>
+                    <TableCell style={{ textAlign: "center" }}>
+                      Room ID
+                    </TableCell>
+                    <TableCell style={{ textAlign: "center" }}>
+                      Room Name
+                    </TableCell>
+                    <TableCell style={{ textAlign: "center" }}>Floor</TableCell>
+                    <TableCell style={{ textAlign: "center" }}>
+                      Room Type
+                    </TableCell>
+                    <TableCell style={{ textAlign: "center" }}>
+                      Floor ID
+                    </TableCell>
+                    <TableCell style={{ textAlign: "center" }}>
+                      Room Price
+                    </TableCell>
                     {userRole === "admin" && ( // Only render Actions column for admin role
                       <TableCell style={{ textAlign: "center" }}>
                         Actions
@@ -402,7 +412,7 @@ const Rooms = () => {
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((room) => (
                       <TableRow key={room.room_id}>
-                        <TableCell>
+                        <TableCell style={{ textAlign: "center" }}>
                           {userRole === "admin" ? (
                             // Display room_id without link for admin
                             room.room_id
@@ -420,13 +430,23 @@ const Rooms = () => {
                             </span>
                           )}
                         </TableCell>
-                        <TableCell>{room.room_name}</TableCell>
-                        <TableCell>{room.room_floor}</TableCell>
-                        <TableCell>{room.room_type}</TableCell>
-                        <TableCell>{room.floor_id}</TableCell>
-                        <TableCell>{room.room_price}</TableCell>
+                        <TableCell style={{ textAlign: "center" }}>
+                          {room.room_name}
+                        </TableCell>
+                        <TableCell style={{ textAlign: "center" }}>
+                          {room.room_floor}
+                        </TableCell>
+                        <TableCell style={{ textAlign: "center" }}>
+                          {room.room_type}
+                        </TableCell>
+                        <TableCell style={{ textAlign: "center" }}>
+                          {room.floor_id}
+                        </TableCell>
+                        <TableCell style={{ textAlign: "center" }}>
+                          {room.room_price}
+                        </TableCell>
                         {userRole === "admin" && ( // Only render Actions for admin role
-                          <TableCell>
+                          <TableCell style={{ textAlign: "center" }}>
                             <Button
                               onClick={() =>
                                 handleEditRoom(

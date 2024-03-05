@@ -17,14 +17,19 @@ import axios from "../../../src/components/utils/axiosInstance";
 import type { ReactElement } from "react";
 import PageContainer from "../../../src/components/container/PageContainer";
 import FullLayout from "../../../src/layouts/full/FullLayout";
-import { Button, Drawer, Spin } from "antd";
+import { Modal, Button, Drawer, Select, Spin, message, Alert } from "antd";
 import AddChiefResidentForm from "./addform";
 import EditChiefResidentForm from "./editform";
 
 const ChiefResident = () => {
   const [doctors, setDoctors] = useState([]);
   const [isAddingDoctor, setIsAddingDoctor] = useState(false);
-  const [loading, setLoading] = useState(true); // Loading state
+  const [loading, setLoading] = useState(true); // Loading
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteError, setDeleteError] = useState(null);
+  const { confirm } = Modal;
+
   const [newDoctor, setNewDoctor] = useState({
     resident_id: "",
     resident_userName: "",
@@ -77,6 +82,53 @@ const ChiefResident = () => {
     } catch (error) {
       console.error("Error fetching doctors:", error);
       setLoading(false);
+    }
+  };
+
+  const handleDeleteDoctor = async (doctorId) => {
+    try {
+      const token = localStorage.getItem("authToken");
+
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+      // Show confirmation modal
+      confirm({
+        title: "Are you sure you want to delete this resident?",
+        content: "This action cannot be undone.",
+        okText: "Yes",
+        okType: "danger",
+        cancelText: "No",
+        onOk() {
+          // Start loading
+          setDeleteLoading(true);
+          // Make a DELETE request to your API endpoint
+          axios
+            .delete(`/admin/residents/delete/${doctorId}`)
+            .then(() => {
+              // Fetch updated data after deletion
+              handleUpdate();
+              // Show success message
+              message.success("Chief Resident deleted successfully");
+            })
+            .catch((error) => {
+              // Show error message
+              message.error("Failed to delete resident");
+              console.error("Error deleting doctor:", error);
+              setDeleteError(error.message || "Failed to delete resident");
+            })
+            .finally(() => {
+              // Reset loading state
+              setDeleteLoading(false);
+              // Close the modal
+              setDeleteModalVisible(false);
+            });
+        },
+        onCancel() {
+          // Do nothing if cancelled
+        },
+      });
+    } catch (error) {
+      console.error("Error deleting doctor:", error);
     }
   };
 
@@ -155,6 +207,16 @@ const ChiefResident = () => {
       <DashboardCard title="Chief Residents">
         <Spin spinning={loading}>
           <Box sx={{ overflow: "auto", width: { xs: "600px", sm: "auto" } }}>
+            <Modal
+              title="Confirm Deletion"
+              open={deleteModalVisible}
+              onOk={() => setDeleteModalVisible(false)}
+              onCancel={() => setDeleteModalVisible(false)}
+              confirmLoading={deleteLoading}
+            >
+              <p>Are you sure you want to delete this resident?</p>
+              {deleteError && <Alert message={deleteError} type="error" />}
+            </Modal>
             <Button onClick={handleAddDoctor}>New Resident</Button>
             <Stack direction="column" spacing={2}>
               <TextField
@@ -202,42 +264,42 @@ const ChiefResident = () => {
             >
               <TableHead>
                 <TableRow>
-                  <TableCell>
+                  <TableCell style={{ textAlign: "center" }}>
                     <Typography variant="subtitle2" fontWeight={600}>
                       Id
                     </Typography>
                   </TableCell>
-                  <TableCell>
+                  <TableCell style={{ textAlign: "center" }}>
                     <Typography variant="subtitle2" fontWeight={600}>
                       Username
                     </Typography>
                   </TableCell>
-                  <TableCell>
+                  <TableCell style={{ textAlign: "center" }}>
                     <Typography variant="subtitle2" fontWeight={600}>
                       First Name
                     </Typography>
                   </TableCell>
-                  <TableCell>
+                  <TableCell style={{ textAlign: "center" }}>
                     <Typography variant="subtitle2" fontWeight={600}>
                       Last Name
                     </Typography>
                   </TableCell>
-                  <TableCell>
+                  <TableCell style={{ textAlign: "center" }}>
                     <Typography variant="subtitle2" fontWeight={600}>
                       Middle Name
                     </Typography>
                   </TableCell>
-                  <TableCell>
+                  <TableCell style={{ textAlign: "center" }}>
                     <Typography variant="subtitle2" fontWeight={600}>
                       Gender
                     </Typography>
                   </TableCell>
-                  <TableCell>
+                  <TableCell style={{ textAlign: "center" }}>
                     <Typography variant="subtitle2" fontWeight={600}>
                       Department ID
                     </Typography>
                   </TableCell>
-                  <TableCell>
+                  <TableCell style={{ textAlign: "center" }}>
                     <Typography variant="subtitle2" fontWeight={600}>
                       Actions
                     </Typography>
@@ -249,7 +311,7 @@ const ChiefResident = () => {
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((doctor) => (
                     <TableRow key={doctor.resident_id}>
-                      <TableCell>
+                      <TableCell style={{ textAlign: "center" }}>
                         <Typography
                           sx={{
                             fontSize: "15px",
@@ -259,25 +321,17 @@ const ChiefResident = () => {
                           {doctor.resident_id}
                         </Typography>
                       </TableCell>
-                      <TableCell>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                          }}
-                        >
-                          <Box>
-                            <Typography variant="subtitle2" fontWeight={600}>
-                              {doctor.resident_userName}
-                            </Typography>
-                          </Box>
-                        </Box>
+                      <TableCell style={{ textAlign: "center" }}>
+                        <Typography variant="subtitle2" fontWeight={600}>
+                          {doctor.resident_userName}
+                        </Typography>
                       </TableCell>
                       <TableCell>
                         <Typography
                           color="textSecondary"
                           variant="subtitle2"
                           fontWeight={400}
+                          sx={{ whiteSpace: "normal" }} // Add text wrapping
                         >
                           {doctor.resident_fName}
                         </Typography>
@@ -287,12 +341,15 @@ const ChiefResident = () => {
                           color="textSecondary"
                           variant="subtitle2"
                           fontWeight={400}
+                          sx={{ whiteSpace: "normal" }} // Add text wrapping
                         >
                           {doctor.resident_lName}
                         </Typography>
                       </TableCell>
                       <TableCell>
-                        <Typography>{doctor.resident_mName}</Typography>
+                        <Typography sx={{ whiteSpace: "normal" }}>
+                          {doctor.resident_mName}
+                        </Typography>
                       </TableCell>
                       <TableCell>
                         <Typography>{doctor.resident_gender}</Typography>
@@ -308,6 +365,12 @@ const ChiefResident = () => {
                           onClick={() => handleEditDoctor(doctor)}
                         >
                           Edit
+                        </Button>
+                        <Button
+                          color="error"
+                          onClick={() => handleDeleteDoctor(doctor.resident_id)}
+                        >
+                          Delete
                         </Button>
                       </TableCell>
                     </TableRow>

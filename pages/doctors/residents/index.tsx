@@ -19,17 +19,18 @@ import axios from "../../../src/components/utils/axiosInstance";
 import type { ReactElement } from "react";
 import PageContainer from "../../../src/components/container/PageContainer";
 import FullLayout from "../../../src/layouts/full/FullLayout";
-import { Button, Drawer, Select, Spin } from "antd";
+import { Modal, Button, Drawer, Select, Spin, message, Alert } from "antd";
 import EditDoctorForm from "./editform";
 import AddDoctorForm from "./addform";
-
 const { Option } = Select;
 
 const Doctors = () => {
   const [doctors, setDoctors] = useState([]);
   const [isAddingDoctor, setIsAddingDoctor] = useState(false);
   const [loading, setLoading] = useState(true); // Loading state
-
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteError, setDeleteError] = useState(null);
   const [newDoctor, setNewDoctor] = useState({
     resident_id: "",
     resident_userName: "",
@@ -42,6 +43,7 @@ const Doctors = () => {
   });
   const [searchQuery, setSearchQuery] = useState("");
   const [noResults, setNoResults] = useState(false); // State to track if there are no search results
+  const { confirm } = Modal;
 
   const [isEditing, setIsEditing] = useState(false);
   const [editDoctor, setEditDoctor] = useState({
@@ -78,6 +80,53 @@ const Doctors = () => {
     } catch (error) {
       console.error("Error fetching doctors:", error);
       setLoading(false);
+    }
+  };
+
+  const handleDeleteDoctor = async (doctorId) => {
+    try {
+      const token = localStorage.getItem("authToken");
+
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+      // Show confirmation modal
+      confirm({
+        title: "Are you sure you want to delete this resident?",
+        content: "This action cannot be undone.",
+        okText: "Yes",
+        okType: "danger",
+        cancelText: "No",
+        onOk() {
+          // Start loading
+          setDeleteLoading(true);
+          // Make a DELETE request to your API endpoint
+          axios
+            .delete(`/admin/residents/delete/${doctorId}`)
+            .then(() => {
+              // Fetch updated data after deletion
+              handleUpdate();
+              // Show success message
+              message.success("Resident deleted successfully");
+            })
+            .catch((error) => {
+              // Show error message
+              message.error("Failed to delete resident");
+              console.error("Error deleting doctor:", error);
+              setDeleteError(error.message || "Failed to delete resident");
+            })
+            .finally(() => {
+              // Reset loading state
+              setDeleteLoading(false);
+              // Close the modal
+              setDeleteModalVisible(false);
+            });
+        },
+        onCancel() {
+          // Do nothing if cancelled
+        },
+      });
+    } catch (error) {
+      console.error("Error deleting doctor:", error);
     }
   };
 
@@ -165,6 +214,17 @@ const Doctors = () => {
       <DashboardCard title="Residents">
         <Spin spinning={loading}>
           <Box sx={{ overflow: "auto", width: { xs: "600px", sm: "auto" } }}>
+            {/* Add Modal for confirmation */}
+            <Modal
+              title="Confirm Deletion"
+              open={deleteModalVisible}
+              onOk={() => setDeleteModalVisible(false)}
+              onCancel={() => setDeleteModalVisible(false)}
+              confirmLoading={deleteLoading}
+            >
+              <p>Are you sure you want to delete this resident?</p>
+              {deleteError && <Alert message={deleteError} type="error" />}
+            </Modal>
             <Button onClick={handleAddDoctor}>New Resident</Button>
             <Stack direction="column" spacing={2}>
               <TextField
@@ -213,42 +273,42 @@ const Doctors = () => {
             >
               <TableHead>
                 <TableRow>
-                  <TableCell>
+                  <TableCell style={{ textAlign: "center" }}>
                     <Typography variant="subtitle2" fontWeight={600}>
                       Id
                     </Typography>
                   </TableCell>
-                  <TableCell>
+                  <TableCell style={{ textAlign: "center" }}>
                     <Typography variant="subtitle2" fontWeight={600}>
                       Username
                     </Typography>
                   </TableCell>
-                  <TableCell>
+                  <TableCell style={{ textAlign: "center" }}>
                     <Typography variant="subtitle2" fontWeight={600}>
                       First Name
                     </Typography>
                   </TableCell>
-                  <TableCell>
+                  <TableCell style={{ textAlign: "center" }}>
                     <Typography variant="subtitle2" fontWeight={600}>
                       Last Name
                     </Typography>
                   </TableCell>
-                  <TableCell>
+                  <TableCell style={{ textAlign: "center" }}>
                     <Typography variant="subtitle2" fontWeight={600}>
                       Middle Name
                     </Typography>
                   </TableCell>
-                  <TableCell>
+                  <TableCell style={{ textAlign: "center" }}>
                     <Typography variant="subtitle2" fontWeight={600}>
                       Gender
                     </Typography>
                   </TableCell>
-                  <TableCell>
+                  <TableCell style={{ textAlign: "center" }}>
                     <Typography variant="subtitle2" fontWeight={600}>
                       Department ID
                     </Typography>
                   </TableCell>
-                  <TableCell>
+                  <TableCell style={{ textAlign: "center" }}>
                     <Typography variant="subtitle2" fontWeight={600}>
                       Actions
                     </Typography>
@@ -260,71 +320,73 @@ const Doctors = () => {
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((doctor) => (
                     <TableRow key={doctor.resident_id}>
-                      <TableCell>
+                      <TableCell style={{ textAlign: "center" }}>
                         <Typography
                           sx={{
                             fontSize: "15px",
                             fontWeight: "500",
+                            textAlign: "center",
                           }}
                         >
                           {doctor.resident_id}
                         </Typography>
                       </TableCell>
-                      <TableCell>
-                        <Box
+                      <TableCell style={{ textAlign: "center" }}>
+                        <Typography variant="subtitle2" fontWeight={600}>
+                          {doctor.resident_userName}
+                        </Typography>
+                        <Typography
+                          color="textSecondary"
                           sx={{
-                            display: "flex",
-                            alignItems: "center",
+                            fontSize: "13px",
                           }}
-                        >
-                          <Box>
-                            <Typography variant="subtitle2" fontWeight={600}>
-                              {doctor.resident_userName}
-                            </Typography>
-                            <Typography
-                              color="textSecondary"
-                              sx={{
-                                fontSize: "13px",
-                              }}
-                            ></Typography>
-                          </Box>
-                        </Box>
+                        ></Typography>
                       </TableCell>
-                      <TableCell>
+                      <TableCell style={{ textAlign: "center" }}>
                         <Typography
                           color="textSecondary"
                           variant="subtitle2"
                           fontWeight={400}
+                          sx={{ whiteSpace: "normal" }} // Add text wrapping
                         >
                           {doctor.resident_fName}
                         </Typography>
                       </TableCell>
-                      <TableCell>
+                      <TableCell style={{ textAlign: "center" }}>
                         <Typography
                           color="textSecondary"
                           variant="subtitle2"
                           fontWeight={400}
+                          sx={{ whiteSpace: "normal" }} // Add text wrapping
                         >
                           {doctor.resident_lName}
                         </Typography>
                       </TableCell>
-                      <TableCell>
-                        <Typography>{doctor.resident_mName}</Typography>
+                      <TableCell style={{ textAlign: "center" }}>
+                        <Typography sx={{ whiteSpace: "normal" }}>
+                          {doctor.resident_mName}
+                        </Typography>
                       </TableCell>
-                      <TableCell>
+                      <TableCell style={{ textAlign: "center" }}>
                         <Typography>{doctor.resident_gender}</Typography>
                       </TableCell>
-                      <TableCell>
+                      <TableCell style={{ textAlign: "center" }}>
                         <Typography className=" pl-8">
                           {doctor.department_id}
                         </Typography>
                       </TableCell>
-                      <TableCell>
+                      <TableCell style={{ textAlign: "center" }}>
                         <Button
                           color="primary"
                           onClick={() => handleEditDoctor(doctor)}
                         >
                           Edit
+                        </Button>
+                        <Button
+                          color="error"
+                          onClick={() => handleDeleteDoctor(doctor.resident_id)}
+                        >
+                          Delete
                         </Button>
                       </TableCell>
                     </TableRow>

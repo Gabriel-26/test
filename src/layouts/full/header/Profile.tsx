@@ -25,6 +25,7 @@ const Profile = () => {
   const [userGender, setUserGender] = useState(""); // Added state for user gender
   const [residentFName, setResidentFName] = useState(""); // Added state for resident first name
   const [residentLName, setResidentLName] = useState(""); // Added state for resident last name
+  const [depName, setDepName] = useState(""); // Added state for department name
 
   const handleClick2 = (event) => {
     setAnchorEl2(event.currentTarget);
@@ -40,6 +41,7 @@ const Profile = () => {
     const storedUserGender = localStorage.getItem("userGender"); // Retrieve user gender
     const storedResidentFName = localStorage.getItem("resFirstName"); // Retrieve resident first name
     const storedResidentLName = localStorage.getItem("resLastname"); // Retrieve resident last name
+    const storedDepName = localStorage.getItem("depName"); // Retrieve department name
 
     if (storedUserRole) {
       setUserRole(storedUserRole);
@@ -59,6 +61,10 @@ const Profile = () => {
 
     if (storedResidentLName) {
       setResidentLName(storedResidentLName);
+    }
+
+    if (storedDepName) {
+      setDepName(storedDepName);
     }
   }, []);
 
@@ -125,14 +131,13 @@ const Profile = () => {
             backgroundColor: "primary.main",
           }}
         />
-        {/* Display the user's name and role */}
+        {/* Display the user's name, department, and role */}
         <Box sx={{ marginLeft: 1, display: "flex", flexDirection: "column" }}>
           <Typography variant="body1">{displayName}</Typography>
-          {displayRole && (
-            <Typography variant="body2" sx={{ color: "text.secondary" }}>
-              {displayRole}
-            </Typography>
-          )}
+          <Typography variant="body2" sx={{ color: "text.secondary" }}>
+            {depName && `${depName} - `}
+            {displayRole}
+          </Typography>
         </Box>
       </IconButton>
       <Menu
@@ -141,8 +146,14 @@ const Profile = () => {
         keepMounted
         open={Boolean(anchorEl2)}
         onClose={handleClose2}
-        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-        transformOrigin={{ horizontal: "right", vertical: "top" }}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "center", // Center horizontally
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "center", // Center horizontally
+        }}
         sx={{
           "& .MuiMenu-paper": {
             width: "200px",
