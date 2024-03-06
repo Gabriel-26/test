@@ -32,7 +32,7 @@ const PatientSearch: React.FC<PatientSearchProps> & {
   const [filteredPatients, setFilteredPatients] = useState([]);
   const [apiRoute, setApiRoute] = useState("/patients"); // Default API route
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   useEffect(() => {
     // Fetch user role using the getUserRole function

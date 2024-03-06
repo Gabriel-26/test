@@ -2,6 +2,8 @@ import axiosInstance from "./axiosInstance";
 import router from "next/router";
 
 const useResidentAuth = () => {
+  let clearLocalStorageTimer; // Declare the variable outside the login function
+
   const login = async ({ username, password }) => {
     try {
       const dataToSend = {
@@ -35,6 +37,11 @@ const useResidentAuth = () => {
       localStorage.setItem("depName", depName);
       localStorage.setItem("userN", username);
       localStorage.setItem("userGender", resident_gender);
+
+      clearLocalStorageTimer = setTimeout(() => {
+        logout(); // Call the logout function to clear local storage
+      }, 10 * 60 * 60 * 1000); // 10 hours
+
       router.push("/");
       return "success";
     } catch (error) {
@@ -59,6 +66,9 @@ const useResidentAuth = () => {
     localStorage.removeItem("depName");
     localStorage.removeItem("userN");
     localStorage.removeItem("userGender");
+
+    clearTimeout(clearLocalStorageTimer);
+
     await axiosInstance.get("/logout");
     router.push("/authentication/login");
   };

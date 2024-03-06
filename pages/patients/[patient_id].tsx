@@ -16,6 +16,8 @@ import axiosInstance from "../../src/components/utils/axiosInstance";
 import { useRouter } from "next/router";
 import FullLayout from "../../src/layouts/full/FullLayout";
 import FileViewer from "../utilities/patientroom/FileViewer";
+import Medication from "../utilities/patientroom/Medications";
+import LabResultsPage from "../utilities/patientroom/LabResults";
 
 interface PatientDetails {
   patient: {
@@ -107,9 +109,9 @@ const PatientHistoryPage = () => {
 
       {!loadingDetails && !errorDetails && (
         <Grid container spacing={3}>
-          <Grid item xs={12} md={7}>
+          <Grid item xs={12} md={6}>
             <Paper elevation={3} style={{ padding: theme.spacing(3) }}>
-              <Typography variant="h6" gutterBottom>
+              <Typography variant="h6" gutterBottom align="center">
                 Patient Details
               </Typography>
               <List>
@@ -149,16 +151,6 @@ const PatientHistoryPage = () => {
                   />
                 </ListItem>
                 <Divider />
-                {/* <ListItem>
-                  <ListItemText
-                    primary={`Room ID: ${
-                      patientDetails.patientRoom.room_id ||
-                      "Patient has no room"
-                    }`}
-                  />
-                </ListItem> */}
-                <Divider />
-                {/* OR */}
                 <ListItem>
                   <ListItemText
                     primary={`Room Name: ${
@@ -185,7 +177,7 @@ const PatientHistoryPage = () => {
 
           <Grid item xs={12} md={6}>
             <Paper elevation={3} style={{ padding: theme.spacing(3) }}>
-              <Typography variant="h6" gutterBottom>
+              <Typography variant="h6" gutterBottom align="center">
                 Patient History
               </Typography>
               <PatientHistory patientData={patientDetails.patient} />
@@ -194,10 +186,28 @@ const PatientHistoryPage = () => {
 
           <Grid item xs={12} md={6}>
             <Paper elevation={3} style={{ padding: theme.spacing(3) }}>
-              <Typography variant="h6" gutterBottom>
+              <Typography variant="h6" gutterBottom align="center">
                 File Viewer
               </Typography>
               <FileViewer patientData={patientDetails.patient} />
+            </Paper>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <Paper elevation={3} style={{ padding: theme.spacing(3) }}>
+              <Typography variant="h6" gutterBottom align="center">
+                Medications
+              </Typography>
+              <Medication patientData={patientDetails.patient} />
+            </Paper>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <Paper elevation={3} style={{ padding: theme.spacing(3) }}>
+              <Typography variant="h6" gutterBottom align="center">
+                Lab Results
+              </Typography>
+              <LabResultsPage patientData={patientDetails.patient} />
             </Paper>
           </Grid>
         </Grid>
