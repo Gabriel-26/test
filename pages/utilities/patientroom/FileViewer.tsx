@@ -110,66 +110,104 @@ const FileViewer = ({ patientData }) => {
       });
   };
 
+  const renderFileViewer = () => {
+    if (!selectedFile) return null;
+
+    const { file_ext, file_id, file_name } = selectedFile;
+
+    console.log("File type:", file_ext);
+
+    if (
+      file_ext &&
+      (file_ext === "jpg" || file_ext === "jpeg" || file_ext === "png")
+    ) {
+      return (
+        <img
+          src={`https://ipimsbe.online/api/fileUpload/viewFile/${file_id}`}
+          alt={file_name}
+          className="max-w-full max-h-full"
+        />
+      );
+    } else if (file_ext === "pdf") {
+      return (
+        <embed
+          src={`https://ipimsbe.online/api/fileUpload/viewFile/${file_id}`}
+          type="application/pdf"
+          className="w-full h-full"
+        />
+      );
+    } else {
+      console.log("Unsupported file type:", file_id);
+      return <p>This file type is not supported for preview.</p>;
+    }
+  };
+
   return (
-    <div>
-      <h3>Uploaded Files:</h3>
+    <div className="flex flex-col">
+      <h3 className="mb-4">Uploaded Files:</h3>
       <List
         itemLayout="horizontal"
         dataSource={files}
         renderItem={(file) => (
           <List.Item
-            actions={[
-              <Button type="link" onClick={() => handleFileClick(file)}>
-                View
-              </Button>,
+            key={file.file_id}
+            className="border p-4 rounded-lg mb-2 flex justify-between items-center"
+          >
+            <div className="flex items-center">
+              <FileOutlined className="text-blue-500 mr-2" />
+              <span className="font-semibold">{file.file_name}</span>
+            </div>
+            <div>
               <Button
-                key="delete"
+                type="link"
+                onClick={() => handleFileClick(file)}
+                className="mr-2"
+              >
+                View
+              </Button>
+              <Button
                 type="link"
                 onClick={() => handleDeleteFile(file.file_id)}
                 danger
               >
                 Delete
-              </Button>,
-            ]}
-          >
-            <List.Item.Meta
-              avatar={<FileOutlined />}
-              title={<span>{file.file_name}</span>}
-            />
+              </Button>
+            </div>
           </List.Item>
         )}
       />
-
-      <Modal
-        title={`Viewing File: ${selectedFile?.file_name || "No file selected"}`}
-        open={isViewerVisible}
-        onCancel={handleCloseFileViewer}
-        footer={[
-          <Button key="close" onClick={handleCloseFileViewer}>
-            Close Viewer
-          </Button>,
-          <Button
-            key="download"
-            onClick={() => handleDownloadFile(selectedFile?.file_id)}
-            style={{ backgroundColor: "#1890ff", color: "white" }}
-          >
-            Download
-          </Button>,
-        ]}
-        width={window.innerWidth > 1200 ? 1000 : "90%"} // Set the modal width to 1200px if the viewport width is greater than 1200px, otherwise set it to 90% of the viewport width
-        style={{ right: "-135px" }} // Move the modal 10px to the right
-      >
-        {selectedFile && (
-          <div className="iframe-container">
-            <iframe
-              title="File Viewer"
-              src={`https://ipimsbe.online/api/fileUpload/viewFile/${selectedFile.file_id}`}
-              className="iframe-content w-full h-auto max-h-screen"
-              style={{ width: "100%", height: "100%", aspectRatio: "16/9" }}
-            />
+      {selectedFile && (
+        <Modal
+          title={selectedFile.file_name}
+          open={isViewerVisible}
+          onCancel={handleCloseFileViewer}
+          footer={null}
+          centered
+          width="80%"
+          bodyStyle={{ padding: 0 }}
+          closeIcon={<></>}
+          maskStyle={{ backgroundColor: "rgba(0, 0, 0, 0.7)" }}
+          zIndex={9999}
+        >
+          <div className="w-full h-screen flex items-center justify-center">
+            {renderFileViewer()}
           </div>
-        )}
-      </Modal>
+          <div className="flex justify-between items-center p-4 bg-white">
+            <Button
+              onClick={handleCloseFileViewer}
+              className="bg-red-500 text-white"
+            >
+              Close Viewer
+            </Button>
+            <Button
+              onClick={() => handleDownloadFile(selectedFile.file_id)}
+              className="bg-blue-500 text-white"
+            >
+              Download
+            </Button>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 };
