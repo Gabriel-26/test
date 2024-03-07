@@ -180,7 +180,7 @@ const MedicineList = () => {
   };
 
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [rowsPerPage, setRowsPerPage] = React.useState(7);
 
   // Avoid a layout jump when reaching the last page with empty rows.
 
@@ -194,7 +194,7 @@ const MedicineList = () => {
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setRowsPerPage(parseInt(event.target.value, 10)); // Change the base to 10
+    setRowsPerPage(parseInt(event.target.value, 7)); // Change the base to 10
     setPage(1); // Reset page to 0 when rows per page changes
   };
 
@@ -308,7 +308,7 @@ const MedicineList = () => {
           )}
         </Spin>
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25, 50, 100]}
+          rowsPerPageOptions={[8]}
           component="div"
           count={medicines.length}
           rowsPerPage={rowsPerPage}

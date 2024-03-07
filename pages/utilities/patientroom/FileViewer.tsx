@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../../../src/components/utils/axiosInstance";
-import { List, Button, Modal, message } from "antd";
+import { List, Button, Modal, message, Pagination } from "antd";
 import { FileOutlined } from "@ant-design/icons";
 
 const { confirm } = Modal;
@@ -9,19 +9,18 @@ const FileViewer = ({ patientData }) => {
   const [files, setFiles] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
   const [isViewerVisible, setViewerVisible] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(8); // Number of items per page
 
   const { patient_id = "" } = patientData;
 
   // Function to fetch files from the API
-  const fetchFiles = (patientId) => {
+  const fetchFiles = () => {
     const token = localStorage.getItem("authToken");
-
-    // Set the token in Axios headers for this request
     axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-    // Fetch files based on patient_id
     axiosInstance
-      .get(`/fileUpload/getFilesByPatient/${patientId}`)
+      .get(`/fileUpload/getFilesByPatient/${patient_id}`)
       .then((response) => {
         setFiles(response.data);
       })
@@ -29,6 +28,34 @@ const FileViewer = ({ patientData }) => {
         console.error("Error fetching files:", error);
         message.error("Failed to fetch files. Please try again.");
       });
+  };
+
+  useEffect(() => {
+    fetchFiles();
+
+    // Poll for file updates every 10 seconds (adjust the interval as needed)
+    const pollingInterval = setInterval(() => {
+      fetchFiles();
+    }, 10000);
+
+    // Clean up the interval when the component unmounts
+    return () => {
+      clearInterval(pollingInterval);
+    };
+  }, [patient_id]); // Run useEffect when patient_id changes
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const handleFileClick = (file) => {
+    setSelectedFile(file);
+    setViewerVisible(true);
+  };
+
+  const handleCloseFileViewer = () => {
+    setSelectedFile(null);
+    setViewerVisible(false);
   };
 
   const handleDeleteFile = (fileId) => {
@@ -40,7 +67,7 @@ const FileViewer = ({ patientData }) => {
           .delete(`/fileUpload/delete/${fileId}`)
           .then((response) => {
             message.success("File deleted successfully!");
-            fetchFiles(patient_id); // Refresh files after deletion
+            fetchFiles(); // Refresh files after deletion
           })
           .catch((error) => {
             console.error("Error deleting file:", error);
@@ -51,30 +78,6 @@ const FileViewer = ({ patientData }) => {
         console.log("Cancel");
       },
     });
-  };
-
-  useEffect(() => {
-    fetchFiles(patient_id);
-
-    // Poll for file updates every 10 seconds (adjust the interval as needed)
-    const pollingInterval = setInterval(() => {
-      fetchFiles(patient_id);
-    }, 10000);
-
-    // Clean up the interval when the component unmounts
-    return () => {
-      clearInterval(pollingInterval);
-    };
-  }, [patient_id]); // Run useEffect when patient_id changes
-
-  const handleFileClick = (file) => {
-    setSelectedFile(file);
-    setViewerVisible(true);
-  };
-
-  const handleCloseFileViewer = () => {
-    setSelectedFile(null);
-    setViewerVisible(false);
   };
 
   const handleDownloadFile = (fileId) => {
@@ -142,12 +145,17 @@ const FileViewer = ({ patientData }) => {
     }
   };
 
+  // Slice files based on pagination
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = currentPage * pageSize;
+  const displayedFiles = files.slice(startIndex, endIndex);
+
   return (
     <div className="flex flex-col">
       <h3 className="mb-4">Uploaded Files:</h3>
       <List
         itemLayout="horizontal"
-        dataSource={files}
+        dataSource={displayedFiles}
         renderItem={(file) => (
           <List.Item
             key={file.file_id}
@@ -175,6 +183,13 @@ const FileViewer = ({ patientData }) => {
             </div>
           </List.Item>
         )}
+      />
+      <Pagination
+        current={currentPage}
+        pageSize={pageSize}
+        total={files.length}
+        onChange={handlePageChange}
+        style={{ marginTop: "16px", textAlign: "center" }}
       />
       {selectedFile && (
         <Modal

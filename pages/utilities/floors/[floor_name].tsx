@@ -32,7 +32,7 @@ const Rooms = () => {
   const [showRoomDrawer, setShowRoomDrawer] = useState(false);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(8);
   const userRole = getUserRole();
 
   const [showAddForm, setShowAddForm] = useState(false);
@@ -474,7 +474,7 @@ const Rooms = () => {
             </TableContainer>
           </Spin>
           <TablePagination
-            rowsPerPageOptions={[10, 25, 50]}
+            rowsPerPageOptions={[8]}
             component="div"
             count={rooms.length}
             page={page}

@@ -53,7 +53,7 @@ const ChiefResident = () => {
     department_id: "",
   });
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
   useEffect(() => {
     setPage(0); // Reset page to 0 when search query changes
@@ -174,7 +174,7 @@ const ChiefResident = () => {
   };
 
   const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 5));
+    setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
 
@@ -389,7 +389,7 @@ const ChiefResident = () => {
 
         {filteredDoctors.length > 0 && (
           <TablePagination
-            rowsPerPageOptions={[5, 10, 25, 50, 100]}
+            rowsPerPageOptions={[10, 25, 50, 100]}
             component="div"
             count={filteredDoctors.length}
             page={page}

@@ -16,9 +16,8 @@ import axiosInstance from "../../src/components/utils/axiosInstance";
 import { useRouter } from "next/router";
 import FullLayout from "../../src/layouts/full/FullLayout";
 import FileViewer from "../utilities/patientroom/FileViewer";
-import Medication from "../utilities/patientroom/Medications";
-import LabResultsPage from "../utilities/patientroom/LabResults";
-
+import Medication from "./MedicationPatientPage";
+import LabResultsPage from "./LabResultsPatientPage";
 interface PatientDetails {
   patient: {
     created_at: string;
@@ -198,7 +197,7 @@ const PatientHistoryPage = () => {
               <Typography variant="h6" gutterBottom align="center">
                 Medications
               </Typography>
-              <Medication patientData={patientDetails.patient} />
+              <Medication patientId={patientDetails?.patient.patient_id} />
             </Paper>
           </Grid>
 
@@ -207,7 +206,7 @@ const PatientHistoryPage = () => {
               <Typography variant="h6" gutterBottom align="center">
                 Lab Results
               </Typography>
-              <LabResultsPage patientData={patientDetails.patient} />
+              <LabResultsPage patientId={patientDetails?.patient.patient_id} />
             </Paper>
           </Grid>
         </Grid>

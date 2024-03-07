@@ -404,7 +404,7 @@ const Doctors = () => {
             {/* Conditionally render the TablePagination component */}
             {filteredDoctors.length > 0 && (
               <TablePagination
-                rowsPerPageOptions={[5, 10, 25, 50, 100]}
+                rowsPerPageOptions={[10, 25, 50, 100]}
                 component="div"
                 count={filteredDoctors.length}
                 page={page}
