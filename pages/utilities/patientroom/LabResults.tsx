@@ -11,9 +11,13 @@ const LabResultsPage = ({ patientData }) => {
   const [fetchedResults, setFetchedResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(3); // Set the number of items per page
+  const [pageSize, setPageSize] = useState(3);
+  const [addModalVisible, setAddModalVisible] = useState(false);
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [editedResult, setEditedResult] = useState({});
+  const [editLoading, setEditLoading] = useState(false);
 
-  const fetchLabResults = async (patientData) => {
+  const fetchLabResults = async () => {
     setLoading(true);
     try {
       const response = await axiosInstance.get(
@@ -57,9 +61,10 @@ const LabResultsPage = ({ patientData }) => {
       const existingResult = existingResults.data;
 
       if (existingResult) {
-        await axiosInstance.put(`/results/${existingResult.labResults_id}`, {
-          ...requestData,
-        });
+        await axiosInstance.put(
+          `/results/${existingResult.labResults_id}`,
+          requestData
+        );
       } else {
         await axiosInstance.post("/results", requestData);
       }
@@ -67,11 +72,51 @@ const LabResultsPage = ({ patientData }) => {
       // Clear the textarea by resetting the labResults state to an empty string
       setLabResults("");
 
-      fetchLabResults(patientData);
+      // Close the modal after submitting
+      setAddModalVisible(false);
+
+      fetchLabResults();
+      message.success("Lab result added successfully!");
     } catch (error) {
       console.error("Error submitting lab results:", error);
+      message.error("Failed to add lab result. Please try again.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleEditResult = (result) => {
+    setEditedResult(result);
+    setEditModalVisible(true);
+  };
+
+  const handleUpdate = async () => {
+    setEditLoading(true);
+    try {
+      const { labResults_id, labResultDate, results } = editedResult;
+      const currentDate = moment()
+        .tz("Asia/Manila")
+        .format("YYYY-MM-DD HH:mm:ss");
+
+      const requestData = {
+        labResultDate,
+        results,
+        patient_id: patientData.patient_id,
+        updated_at: currentDate,
+      };
+
+      await axiosInstance.put(`/results/${labResults_id}`, requestData);
+
+      // Close the edit modal after updating
+      setEditModalVisible(false);
+
+      fetchLabResults();
+      message.success("Lab result updated successfully!");
+    } catch (error) {
+      console.error("Error updating lab result:", error);
+      message.error("Failed to update lab result. Please try again.");
+    } finally {
+      setEditLoading(false);
     }
   };
 
@@ -88,11 +133,9 @@ const LabResultsPage = ({ patientData }) => {
           .delete(`/results/delete/${selectedResultId}`)
           .then((response) => {
             if (response.status === 200) {
-              // Filter out the deleted result from the fetchedResults array
               const updatedResults = fetchedResults.filter(
                 (result) => result.labResults_id !== selectedResultId
               );
-              // Update the fetchedResults state with the new array
               setFetchedResults(updatedResults);
               message.success("Lab result deleted successfully!");
             } else {
@@ -112,8 +155,9 @@ const LabResultsPage = ({ patientData }) => {
   };
 
   useEffect(() => {
-    fetchLabResults(patientData);
+    fetchLabResults();
   }, []);
+
   return (
     <div style={{ maxWidth: "800px", margin: "auto" }}>
       <Typography variant="h3" align="center" gutterBottom>
@@ -121,26 +165,13 @@ const LabResultsPage = ({ patientData }) => {
       </Typography>
       <Grid container spacing={3}>
         <Grid item xs={12}>
-          <Typography variant="h6" gutterBottom>
-            Lab Results:
-          </Typography>
-          <TextareaAutosize
-            aria-label="results"
-            placeholder="Enter lab results here..."
-            value={labResults}
-            onChange={handleInputChange}
-            style={{ width: "100%", fontSize: "1.2rem" }}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <Box display="flex" justifyContent="center">
+          <Box display="flex" justifyContent="center" marginBottom="1rem">
             <Button
-              color="primary"
-              onClick={handleSubmit}
-              disabled={loading}
-              className="bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300"
+              type="primary"
+              onClick={() => setAddModalVisible(true)}
+              className="bg-green-500 hover:bg-green-600 focus:outline-none focus:ring focus:border-green-300"
             >
-              {loading ? "Submitting..." : "Submit"}
+              Add Lab Result
             </Button>
           </Box>
         </Grid>
@@ -164,12 +195,9 @@ const LabResultsPage = ({ patientData }) => {
                       marginBottom: "20px",
                       background: "#fff",
                       boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-                      wordWrap: "break-word", // Add word wrap
+                      wordWrap: "break-word",
                     }}
                   >
-                    {/* <p style={{ marginBottom: "8px" }}>
-                      <strong>Lab Results ID:</strong> {result.labResults_id}
-                    </p> */}
                     <p style={{ marginBottom: "8px" }}>
                       <strong>Lab Result Date:</strong>{" "}
                       {moment(result.labResultDate)
@@ -180,6 +208,13 @@ const LabResultsPage = ({ patientData }) => {
                       <strong>Results:</strong> {result.results}
                     </p>
 
+                    <Button
+                      key="edit"
+                      onClick={() => handleEditResult(result)}
+                      style={{ marginRight: "8px" }}
+                    >
+                      Edit
+                    </Button>
                     <Button
                       key="delete"
                       onClick={() => handleDeleteResult(result.labResults_id)}
@@ -206,6 +241,60 @@ const LabResultsPage = ({ patientData }) => {
           )}
         </Grid>
       </Grid>
+
+      <Modal
+        title="Add Lab Result"
+        open={addModalVisible}
+        onCancel={() => setAddModalVisible(false)}
+        footer={null}
+      >
+        <TextareaAutosize
+          aria-label="results"
+          placeholder="Enter lab results here..."
+          value={labResults}
+          onChange={handleInputChange}
+          style={{ width: "100%", fontSize: "1.2rem" }}
+        />
+        <Box display="flex" justifyContent="center" marginTop="1rem">
+          <Button
+            type="primary"
+            onClick={handleSubmit}
+            disabled={loading}
+            className="bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300"
+          >
+            {loading ? "Submitting..." : "Submit"}
+          </Button>
+        </Box>
+      </Modal>
+
+      <Modal
+        title="Edit Lab Result"
+        open={editModalVisible}
+        onCancel={() => setEditModalVisible(false)}
+        footer={[
+          <Button key="cancel" onClick={() => setEditModalVisible(false)}>
+            Cancel
+          </Button>,
+          <Button
+            key="submit"
+            type="primary"
+            loading={editLoading}
+            onClick={handleUpdate}
+          >
+            Update
+          </Button>,
+        ]}
+      >
+        <TextareaAutosize
+          aria-label="results"
+          placeholder="Enter lab results here..."
+          value={editedResult.results}
+          onChange={(e) =>
+            setEditedResult({ ...editedResult, results: e.target.value })
+          }
+          style={{ width: "100%", fontSize: "1.2rem" }}
+        />
+      </Modal>
     </div>
   );
 };

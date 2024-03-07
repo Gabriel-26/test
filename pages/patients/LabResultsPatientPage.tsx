@@ -78,7 +78,7 @@ const LabResultsPage = ({ patientId }) => {
                   timeZone: "Asia/Manila",
                 })}`}
               </p>
-              <p style={{ marginBottom: "8px" }}>
+              <p style={{ marginBottom: "8px", wordWrap: "break-word" }}>
                 {`Results: ${result.results}`}
               </p>
             </div>

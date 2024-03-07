@@ -28,6 +28,20 @@ const Medication = (props: any) => {
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(3); // Set the number of items per page
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [selectedMedication, setSelectedMedication] = useState(null);
+  const [addModalVisible, setAddModalVisible] = useState(false);
+
+  const handleAddModalOpen = () => {
+    setAddModalVisible(true);
+  };
+
+  const handleAddModalClose = () => {
+    setAddModalVisible(false);
+  };
+  const handleEditModalClose = () => {
+    setEditModalVisible(false);
+  };
 
   const fetchMedications = async () => {
     try {
@@ -132,6 +146,79 @@ const Medication = (props: any) => {
     }
   };
 
+  const handleEdit = (medication) => {
+    console.log("Selected Medication for Edit:", medication);
+    setSelectedMedication(medication);
+    form.setFieldsValue({
+      medicine_id: medication.medicine_name,
+      medicine_frequency: medication.medicine_frequency,
+      patientMedicineDate: moment(medication.patientMedicineDate),
+    });
+    setEditModalVisible(true);
+  };
+
+  const handleEditSubmit = async (values, selectedDate) => {
+    try {
+      console.log("Values before submission:", values);
+      console.log("Selected Medication before submission:", selectedMedication);
+      const selectedDateTime = selectedDate;
+      const currentHour = moment().tz("Asia/Manila").hours();
+      const currentMinute = moment().tz("Asia/Manila").minutes();
+
+      selectedDateTime.set({
+        hour: currentHour,
+        minute: currentMinute,
+        second: 0,
+      });
+
+      values.patientMedicineDate = selectedDateTime.format();
+      values.patient_id = patientId;
+
+      const selectedMedicine = medications.find(
+        (medication) => medication.medicine_name === values.medicine_id
+      );
+
+      if (selectedMedicine) {
+        const response = await axiosInstance.put(
+          `/patientMedicines/${selectedMedication.patientMedicine_id}`,
+          {
+            ...values,
+            medicine_id: selectedMedicine.medicine_id, // Update to use medicine_id
+          }
+        );
+
+        if (response.status === 200) {
+          const formattedDate = selectedDateTime.format("YYYY-MM-DD HH:mm:ss");
+
+          console.log("Medication updated successfully.", {
+            ...values,
+            patientMedicineDate: formattedDate,
+          });
+
+          form.resetFields();
+          setEditModalVisible(false);
+          const updatedMedicationsResponse = await axiosInstance.get(
+            `/patientMedicines/patient/${patientId}`
+          );
+
+          const updatedMedications = updatedMedicationsResponse.data;
+
+          setPatientMedications(updatedMedications);
+          message.success("Medication updated successfully!");
+        } else {
+          console.error("Failed to update medication.");
+          message.error("Failed to update medication. Please try again.");
+        }
+      } else {
+        console.error("Selected medicine not found.");
+        message.error("Selected medicine not found. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error updating medication:", error);
+      message.error("Error updating medication. Please try again.");
+    }
+  };
+
   const handleDeleteMedication = (medicationId) => {
     confirm({
       title: "Are you sure you want to delete this medication?",
@@ -173,70 +260,166 @@ const Medication = (props: any) => {
       <Title level={3} style={{ marginBottom: "16px" }}>
         Medication Page
       </Title>
-      <Form
-        form={form}
-        onFinish={(values) =>
-          handleAddMedication(values, form.getFieldValue("patientMedicineDate"))
-        }
-        layout="vertical"
+      <Button
+        type="primary"
+        onClick={handleAddModalOpen}
+        className="bg-green-500 hover:bg-green-600 focus:outline-none focus:ring focus:border-green-300"
         style={{ marginBottom: "16px" }}
-        onValuesChange={(changedValues) => {
-          if ("medicine" in changedValues) {
-            handleMedicineChange(changedValues.medicine);
-          }
-        }}
       >
-        <Form.Item
-          label="Medicine"
-          name="medicine_id"
-          rules={[{ required: true, message: "Please select medicine" }]}
-        >
-          <AutoComplete
-            placeholder="Type to search and select a medicine"
-            filterOption={(inputValue, option) =>
-              option?.value
-                ?.toString()
-                .toUpperCase()
-                .indexOf(inputValue.toUpperCase()) !== -1
+        Add Medication
+      </Button>
+      <Modal
+        title="Add Medication"
+        open={addModalVisible}
+        onCancel={handleAddModalClose}
+        footer={null}
+      >
+        <Form
+          form={form}
+          onFinish={(values) =>
+            handleAddMedication(
+              values,
+              form.getFieldValue("patientMedicineDate")
+            )
+          }
+          layout="vertical"
+          style={{ marginBottom: "16px" }}
+          onValuesChange={(changedValues) => {
+            if ("medicine" in changedValues) {
+              handleMedicineChange(changedValues.medicine);
             }
-            onSelect={(value, option) => {
-              form.setFieldsValue({
-                medicine_id: value,
-              });
-            }}
+          }}
+        >
+          <Form.Item
+            label="Medicine"
+            name="medicine_id"
+            rules={[{ required: true, message: "Please select medicine" }]}
           >
-            {medications.map((medication, index) => (
-              <AutoComplete.Option key={index} value={medication.medicine_name}>
-                {medication.medicine_name}
-              </AutoComplete.Option>
-            ))}
-          </AutoComplete>
-        </Form.Item>
+            <AutoComplete
+              placeholder="Type to search and select a medicine"
+              filterOption={(inputValue, option) =>
+                option?.value
+                  ?.toString()
+                  .toUpperCase()
+                  .indexOf(inputValue.toUpperCase()) !== -1
+              }
+              onSelect={(value, option) => {
+                form.setFieldsValue({
+                  medicine_id: value,
+                });
+              }}
+            >
+              {medications.map((medication, index) => (
+                <AutoComplete.Option
+                  key={index}
+                  value={medication.medicine_name}
+                >
+                  {medication.medicine_name}
+                </AutoComplete.Option>
+              ))}
+            </AutoComplete>
+          </Form.Item>
 
-        <Form.Item
-          label="Frequency"
-          name="medicine_frequency"
-          rules={[{ required: true, message: "Please enter frequency" }]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          label="Patient Medicine Date"
-          name="patientMedicineDate"
-          rules={[{ required: true, message: "Please select a date" }]}
-        >
-          <DatePicker format="YYYY-MM-DD" />
-        </Form.Item>
-        <Form.Item>
-          <Button
-            type="primary"
-            htmlType="submit"
-            className="bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300"
+          <Form.Item
+            label="Frequency"
+            name="medicine_frequency"
+            rules={[{ required: true, message: "Please enter frequency" }]}
           >
-            Add Medication
-          </Button>
-        </Form.Item>
-      </Form>
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Patient Medicine Date"
+            name="patientMedicineDate"
+            rules={[{ required: true, message: "Please select a date" }]}
+          >
+            <DatePicker format="YYYY-MM-DD" />
+          </Form.Item>
+          <Form.Item>
+            <Button
+              type="primary"
+              htmlType="submit"
+              className="bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300"
+            >
+              Add Medication
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+      <Modal
+        title="Edit Medication"
+        open={editModalVisible}
+        onCancel={handleEditModalClose}
+        footer={null}
+      >
+        <Form
+          form={form}
+          onFinish={(values) =>
+            handleEditSubmit(values, form.getFieldValue("patientMedicineDate"))
+          }
+          layout="vertical"
+          style={{ marginBottom: "16px" }}
+          onValuesChange={(changedValues) => {
+            if ("medicine" in changedValues) {
+              handleMedicineChange(changedValues.medicine);
+            }
+          }}
+        >
+          <Form.Item
+            label="Medicine"
+            name="medicine_id"
+            rules={[{ required: true, message: "Please select medicine" }]}
+          >
+            <AutoComplete
+              placeholder="Type to search and select a medicine"
+              filterOption={(inputValue, option) =>
+                option?.value
+                  ?.toString()
+                  .toUpperCase()
+                  .indexOf(inputValue.toUpperCase()) !== -1
+              }
+              onSelect={(value, option) => {
+                form.setFieldsValue({
+                  medicine_id: value,
+                });
+              }}
+            >
+              {medications.map((medication, index) => (
+                <AutoComplete.Option
+                  key={index}
+                  value={medication.medicine_name}
+                >
+                  {medication.medicine_name}
+                </AutoComplete.Option>
+              ))}
+            </AutoComplete>
+          </Form.Item>
+
+          <Form.Item
+            label="Frequency"
+            name="medicine_frequency"
+            rules={[{ required: true, message: "Please enter frequency" }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Patient Medicine Date"
+            name="patientMedicineDate"
+            rules={[{ required: true, message: "Please select a date" }]}
+          >
+            <DatePicker format="YYYY-MM-DD" />
+          </Form.Item>
+          <Form.Item>
+            <Button
+              type="primary"
+              htmlType="submit"
+              className="bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300"
+            >
+              Update Medication
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+
       {loading ? (
         <Spin size="large" />
       ) : patientMedications.length > 0 ? (
@@ -316,6 +499,13 @@ const Medication = (props: any) => {
                     second: "numeric",
                   })}`}
                 </p>
+                <Button
+                  key="edit"
+                  onClick={() => handleEdit(medication)}
+                  style={{ marginRight: "8px" }}
+                >
+                  Edit
+                </Button>
                 <Button
                   key="delete"
                   onClick={() =>
