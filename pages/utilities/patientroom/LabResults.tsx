@@ -14,7 +14,11 @@ const LabResultsPage = ({ patientData }) => {
   const [pageSize, setPageSize] = useState(3);
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
-  const [editedResult, setEditedResult] = useState({});
+  const [editedResult, setEditedResult] = useState({
+    labResults_id: "",
+    labResultDate: "",
+    results: "",
+  });
   const [editLoading, setEditLoading] = useState(false);
 
   const fetchLabResults = async () => {
