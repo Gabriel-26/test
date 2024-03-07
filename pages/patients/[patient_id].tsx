@@ -177,15 +177,6 @@ const PatientHistoryPage = () => {
           <Grid item xs={12} md={6}>
             <Paper elevation={3} style={{ padding: theme.spacing(3) }}>
               <Typography variant="h6" gutterBottom align="center">
-                Patient History
-              </Typography>
-              <PatientHistory patientData={patientDetails.patient} />
-            </Paper>
-          </Grid>
-
-          <Grid item xs={12} md={6}>
-            <Paper elevation={3} style={{ padding: theme.spacing(3) }}>
-              <Typography variant="h6" gutterBottom align="center">
                 File Viewer
               </Typography>
               <FileViewer patientData={patientDetails.patient} />
@@ -207,6 +198,14 @@ const PatientHistoryPage = () => {
                 Lab Results
               </Typography>
               <LabResultsPage patientId={patientDetails?.patient.patient_id} />
+            </Paper>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <Paper elevation={3} style={{ padding: theme.spacing(3) }}>
+              <Typography variant="h6" gutterBottom align="center">
+                Patient History
+              </Typography>
+              <PatientHistory patientData={patientDetails.patient} />
             </Paper>
           </Grid>
         </Grid>

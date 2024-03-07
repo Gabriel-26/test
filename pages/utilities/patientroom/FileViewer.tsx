@@ -10,7 +10,7 @@ const FileViewer = ({ patientData }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [isViewerVisible, setViewerVisible] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize] = useState(8); // Number of items per page
+  const [pageSize] = useState(5); // Number of items per page
 
   const { patient_id = "" } = patientData;
 
