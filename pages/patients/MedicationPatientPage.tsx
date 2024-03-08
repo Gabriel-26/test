@@ -126,13 +126,6 @@ const Medication = (props: any) => {
               </p>
             </div>
           ))}
-          <Pagination
-            current={currentPage}
-            total={patientMedications.length}
-            pageSize={medicationsPerPage}
-            onChange={paginate}
-            style={{ marginTop: "16px", textAlign: "center" }}
-          />
         </div>
       ) : (
         <Alert
@@ -141,6 +134,13 @@ const Medication = (props: any) => {
           type="info"
         />
       )}
+      <Pagination
+        current={currentPage}
+        total={patientMedications.length}
+        pageSize={medicationsPerPage}
+        onChange={paginate}
+        style={{ marginTop: "16px", textAlign: "center" }}
+      />
     </div>
   );
 };
