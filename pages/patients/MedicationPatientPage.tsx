@@ -41,7 +41,7 @@ const Medication = (props: any) => {
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   return (
-    <div style={{ maxWidth: "800px", margin: "auto" }}>
+    <div style={{ maxWidth: "800px", margin: "auto", height: "675px" }}>
       {/* <Title level={3} style={{ marginBottom: "16px" }}>
         Medication Page
       </Title> */}

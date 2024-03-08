@@ -15,6 +15,8 @@ import {
 } from "antd";
 import axiosInstance from "../../../src/components/utils/axiosInstance";
 import moment from "moment-timezone";
+import { MdAddCircle, MdDelete } from "react-icons/md";
+import { FiEdit } from "react-icons/fi";
 
 const { Title } = Typography;
 const { confirm } = Modal;
@@ -257,17 +259,6 @@ const Medication = (props: any) => {
   }, [patientId]);
   return (
     <div style={{ maxWidth: "800px", margin: "auto" }}>
-      <Title level={3} style={{ marginBottom: "16px" }}>
-        Medication Page
-      </Title>
-      <Button
-        type="primary"
-        onClick={handleAddModalOpen}
-        className="bg-green-500 hover:bg-green-600 focus:outline-none focus:ring focus:border-green-300"
-        style={{ marginBottom: "16px" }}
-      >
-        Add Medication
-      </Button>
       <Modal
         title="Add Medication"
         open={addModalVisible}
@@ -423,10 +414,30 @@ const Medication = (props: any) => {
       {loading ? (
         <Spin size="large" />
       ) : patientMedications.length > 0 ? (
-        <div>
-          <Title level={4} style={{ marginBottom: "16px", color: "#2c3e50" }}>
-            Patient's Medications
-          </Title>
+        <div style={{ maxWidth: "800px", margin: "auto" }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Title
+              level={3}
+              style={{ marginTop: "26px", display: "inline-block" }}
+            >
+              Patient's Medication{" "}
+            </Title>
+            <Button
+              type="primary"
+              onClick={handleAddModalOpen}
+              className="bg-green-500 hover:bg-green-600 focus:outline-none focus:ring focus:border-green-300"
+              style={{ marginTop: "26px", marginLeft: "8px" }}
+            >
+              <MdAddCircle style={{ fontSize: "22px" }} />
+            </Button>
+          </div>
+
           {patientMedications
             .slice((currentPage - 1) * pageSize, currentPage * pageSize)
             .map((medication, index) => (
@@ -441,15 +452,41 @@ const Medication = (props: any) => {
                   boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                 }}
               >
-                <p
+                <div
                   style={{
-                    color: "#3498db",
-                    marginBottom: "8px",
-                    fontSize: "18px",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
                   }}
                 >
-                  {`Medicine: ${medication.medicine_name}`}
-                </p>
+                  <p
+                    style={{
+                      color: "#3498db",
+                      marginBottom: "8px",
+                      fontSize: "18px",
+                    }}
+                  >
+                    {`Medicine: ${medication.medicine_name}`}
+                  </p>
+                  <div>
+                    <Button
+                      key="edit"
+                      onClick={() => handleEdit(medication)}
+                      // style={{ marginRight: "8px" }}
+                    >
+                      <FiEdit style={{ fontSize: "20px" }} />
+                    </Button>
+                    <Button
+                      key="delete"
+                      onClick={() =>
+                        handleDeleteMedication(medication.patientMedicine_id)
+                      }
+                      danger
+                    >
+                      <MdDelete style={{ fontSize: "20px" }} />
+                    </Button>
+                  </div>
+                </div>
                 <p style={{ marginBottom: "8px" }}>
                   {`Type: ${medication.medicine_type}`}
                 </p>
@@ -499,22 +536,6 @@ const Medication = (props: any) => {
                     second: "numeric",
                   })}`}
                 </p>
-                <Button
-                  key="edit"
-                  onClick={() => handleEdit(medication)}
-                  style={{ marginRight: "8px" }}
-                >
-                  Edit
-                </Button>
-                <Button
-                  key="delete"
-                  onClick={() =>
-                    handleDeleteMedication(medication.patientMedicine_id)
-                  }
-                  danger
-                >
-                  Delete
-                </Button>
               </div>
             ))}
           <Pagination

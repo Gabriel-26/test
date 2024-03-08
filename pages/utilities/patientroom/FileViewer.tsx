@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axiosInstance from "../../../src/components/utils/axiosInstance";
 import { List, Button, Modal, message, Pagination } from "antd";
 import { FileOutlined } from "@ant-design/icons";
+import { MdOutlinePreview, MdDelete } from "react-icons/md";
 
 const { confirm } = Modal;
 
@@ -151,7 +152,7 @@ const FileViewer = ({ patientData }) => {
   const displayedFiles = files.slice(startIndex, endIndex);
 
   return (
-    <div className="flex flex-col">
+    <div style={{ maxWidth: "800px", margin: "auto", height: "430px" }}>
       <h3 className="mb-4">Uploaded Files:</h3>
       <List
         itemLayout="horizontal"
@@ -171,14 +172,14 @@ const FileViewer = ({ patientData }) => {
                 onClick={() => handleFileClick(file)}
                 className="mr-2"
               >
-                View
+                <MdOutlinePreview style={{ fontSize: "24px" }} />
               </Button>
               <Button
                 type="link"
                 onClick={() => handleDeleteFile(file.file_id)}
                 danger
               >
-                Delete
+                <MdDelete style={{ fontSize: "24px" }} />
               </Button>
             </div>
           </List.Item>

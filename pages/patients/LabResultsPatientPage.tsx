@@ -35,7 +35,9 @@ const LabResultsPage = ({ patientId }) => {
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
-    <div style={{ maxWidth: "800px", margin: "auto" }}>
+    <div style={{ maxWidth: "800px", margin: "auto", height: "675px" }}>
+      {" "}
+      {/* Set default height here */}
       {/* <Title level={3} style={{ marginBottom: "16px" }}>
         Lab Results Page
       </Title> */}
@@ -62,7 +64,7 @@ const LabResultsPage = ({ patientId }) => {
                 style={{
                   color: "#3498db",
                   marginBottom: "8px",
-                  fontSize: "18px",
+                  fontSize: "16px",
                 }}
               >
                 {`Lab Result Date: ${new Date(

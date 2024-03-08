@@ -1,10 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { Typography, Box, Paper, TextareaAutosize, Grid } from "@mui/material";
+import { Box, Paper, TextareaAutosize, Grid } from "@mui/material";
 import axiosInstance from "../../../src/components/utils/axiosInstance";
-import { Spin, Alert, Pagination, Modal, message, Button } from "antd";
+import {
+  Spin,
+  Alert,
+  Pagination,
+  Modal,
+  message,
+  Button,
+  Typography,
+} from "antd";
 import moment from "moment-timezone";
+import { MdAddCircle, MdDelete } from "react-icons/md";
+import { FiEdit } from "react-icons/fi";
 
 const { confirm } = Modal;
+const { Title } = Typography;
 
 const LabResultsPage = ({ patientData }) => {
   const [labResults, setLabResults] = useState("");
@@ -164,29 +175,34 @@ const LabResultsPage = ({ patientData }) => {
 
   return (
     <div style={{ maxWidth: "800px", margin: "auto" }}>
-      <Typography variant="h3" align="center" gutterBottom>
-        Hospital Lab Results
-      </Typography>
       <Grid container spacing={3}>
-        <Grid item xs={12}>
-          <Box display="flex" justifyContent="center" marginBottom="1rem">
-            <Button
-              type="primary"
-              onClick={() => setAddModalVisible(true)}
-              className="bg-green-500 hover:bg-green-600 focus:outline-none focus:ring focus:border-green-300"
-            >
-              Add Lab Result
-            </Button>
-          </Box>
-        </Grid>
+        <Grid item xs={12}></Grid>
         <Grid item xs={12}>
           {loading ? (
             <Spin size="large" />
           ) : fetchedResults.length > 0 ? (
             <div>
-              <Typography variant="h6" gutterBottom>
-                Fetched Lab Results:
-              </Typography>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                marginBottom="1rem"
+              >
+                <Title
+                  level={3}
+                  style={{ marginTop: "26px", display: "inline-block" }}
+                >
+                  Patient's Lab Results:{" "}
+                </Title>
+                <Button
+                  type="primary"
+                  onClick={() => setAddModalVisible(true)}
+                  className="bg-green-500 hover:bg-green-600 focus:outline-none focus:ring focus:border-green-300"
+                  style={{ marginTop: "26px", marginLeft: "8px" }}
+                >
+                  <MdAddCircle style={{ fontSize: "20px" }} />
+                </Button>
+              </Box>
               {fetchedResults
                 .slice((currentPage - 1) * pageSize, currentPage * pageSize)
                 .map((result, index) => (
@@ -202,30 +218,41 @@ const LabResultsPage = ({ patientData }) => {
                       wordWrap: "break-word",
                     }}
                   >
-                    <p style={{ marginBottom: "8px" }}>
-                      <strong>Lab Result Date:</strong>{" "}
-                      {moment(result.labResultDate)
-                        .tz("Asia/Manila")
-                        .format("dddd, MMMM D, YYYY HH:mm:ss")}
-                    </p>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <p>
+                        <strong>Lab Result Date:</strong>{" "}
+                        {moment(result.labResultDate)
+                          .tz("Asia/Manila")
+                          .format("dddd, MMMM D, YYYY HH:mm:ss")}
+                      </p>
+                      <div>
+                        <Button
+                          key="edit"
+                          onClick={() => handleEditResult(result)}
+                          // style={{ marginRight: "8px" }}
+                        >
+                          <FiEdit style={{ fontSize: "20px" }} />
+                        </Button>
+                        <Button
+                          key="delete"
+                          onClick={() =>
+                            handleDeleteResult(result.labResults_id)
+                          }
+                          danger
+                        >
+                          <MdDelete style={{ fontSize: "20px" }} />
+                        </Button>
+                      </div>
+                    </div>
                     <p style={{ marginBottom: "8px" }}>
                       <strong>Results:</strong> {result.results}
                     </p>
-
-                    <Button
-                      key="edit"
-                      onClick={() => handleEditResult(result)}
-                      style={{ marginRight: "8px" }}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      key="delete"
-                      onClick={() => handleDeleteResult(result.labResults_id)}
-                      danger
-                    >
-                      Delete
-                    </Button>
                   </div>
                 ))}
               <Pagination

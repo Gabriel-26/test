@@ -11,7 +11,7 @@ import {
   Typography,
 } from "antd";
 import { Paper } from "@mui/material";
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import { FiEdit } from "react-icons/fi";
 import { useRouter } from "next/router";
 import axiosInstance from "../../../src/components/utils/axiosInstance";
 const { Title, Text } = Typography;
@@ -100,6 +100,13 @@ const PatientInfo = (props: any) => {
               key={patient.patient_id}
               style={{ marginBottom: "16px" }}
               title={`Patient ID: ${patient.patient_id}`}
+              extra={
+                <Button
+                  icon={<FiEdit style={{ fontSize: "20px" }} />}
+                  onClick={() => showEditDrawer(patient)}
+                  className="bg-skyblue hover:bg-lightblue active:bg-darkblue focus:outline-none border-skyblue"
+                ></Button>
+              }
             >
               <Row gutter={[16, 16]}>
                 <Col span={8}>
@@ -124,15 +131,7 @@ const PatientInfo = (props: any) => {
                   <Text strong>Vaccination History:</Text>{" "}
                   <Text>{patient.phr_vaccinationHistory}</Text>
                 </Col> */}
-                <Col span={24}>
-                  <Button
-                    icon={<EditOutlinedIcon />}
-                    onClick={() => showEditDrawer(patient)}
-                    className="bg-skyblue hover:bg-lightblue active:bg-darkblue focus:outline-none border-skyblue"
-                  >
-                    Edit
-                  </Button>
-                </Col>
+                <Col span={24}></Col>
               </Row>
             </Card>
           ))}
