@@ -185,13 +185,7 @@ const FileViewer = ({ patientData }) => {
           </List.Item>
         )}
       />
-      <Pagination
-        current={currentPage}
-        pageSize={pageSize}
-        total={files.length}
-        onChange={handlePageChange}
-        style={{ marginTop: "16px", textAlign: "center" }}
-      />
+
       {selectedFile && (
         <Modal
           title={selectedFile.file_name}
@@ -224,6 +218,19 @@ const FileViewer = ({ patientData }) => {
           </div>
         </Modal>
       )}
+      <Pagination
+        current={currentPage}
+        pageSize={pageSize}
+        total={files.length}
+        onChange={handlePageChange}
+        style={{
+          marginTop: "16px",
+          position: "absolute",
+          bottom: "300px",
+          left: "54.3%",
+          transform: "translateX(-50%)",
+        }}
+      />
     </div>
   );
 };
