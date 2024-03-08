@@ -174,7 +174,14 @@ const LabResultsPage = ({ patientData }) => {
   }, []);
 
   return (
-    <div style={{ maxWidth: "800px", margin: "auto" }}>
+    <div
+      style={{
+        maxWidth: "800px",
+        margin: "auto",
+        marginBottom: "40px",
+        height: "592px",
+      }}
+    >
       <Grid container spacing={3}>
         <Grid item xs={12}></Grid>
         <Grid item xs={12}>
@@ -260,7 +267,14 @@ const LabResultsPage = ({ patientData }) => {
                 total={fetchedResults.length}
                 pageSize={pageSize}
                 onChange={handlePageChange}
-                style={{ marginTop: "16px", textAlign: "center" }}
+                style={{
+                  marginTop: "16px",
+                  textAlign: "center",
+                  position: "absolute",
+                  bottom: "110px", // Adjust as needed
+                  left: "50.3%",
+                  zIndex: 1,
+                }}
               />
             </div>
           ) : (

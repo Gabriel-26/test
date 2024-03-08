@@ -29,7 +29,7 @@ const Medication = (props: any) => {
   const [patientMedications, setPatientMedications] = useState([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(3); // Set the number of items per page
+  const [pageSize, setPageSize] = useState(2); // Set the number of items per page
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [selectedMedication, setSelectedMedication] = useState(null);
   const [addModalVisible, setAddModalVisible] = useState(false);
@@ -414,7 +414,14 @@ const Medication = (props: any) => {
       {loading ? (
         <Spin size="large" />
       ) : patientMedications.length > 0 ? (
-        <div style={{ maxWidth: "800px", margin: "auto" }}>
+        <div
+          style={{
+            maxWidth: "800px",
+            margin: "auto",
+            marginBottom: "40px",
+            height: "592px",
+          }}
+        >
           <div
             style={{
               display: "flex",
@@ -543,7 +550,14 @@ const Medication = (props: any) => {
             total={patientMedications.length}
             pageSize={pageSize}
             onChange={(page) => setCurrentPage(page)}
-            style={{ marginTop: "16px", textAlign: "center" }}
+            style={{
+              marginTop: "16px",
+              textAlign: "center",
+              position: "absolute",
+              bottom: "85px", // Adjust as needed
+              left: "50.3%",
+              zIndex: 1,
+            }}
           />
         </div>
       ) : (
