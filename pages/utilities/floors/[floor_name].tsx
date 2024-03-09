@@ -18,6 +18,10 @@ import { Input, Form, Modal, Drawer, Spin, Select, message } from "antd";
 import { getUserRole } from "../../../src/components/utils/roles";
 import dynamic from "next/dynamic";
 import useFloorStore from "../../../src/components/utils/zustandStore";
+import roomAddIcon from "../../../src/assets/images/icons/hospitalAdd.png";
+import { FiEdit } from "react-icons/fi";
+import { MdDelete } from "react-icons/md";
+import { BsBuildingFillAdd } from "react-icons/bs";
 
 const Button = dynamic(() => import("antd/lib/button"));
 const { Option } = Select;
@@ -334,49 +338,42 @@ const Rooms = () => {
   // Step 2: Define a function to handle navigation to another page
   return (
     <div>
-      <PageContainer
-        title={floorName || "Loading..."}
-        description="This is Sample page"
-      >
+      <PageContainer title={floorName || "Loading..."}>
         <DashboardCard title={floorName || "Loading..."}>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             {userRole === "admin" && (
-              <Button
-                // variant="contained"
-                color="secondary"
-                onClick={() => setShowAddForm(true)}
-              >
-                Add Floor
-              </Button>
-            )}
-            {userRole === "admin" && (
               <div>
                 <Button
+                  icon={<BsBuildingFillAdd style={{ fontSize: "20px" }} />}
+                  color="secondary"
+                  onClick={() => setShowAddForm(true)}
+                ></Button>
+                <Button
+                  icon={<FiEdit style={{ fontSize: "20px" }} />}
                   color="primary"
                   onClick={() => handleEditFloor(editFloorId, editFloorName)}
-                >
-                  Edit Floor
-                </Button>
-
+                ></Button>
                 <Button
+                  icon={<MdDelete style={{ fontSize: "20px" }} />}
                   color="secondary"
-                  style={{ marginLeft: "10px" }}
                   onClick={() => handleDeleteFloor(deleteFloorId)}
-                >
-                  Delete Floor
-                </Button>
+                ></Button>
               </div>
             )}
 
             {userRole === "admin" && (
               <Button
-                color="secondary"
+                icon={
+                  <img
+                    src={roomAddIcon.src}
+                    alt="Add Room"
+                    style={{ width: "24px", height: "24px" }}
+                  />
+                }
                 onClick={() => {
                   setShowAddRoomForm(true);
                 }}
-              >
-                Add Room
-              </Button>
+              />
             )}
           </div>
           <Spin spinning={loading}>
@@ -448,6 +445,7 @@ const Rooms = () => {
                         {userRole === "admin" && ( // Only render Actions for admin role
                           <TableCell style={{ textAlign: "center" }}>
                             <Button
+                              icon={<FiEdit style={{ fontSize: "20px" }} />}
                               onClick={() =>
                                 handleEditRoom(
                                   room.room_id,
@@ -458,12 +456,13 @@ const Rooms = () => {
                                 )
                               }
                             >
-                              Edit
+                              {/* <FiEdit style={{ fontSize: "20px" }} /> */}
                             </Button>
                             <Button
+                              icon={<MdDelete style={{ fontSize: "20px" }} />}
                               onClick={() => handleDeleteRoom(room.room_id)}
                             >
-                              Delete
+                              {/* <MdDelete style={{ fontSize: "20px" }} /> */}
                             </Button>
                           </TableCell>
                         )}
@@ -506,7 +505,7 @@ const Rooms = () => {
       </Modal>
       <Drawer
         title="Add Room"
-        width={720}
+        width={300}
         onClose={() => setShowAddRoomForm(false)}
         open={showAddRoomForm}
         destroyOnClose

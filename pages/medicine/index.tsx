@@ -26,8 +26,10 @@ import {
 } from "@mui/material";
 import { getUserRole } from "../../src/components/utils/roles";
 import DashboardCard from "../../src/components/shared/DashboardCard";
+import { AiFillMedicineBox } from "react-icons/ai";
+import { FiEdit } from "react-icons/fi";
+import { MdDelete } from "react-icons/md";
 
-const userRole = getUserRole();
 const { confirm } = Modal;
 
 interface Medicine {
@@ -42,7 +44,7 @@ interface Medicine {
 }
 
 const MedicineList = () => {
-  const [medicines, setMedicineData] = useState<Medicine[]>([]); // Renamed variable
+  const [medicines, setMedicineData] = useState<Medicine[]>([]);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [editingMedicine, setEditingMedicine] = useState<Medicine | null>(null);
   const [form] = Form.useForm();
@@ -51,32 +53,31 @@ const MedicineList = () => {
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteError, setDeleteError] = useState(null);
+  const [userRole, setUserRole] = useState<string>(getUserRole()); // Manage user role state
+
   useEffect(() => {
     setPage(0); // Reset page to 0 when search query changes
     fetchMedicines();
-  }, [searchQuery]);
+  }, [searchQuery, userRole]); // Include userRole as a dependency
 
   const fetchMedicines = async () => {
     try {
-      setLoading(true); // Set loading to true when starting data fetch
+      setLoading(true);
 
       const token = localStorage.getItem("authToken");
-      const role = localStorage.getItem("userRole"); // Assuming user role is stored in localStorage
 
-      // Set the token in Axios headers for this request
       axiosInstance.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${token}`;
 
-      let endpoint = "/medicines"; // Default endpoint
+      let endpoint = "/medicines";
 
-      // Check the user's role and update the endpoint if it's "admin"
-      if (role === "admin") {
+      if (userRole === "admin") {
         endpoint = "/admin/medicines";
       }
 
       const response = await axiosInstance.get(endpoint);
-      console.log(response.data);
+
       setLoading(false);
 
       const filteredMedicines = response.data.filter((medicine) =>
@@ -154,12 +155,12 @@ const MedicineList = () => {
   const handleFormSubmit = async (values: any) => {
     try {
       const token = localStorage.getItem("authToken");
+
       axiosInstance.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${token}`;
 
       if (editingMedicine) {
-        // Ensure medicine_id is provided when updating a record
         values.medicine_id = editingMedicine.medicine_id;
 
         await axiosInstance.put(
@@ -182,8 +183,6 @@ const MedicineList = () => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(7);
 
-  // Avoid a layout jump when reaching the last page with empty rows.
-
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
     newPage: number
@@ -194,15 +193,14 @@ const MedicineList = () => {
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setRowsPerPage(parseInt(event.target.value, 7)); // Change the base to 10
-    setPage(1); // Reset page to 0 when rows per page changes
+    setRowsPerPage(parseInt(event.target.value, 7));
+    setPage(1);
   };
 
   return (
     <>
-      <DashboardCard title="Medicines">
+      <DashboardCard title="Medicine Formulary">
         <Spin spinning={loading}>
-          <h1>Medicine Formulary</h1>
           <Modal
             title="Confirm Deletion"
             open={deleteModalVisible}
@@ -213,14 +211,15 @@ const MedicineList = () => {
             <p>Are you sure you want to delete this medicine?</p>
             {deleteError && <Alert message={deleteError} type="error" />}
           </Modal>
-          <Button
-            // variant="contained"
-            color="primary"
-            onClick={() => showDrawer()}
-            style={{ display: userRole === "admin" ? "block" : "none" }}
-          >
-            Add Medicine
-          </Button>
+          {userRole === "admin" && (
+            <div style={{ display: "flex", justifyContent: "flex-end" }}>
+              <Button
+                icon={<AiFillMedicineBox style={{ fontSize: "20px" }} />}
+                color="primary"
+                onClick={() => showDrawer()}
+              ></Button>
+            </div>
+          )}
           <Input
             placeholder="Search"
             value={searchQuery}
@@ -239,8 +238,6 @@ const MedicineList = () => {
                     </TableCell>
                     <TableCell style={{ textAlign: "center" }}>Type</TableCell>
                     <TableCell style={{ textAlign: "center" }}>Price</TableCell>
-                    {/* <TableCell>Created At</TableCell>
-    <TableCell>Updated At</TableCell> */}
                     {userRole === "admin" && (
                       <TableCell style={{ textAlign: "center" }}>
                         Action
@@ -274,24 +271,21 @@ const MedicineList = () => {
                         {userRole === "admin" && (
                           <TableCell style={{ textAlign: "center" }}>
                             <Button
-                              // variant="text"
+                              icon={<FiEdit style={{ fontSize: "20px" }} />}
                               color="primary"
                               onClick={() => showDrawer(medicine)}
                               style={{
                                 // display: "block",
                                 margin: "auto",
                               }}
-                            >
-                              Edit
-                            </Button>
+                            ></Button>
                             <Button
+                              icon={<MdDelete style={{ fontSize: "20px" }} />}
                               color="error"
                               onClick={() =>
                                 handleDeleteMedicine(medicine.medicine_id)
                               }
-                            >
-                              Delete
-                            </Button>
+                            ></Button>
                           </TableCell>
                         )}
                       </TableRow>
@@ -320,7 +314,7 @@ const MedicineList = () => {
 
       <Drawer
         title={editingMedicine ? "Edit Medicine" : "Add Medicine"}
-        width={720}
+        width={450}
         onClose={closeDrawer}
         open={drawerVisible}
         bodyStyle={{ paddingBottom: 80 }}
