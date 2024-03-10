@@ -22,6 +22,8 @@ import FullLayout from "../../../src/layouts/full/FullLayout";
 import { Modal, Button, Drawer, Select, Spin, message, Alert } from "antd";
 import EditDoctorForm from "./editform";
 import AddDoctorForm from "./addform";
+import { MdAddCircle, MdDelete } from "react-icons/md";
+import { FiEdit } from "react-icons/fi";
 const { Option } = Select;
 
 const Doctors = () => {
@@ -93,9 +95,8 @@ const Doctors = () => {
       confirm({
         title: "Are you sure you want to delete this resident?",
         content: "This action cannot be undone.",
-        okText: "Yes",
+        okText: "Confirm",
         okType: "danger",
-        cancelText: "No",
         onOk() {
           // Start loading
           setDeleteLoading(true);
@@ -225,7 +226,18 @@ const Doctors = () => {
               <p>Are you sure you want to delete this resident?</p>
               {deleteError && <Alert message={deleteError} type="error" />}
             </Modal>
-            <Button onClick={handleAddDoctor}>New Resident</Button>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end	",
+                alignItems: "center",
+              }}
+            >
+              <Button
+                icon={<MdAddCircle style={{ fontSize: "22px" }} />}
+                onClick={handleAddDoctor}
+              ></Button>
+            </Box>
             <Stack direction="column" spacing={2}>
               <TextField
                 label="Search"
@@ -239,7 +251,7 @@ const Doctors = () => {
 
             <Drawer
               title={isAddingDoctor ? "Add a Resident" : "Edit Resident"}
-              width={720}
+              width={550}
               onClose={() => {
                 setIsAddingDoctor(false);
                 setIsEditing(false);
@@ -371,23 +383,19 @@ const Doctors = () => {
                         <Typography>{doctor.resident_gender}</Typography>
                       </TableCell>
                       <TableCell style={{ textAlign: "center" }}>
-                        <Typography className=" pl-8">
-                          {doctor.department_id}
-                        </Typography>
+                        <Typography>{doctor.department_id}</Typography>
                       </TableCell>
                       <TableCell style={{ textAlign: "center" }}>
                         <Button
+                          icon={<FiEdit style={{ fontSize: "22px" }} />}
                           color="primary"
                           onClick={() => handleEditDoctor(doctor)}
-                        >
-                          Edit
-                        </Button>
+                        ></Button>
                         <Button
+                          icon={<MdDelete style={{ fontSize: "22px" }} />}
                           color="error"
                           onClick={() => handleDeleteDoctor(doctor.resident_id)}
-                        >
-                          Delete
-                        </Button>
+                        ></Button>
                       </TableCell>
                     </TableRow>
                   ))}

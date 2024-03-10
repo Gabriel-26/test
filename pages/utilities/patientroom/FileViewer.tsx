@@ -63,6 +63,8 @@ const FileViewer = ({ patientData }) => {
     confirm({
       title: "Are you sure you want to delete this file?",
       content: "This action cannot be undone.",
+      okText: "Confirm",
+      okType: "danger",
       onOk() {
         axiosInstance
           .delete(`/fileUpload/delete/${fileId}`)

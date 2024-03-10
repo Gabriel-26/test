@@ -57,7 +57,7 @@ const EditChiefResidentForm = ({ editChiefResident, onFinish, onUpdate }) => {
     <Form
       form={form}
       onFinish={handleFinish}
-      labelCol={{ span: 4 }}
+      labelCol={{ span: 6 }}
       wrapperCol={{ span: 16 }}
     >
       <Form.Item

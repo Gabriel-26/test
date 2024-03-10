@@ -105,9 +105,8 @@ const MedicineList = () => {
       confirm({
         title: "Are you sure you want to delete this medicine?",
         content: "This action cannot be undone.",
-        okText: "Yes",
+        okText: "Confirm",
         okType: "danger",
-        cancelText: "No",
         onOk() {
           setDeleteLoading(true);
 

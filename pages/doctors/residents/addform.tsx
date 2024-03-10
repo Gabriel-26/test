@@ -77,7 +77,7 @@ const AddDoctorForm = ({
   return (
     <Form
       onFinish={handleFinish} // Use handleSubmit if provided, or handleFinish if not
-      labelCol={{ span: 4 }}
+      labelCol={{ span: 6 }}
       wrapperCol={{ span: 16 }}
     >
       <Form.Item

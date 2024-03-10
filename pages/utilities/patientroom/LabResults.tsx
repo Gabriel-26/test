@@ -143,6 +143,8 @@ const LabResultsPage = ({ patientData }) => {
     confirm({
       title: "Are you sure you want to delete this lab result?",
       content: "This action cannot be undone.",
+      okText: "Confirm",
+      okType: "danger",
       onOk() {
         axiosInstance
           .delete(`/results/delete/${selectedResultId}`)
@@ -183,33 +185,29 @@ const LabResultsPage = ({ patientData }) => {
       }}
     >
       <Grid container spacing={3}>
-        <Grid item xs={12}></Grid>
         <Grid item xs={12}>
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            marginBottom="1rem"
+          >
+            <Title
+              level={3}
+              style={{ marginTop: "26px", display: "inline-block" }}
+            >
+              Patient's Lab Results:{" "}
+            </Title>
+            <Button
+              icon={<MdAddCircle style={{ fontSize: "22px" }} />}
+              onClick={() => setAddModalVisible(true)}
+              style={{ marginTop: "26px", marginLeft: "8px" }}
+            ></Button>
+          </Box>
           {loading ? (
             <Spin size="large" />
           ) : fetchedResults.length > 0 ? (
             <div>
-              <Box
-                display="flex"
-                justifyContent="space-between"
-                alignItems="center"
-                marginBottom="1rem"
-              >
-                <Title
-                  level={3}
-                  style={{ marginTop: "26px", display: "inline-block" }}
-                >
-                  Patient's Lab Results:{" "}
-                </Title>
-                <Button
-                  type="primary"
-                  onClick={() => setAddModalVisible(true)}
-                  className="bg-green-500 hover:bg-green-600 focus:outline-none focus:ring focus:border-green-300"
-                  style={{ marginTop: "26px", marginLeft: "8px" }}
-                >
-                  <MdAddCircle style={{ fontSize: "20px" }} />
-                </Button>
-              </Box>
               {fetchedResults
                 .slice((currentPage - 1) * pageSize, currentPage * pageSize)
                 .map((result, index) => (
@@ -240,21 +238,19 @@ const LabResultsPage = ({ patientData }) => {
                       </p>
                       <div>
                         <Button
+                          icon={<FiEdit style={{ fontSize: "22px" }} />}
                           key="edit"
                           onClick={() => handleEditResult(result)}
                           // style={{ marginRight: "8px" }}
-                        >
-                          <FiEdit style={{ fontSize: "20px" }} />
-                        </Button>
+                        ></Button>
                         <Button
+                          icon={<MdDelete style={{ fontSize: "22px" }} />}
                           key="delete"
                           onClick={() =>
                             handleDeleteResult(result.labResults_id)
                           }
                           danger
-                        >
-                          <MdDelete style={{ fontSize: "20px" }} />
-                        </Button>
+                        ></Button>
                       </div>
                     </div>
                     <p style={{ marginBottom: "8px" }}>
@@ -270,10 +266,6 @@ const LabResultsPage = ({ patientData }) => {
                 style={{
                   marginTop: "16px",
                   textAlign: "center",
-                  position: "absolute",
-                  bottom: "110px", // Adjust as needed
-                  left: "50.3%",
-                  zIndex: 1,
                 }}
               />
             </div>
@@ -325,6 +317,7 @@ const LabResultsPage = ({ patientData }) => {
             type="primary"
             loading={editLoading}
             onClick={handleUpdate}
+            className="bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300"
           >
             Update
           </Button>,

@@ -59,13 +59,13 @@ const Medication = (props: any) => {
   };
 
   const fetchPatientMedications = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
       const response = await axiosInstance.get(
         `/patientMedicines/patient/${patientId}`
       );
-      const patientMedicationsData = response.data;
-      setPatientMedications(patientMedicationsData);
+      // const patientMedicationsData = response.data;
+      setPatientMedications(response.data);
     } catch (error) {
       console.error("Error fetching patient medications:", error);
     } finally {
@@ -225,6 +225,8 @@ const Medication = (props: any) => {
     confirm({
       title: "Are you sure you want to delete this medication?",
       content: "This action cannot be undone.",
+      okText: "Confirm",
+      okType: "danger",
       onOk() {
         axiosInstance
           .delete(`/patientMedicines/delete/${medicationId}`)
@@ -258,7 +260,7 @@ const Medication = (props: any) => {
     fetchPatientMedications();
   }, [patientId]);
   return (
-    <div style={{ maxWidth: "800px", margin: "auto" }}>
+    <div style={{ maxWidth: "800px", margin: "auto", height: "592px" }}>
       <Modal
         title="Add Medication"
         open={addModalVisible}
@@ -411,162 +413,155 @@ const Medication = (props: any) => {
         </Form>
       </Modal>
 
-      {loading ? (
-        <Spin size="large" />
-      ) : patientMedications.length > 0 ? (
+      <div
+        style={{
+          maxWidth: "800px",
+          margin: "auto",
+          marginBottom: "40px",
+          height: "592px",
+        }}
+      >
         <div
           style={{
-            maxWidth: "800px",
-            margin: "auto",
-            marginBottom: "40px",
-            height: "592px",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
           }}
         >
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
+          <Title
+            level={3}
+            style={{ marginTop: "26px", display: "inline-block" }}
           >
-            <Title
-              level={3}
-              style={{ marginTop: "26px", display: "inline-block" }}
-            >
-              Patient's Medication{" "}
-            </Title>
-            <Button
-              type="primary"
-              onClick={handleAddModalOpen}
-              className="bg-green-500 hover:bg-green-600 focus:outline-none focus:ring focus:border-green-300"
-              style={{ marginTop: "26px", marginLeft: "8px" }}
-            >
-              <MdAddCircle style={{ fontSize: "22px" }} />
-            </Button>
-          </div>
-
-          {patientMedications
-            .slice((currentPage - 1) * pageSize, currentPage * pageSize)
-            .map((medication, index) => (
-              <div
-                key={index}
-                style={{
-                  border: "1px solid #ecf0f1",
-                  borderRadius: "8px",
-                  padding: "20px",
-                  marginBottom: "20px",
-                  background: "#fff",
-                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-                }}
-              >
+            Patient's Medication{" "}
+          </Title>
+          <Button
+            icon={<MdAddCircle style={{ fontSize: "22px" }} />}
+            onClick={handleAddModalOpen}
+            style={{ marginTop: "26px", marginLeft: "8px" }}
+          ></Button>
+        </div>
+        {loading ? (
+          <Spin size="large" />
+        ) : patientMedications.length > 0 ? (
+          <div>
+            {patientMedications
+              .slice((currentPage - 1) * pageSize, currentPage * pageSize)
+              .map((medication, index) => (
                 <div
+                  key={index}
                   style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
+                    border: "1px solid #ecf0f1",
+                    borderRadius: "8px",
+                    padding: "20px",
+                    marginBottom: "20px",
+                    background: "#fff",
+                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                   }}
                 >
-                  <p
+                  <div
                     style={{
-                      color: "#3498db",
-                      marginBottom: "8px",
-                      fontSize: "18px",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
                     }}
                   >
-                    {`Medicine: ${medication.medicine_name}`}
-                  </p>
-                  <div>
-                    <Button
-                      key="edit"
-                      onClick={() => handleEdit(medication)}
-                      // style={{ marginRight: "8px" }}
+                    <p
+                      style={{
+                        color: "#3498db",
+                        marginBottom: "8px",
+                        fontSize: "18px",
+                      }}
                     >
-                      <FiEdit style={{ fontSize: "20px" }} />
-                    </Button>
-                    <Button
-                      key="delete"
-                      onClick={() =>
-                        handleDeleteMedication(medication.patientMedicine_id)
-                      }
-                      danger
-                    >
-                      <MdDelete style={{ fontSize: "20px" }} />
-                    </Button>
+                      {`Medicine: ${medication.medicine_name}`}
+                    </p>
+                    <div>
+                      <Button
+                        icon={<FiEdit style={{ fontSize: "20px" }} />}
+                        key="edit"
+                        onClick={() => handleEdit(medication)}
+                        // style={{ marginRight: "8px" }}
+                      ></Button>
+                      <Button
+                        icon={<MdDelete style={{ fontSize: "20px" }} />}
+                        key="delete"
+                        onClick={() =>
+                          handleDeleteMedication(medication.patientMedicine_id)
+                        }
+                        danger
+                      ></Button>
+                    </div>
                   </div>
+                  <p style={{ marginBottom: "8px" }}>
+                    {`Type: ${medication.medicine_type}`}
+                  </p>
+                  <p style={{ marginBottom: "8px" }}>
+                    {`Frequency: ${medication.medicine_frequency}`}
+                  </p>
+                  <p style={{ marginBottom: "8px" }}>
+                    {`Patient ID: ${medication.patient_id}`}
+                  </p>
+                  <p style={{ marginBottom: "8px" }}>
+                    {`Date: ${new Date(
+                      medication.patientMedicineDate
+                    ).toLocaleString("en-US", {
+                      weekday: "long",
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                      hour: "numeric",
+                      minute: "numeric",
+                      second: "numeric",
+                      timeZone: "Asia/Manila",
+                    })}`}
+                  </p>
+                  <p style={{ marginBottom: "8px" }}>
+                    {`Created At: ${new Date(
+                      medication.created_at
+                    ).toLocaleString("en-US", {
+                      weekday: "long",
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                      hour: "numeric",
+                      minute: "numeric",
+                      second: "numeric",
+                    })}`}
+                  </p>
+                  <p style={{ marginBottom: "8px" }}>
+                    {`Updated At: ${new Date(
+                      medication.updated_at
+                    ).toLocaleString("en-US", {
+                      weekday: "long",
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                      hour: "numeric",
+                      minute: "numeric",
+                      second: "numeric",
+                    })}`}
+                  </p>
                 </div>
-                <p style={{ marginBottom: "8px" }}>
-                  {`Type: ${medication.medicine_type}`}
-                </p>
-                <p style={{ marginBottom: "8px" }}>
-                  {`Frequency: ${medication.medicine_frequency}`}
-                </p>
-                <p style={{ marginBottom: "8px" }}>
-                  {`Patient ID: ${medication.patient_id}`}
-                </p>
-                <p style={{ marginBottom: "8px" }}>
-                  {`Date: ${new Date(
-                    medication.patientMedicineDate
-                  ).toLocaleString("en-US", {
-                    weekday: "long",
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                    hour: "numeric",
-                    minute: "numeric",
-                    second: "numeric",
-                    timeZone: "Asia/Manila",
-                  })}`}
-                </p>
-                <p style={{ marginBottom: "8px" }}>
-                  {`Created At: ${new Date(
-                    medication.created_at
-                  ).toLocaleString("en-US", {
-                    weekday: "long",
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                    hour: "numeric",
-                    minute: "numeric",
-                    second: "numeric",
-                  })}`}
-                </p>
-                <p style={{ marginBottom: "8px" }}>
-                  {`Updated At: ${new Date(
-                    medication.updated_at
-                  ).toLocaleString("en-US", {
-                    weekday: "long",
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                    hour: "numeric",
-                    minute: "numeric",
-                    second: "numeric",
-                  })}`}
-                </p>
-              </div>
-            ))}
-          <Pagination
-            current={currentPage}
-            total={patientMedications.length}
-            pageSize={pageSize}
-            onChange={(page) => setCurrentPage(page)}
-            style={{
-              marginTop: "16px",
-              textAlign: "center",
-              position: "absolute",
-              bottom: "85px", // Adjust as needed
-              left: "50.3%",
-              zIndex: 1,
-            }}
+              ))}
+            <Pagination
+              current={currentPage}
+              total={patientMedications.length}
+              pageSize={pageSize}
+              onChange={(page) => setCurrentPage(page)}
+              style={{
+                marginTop: "16px",
+                textAlign: "center",
+              }}
+            />
+          </div>
+        ) : (
+          <Alert
+            message="No Medications Found"
+            description="There are no medications recorded for this patient."
+            type="info"
+            // style={{ maxWidth: "800px", margin: "auto", marginBottom: "40px" }}
           />
-        </div>
-      ) : (
-        <Alert
-          message="No Medications Found"
-          description="There are no medications recorded for this patient."
-          type="info"
-        />
-      )}
+        )}
+      </div>
     </div>
   );
 };

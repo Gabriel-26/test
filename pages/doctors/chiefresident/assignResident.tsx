@@ -21,6 +21,7 @@ import {
   CheckCircleOutlined,
   CloseCircleOutlined,
 } from "@ant-design/icons";
+import { MdDelete } from "react-icons/md";
 
 const { Option } = Select;
 
@@ -65,15 +66,13 @@ const AssignResidentRoom = () => {
       key: "action",
       render: (text, record) => (
         <Button
+          icon={<MdDelete style={{ fontSize: "20px" }} />}
           type="default"
           onClick={() => {
-            console.log("Delete button clicked");
             showDeleteConfirmation(record.resAssRoom_id);
           }}
           style={{ zIndex: 1 }} // Set a higher z-index
-        >
-          Delete
-        </Button>
+        ></Button>
       ),
     },
   ];
@@ -173,9 +172,9 @@ const AssignResidentRoom = () => {
   const showDeleteConfirmation = (resAssRoomId) => {
     Modal.confirm({
       title: "Are you sure you want to delete this assignment?",
-      okText: "Yes",
+      content: "This action cannot be undone.",
+      okText: "Confirm",
       okType: "danger",
-      cancelText: "No",
       onOk() {
         handleDeleteAssignment(resAssRoomId);
       },

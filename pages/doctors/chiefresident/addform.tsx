@@ -78,7 +78,7 @@ const AddChiefResidentForm = ({
   return (
     <Form
       onFinish={handleFinish}
-      labelCol={{ span: 4 }}
+      labelCol={{ span: 6 }}
       wrapperCol={{ span: 16 }}
     >
       <Form.Item

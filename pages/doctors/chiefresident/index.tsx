@@ -20,6 +20,8 @@ import FullLayout from "../../../src/layouts/full/FullLayout";
 import { Modal, Button, Drawer, Select, Spin, message, Alert } from "antd";
 import AddChiefResidentForm from "./addform";
 import EditChiefResidentForm from "./editform";
+import { MdAddCircle, MdDelete } from "react-icons/md";
+import { FiEdit } from "react-icons/fi";
 
 const ChiefResident = () => {
   const [doctors, setDoctors] = useState([]);
@@ -95,9 +97,8 @@ const ChiefResident = () => {
       confirm({
         title: "Are you sure you want to delete this resident?",
         content: "This action cannot be undone.",
-        okText: "Yes",
+        okText: "Confirm",
         okType: "danger",
-        cancelText: "No",
         onOk() {
           // Start loading
           setDeleteLoading(true);
@@ -207,17 +208,18 @@ const ChiefResident = () => {
       <DashboardCard title="Chief Residents">
         <Spin spinning={loading}>
           <Box sx={{ overflow: "auto", width: { xs: "600px", sm: "auto" } }}>
-            <Modal
-              title="Confirm Deletion"
-              open={deleteModalVisible}
-              onOk={() => setDeleteModalVisible(false)}
-              onCancel={() => setDeleteModalVisible(false)}
-              confirmLoading={deleteLoading}
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end	",
+                alignItems: "center",
+              }}
             >
-              <p>Are you sure you want to delete this resident?</p>
-              {deleteError && <Alert message={deleteError} type="error" />}
-            </Modal>
-            <Button onClick={handleAddDoctor}>New Resident</Button>
+              <Button
+                icon={<MdAddCircle style={{ fontSize: "22px" }} />}
+                onClick={handleAddDoctor}
+              ></Button>
+            </Box>
             <Stack direction="column" spacing={2}>
               <TextField
                 label="Search"
@@ -233,7 +235,7 @@ const ChiefResident = () => {
               title={
                 isAddingDoctor ? "Add Chief Resident" : "Edit Chief Resident"
               }
-              width={720}
+              width={550}
               onClose={handleDrawerClose}
               open={isAddingDoctor || isEditing}
               bodyStyle={{ paddingBottom: 80 }}
@@ -326,7 +328,7 @@ const ChiefResident = () => {
                           {doctor.resident_userName}
                         </Typography>
                       </TableCell>
-                      <TableCell>
+                      <TableCell style={{ textAlign: "center" }}>
                         <Typography
                           color="textSecondary"
                           variant="subtitle2"
@@ -336,7 +338,7 @@ const ChiefResident = () => {
                           {doctor.resident_fName}
                         </Typography>
                       </TableCell>
-                      <TableCell>
+                      <TableCell style={{ textAlign: "center" }}>
                         <Typography
                           color="textSecondary"
                           variant="subtitle2"
@@ -346,32 +348,28 @@ const ChiefResident = () => {
                           {doctor.resident_lName}
                         </Typography>
                       </TableCell>
-                      <TableCell>
+                      <TableCell style={{ textAlign: "center" }}>
                         <Typography sx={{ whiteSpace: "normal" }}>
                           {doctor.resident_mName}
                         </Typography>
                       </TableCell>
-                      <TableCell>
+                      <TableCell style={{ textAlign: "center" }}>
                         <Typography>{doctor.resident_gender}</Typography>
                       </TableCell>
-                      <TableCell>
-                        <Typography className=" pl-8">
-                          {doctor.department_id}
-                        </Typography>
+                      <TableCell style={{ textAlign: "center" }}>
+                        <Typography>{doctor.department_id}</Typography>
                       </TableCell>
-                      <TableCell>
+                      <TableCell style={{ textAlign: "center" }}>
                         <Button
+                          icon={<FiEdit style={{ fontSize: "22px" }} />}
                           color="primary"
                           onClick={() => handleEditDoctor(doctor)}
-                        >
-                          Edit
-                        </Button>
+                        ></Button>
                         <Button
+                          icon={<MdDelete style={{ fontSize: "22px" }} />}
                           color="error"
                           onClick={() => handleDeleteDoctor(doctor.resident_id)}
-                        >
-                          Delete
-                        </Button>
+                        ></Button>
                       </TableCell>
                     </TableRow>
                   ))}
