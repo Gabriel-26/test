@@ -290,7 +290,13 @@ const LabResultsPage = ({ patientData }) => {
           placeholder="Enter lab results here..."
           value={labResults}
           onChange={handleInputChange}
-          style={{ width: "100%", fontSize: "1.2rem" }}
+          style={{
+            width: "100%",
+            fontSize: "1.2rem",
+            border: "1px solid #ccc", // Add border style here
+            borderRadius: "5px", // Add border radius for rounded corners
+            padding: "8px", // Add padding for better appearance
+          }}
         />
         <Box display="flex" justifyContent="center" marginTop="1rem">
           <Button
@@ -330,7 +336,13 @@ const LabResultsPage = ({ patientData }) => {
           onChange={(e) =>
             setEditedResult({ ...editedResult, results: e.target.value })
           }
-          style={{ width: "100%", fontSize: "1.2rem" }}
+          style={{
+            width: "100%",
+            fontSize: "1.2rem",
+            border: "1px solid #ccc", // Add border style here
+            borderRadius: "5px", // Add border radius for rounded corners
+            padding: "8px", // Add padding for better appearance
+          }}
         />
       </Modal>
     </div>

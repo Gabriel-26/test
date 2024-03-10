@@ -227,10 +227,7 @@ const FileViewer = ({ patientData }) => {
         onChange={handlePageChange}
         style={{
           marginTop: "16px",
-          position: "absolute",
-          bottom: "300px",
-          left: "54.3%",
-          transform: "translateX(-50%)",
+          textAlign: "center",
         }}
       />
     </div>

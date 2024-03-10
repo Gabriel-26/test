@@ -46,13 +46,6 @@ const RoomView = () => {
   };
 
   // Function to handle the checkout when the user confirms
-  const handleCheckoutConfirmed = () => {
-    // Perform the checkout logic here
-    // ...
-
-    // Close the confirmation dialog
-    setIsCheckoutModalVisible(false);
-  };
 
   // Function to handle cancellation of the confirmation
   const handleCheckoutCancel = () => {
