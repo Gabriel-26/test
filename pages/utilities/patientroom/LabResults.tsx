@@ -181,7 +181,7 @@ const LabResultsPage = ({ patientData }) => {
         maxWidth: "800px",
         margin: "auto",
         marginBottom: "40px",
-        height: "592px",
+        // height: "592px",
       }}
     >
       <Grid container spacing={3}>

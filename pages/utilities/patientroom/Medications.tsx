@@ -106,6 +106,11 @@ const Medication = (props: any) => {
       values.patientMedicineDate = selectedDateTime.format();
       values.patient_id = patientId;
 
+      const disabledDate = (current) => {
+        // Disable dates before today
+        return current && current < moment().startOf("day");
+      };
+
       const selectedMedicine = medications.find(
         (medication) => medication.medicine_name === values.medicine_id
       );
@@ -133,6 +138,7 @@ const Medication = (props: any) => {
           const updatedMedications = updatedMedicationsResponse.data;
 
           setPatientMedications(updatedMedications);
+
           message.success("Medication added successfully!");
         } else {
           console.error("Failed to save medication.");
@@ -260,7 +266,7 @@ const Medication = (props: any) => {
     fetchPatientMedications();
   }, [patientId]);
   return (
-    <div style={{ maxWidth: "800px", margin: "auto", height: "592px" }}>
+    <div style={{ maxWidth: "800px", margin: "auto" }}>
       <Modal
         title="Add Medication"
         open={addModalVisible}
@@ -418,7 +424,6 @@ const Medication = (props: any) => {
           maxWidth: "800px",
           margin: "auto",
           marginBottom: "40px",
-          height: "592px",
         }}
       >
         <div
