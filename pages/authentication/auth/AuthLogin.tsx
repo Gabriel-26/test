@@ -2,19 +2,15 @@ import React, { useState } from "react";
 import {
   Box,
   Typography,
-  FormGroup,
-  FormControlLabel,
-  Button,
   Stack,
-  Checkbox,
-  Radio,
-  RadioGroup,
+  Switch,
+  Button,
+  FormControlLabel,
+  FormGroup,
   FormControl,
   FormLabel,
 } from "@mui/material";
 import { message } from "antd";
-
-import Link from "next/link";
 import CustomTextField from "../../../src/components/forms/theme-elements/CustomTextField";
 import { JSX } from "@emotion/react/jsx-runtime";
 import { useRouter } from "next/router";
@@ -31,10 +27,10 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
-  const [loginType, setLoginType] = useState("admin"); // Default to admin login
-
+  const [loginType, setLoginType] = useState("admin");
   const adminAuth = useAdminAuth();
   const residentAuth = useResidentAuth();
+  const router = useRouter();
 
   const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(event.target.value);
@@ -50,10 +46,10 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
     setRememberMe(event.target.checked);
   };
 
-  const handleLoginTypeChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setLoginType(event.target.value);
+  const handleLoginTypeChange = () => {
+    setLoginType((prevLoginType) =>
+      prevLoginType === "admin" ? "resident" : "admin"
+    );
   };
 
   const handleSignIn = async () => {
@@ -67,22 +63,15 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
       }
 
       if (loginResult === "success") {
-        // If the login was successful, set the token and redirect
         const token = localStorage.getItem("authToken");
         console.log("Token:", token);
-
-        // Show a success message
         message.success("Login successful");
-
-        // Redirect to the desired route (e.g., '/')
+        router.push("/"); // Redirect to the desired route
       } else {
-        // Show an error message for unsuccessful login
         message.error("Wrong credentials. Please try again.");
       }
     } catch (error) {
       console.error("Error occurred during login:", error);
-
-      // Show an error message for unexpected errors
       message.error("An error occurred during login. Please try again later.");
     }
   };
@@ -96,25 +85,26 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
       ) : null}
       {subtext}
 
-      <FormControl component="fieldset">
-        <FormLabel component="legend">Login Type</FormLabel>
-        <RadioGroup
-          row
-          aria-label="login-type"
-          name="login-type"
-          value={loginType}
-          onChange={handleLoginTypeChange}
-        >
-          <FormControlLabel value="admin" control={<Radio />} label="Admin" />
-          <FormControlLabel
-            value="resident"
-            control={<Radio />}
-            label="Resident"
-          />
-        </RadioGroup>
-      </FormControl>
+      <Stack direction="row" spacing={1} alignItems="center">
+        <FormControl component="fieldset">
+          <FormLabel component="legend">Login</FormLabel>
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={loginType === "resident"}
+                  onChange={handleLoginTypeChange}
+                  name="loginTypeSwitch"
+                  color="primary"
+                />
+              }
+              label={loginType === "resident" ? "Resident" : "Admin"}
+            />
+          </FormGroup>
+        </FormControl>
+      </Stack>
 
-      <Stack>
+      <Stack spacing={2}>
         <Box>
           <Typography
             variant="subtitle1"
@@ -133,7 +123,7 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
             onChange={handleUsernameChange}
           />
         </Box>
-        <Box mt="25px">
+        <Box>
           <Typography
             variant="subtitle1"
             fontWeight={600}
@@ -141,7 +131,7 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
             htmlFor="password"
             mb="5px"
           >
-            {loginType === "admin" ? "Password" : "Password"}
+            Password
           </Typography>
           <CustomTextField
             type="password"
@@ -152,50 +142,34 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
             onChange={handlePasswordChange}
           />
         </Box>
-        <Stack
-          justifyContent="space-between"
-          direction="row"
-          alignItems="center"
-          my={2}
-        >
-          {/* <FormGroup>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={rememberMe}
-                  onChange={handleRememberMeChange}
-                />
-              }
-              label="Remember this Device"
-            />
-          </FormGroup>
-          <Typography
-            component={Link}
-            href="/"
-            fontWeight="500"
-            sx={{
-              textDecoration: "none",
-              color: "primary.main",
-            }}
-          >
-            Forgot Password ?
-          </Typography> */}
-        </Stack>
+        {/* <FormGroup>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={rememberMe}
+                onChange={handleRememberMeChange}
+                name="rememberMe"
+                color="primary"
+              />
+            }
+            label="Remember this Device"
+          />
+        </FormGroup> */}
       </Stack>
-      <Box>
+
+      <Box mt={2}>
         <Button
           color="primary"
           variant="contained"
           size="large"
           fullWidth
           onClick={handleSignIn}
-          style={{
-            backgroundColor: "blue",
-          }}
+          style={{ backgroundColor: "blue" }}
         >
           Sign In
         </Button>
       </Box>
+
       {subtitle}
     </>
   );
