@@ -7,6 +7,7 @@ interface Resident {
   resident_userName: string;
   resident_fName: string;
   resident_lName: string;
+  isDeleted: number;
 }
 
 interface ResidentsListProps {
@@ -29,13 +30,18 @@ const ResidentsList: React.FC<ResidentsListProps> = ({
     axiosInstance
       .get("chatGroupUsers/get/firstAddResidents")
       .then((response) => {
-        setResidents(response.data);
-        console.log("Residents:", response.data);
+        // Filter out residents with isDeleted equal to 1
+        const filteredResidents = response.data.filter(
+          (resident: Resident) => resident.isDeleted !== 1
+        );
+        setResidents(filteredResidents);
+        console.log("Residents:", filteredResidents);
       })
       .catch((error) => {
         console.error("Error fetching residents:", error);
       });
   }, []);
+  
 
   const handleCheckboxChange = (checkedValues: string[]) => {
     setSelectedResidents(checkedValues);
