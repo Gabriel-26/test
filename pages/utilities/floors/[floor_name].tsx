@@ -210,21 +210,22 @@ const Rooms = () => {
           room_floor: editRoomFloor,
           room_type: editRoomType,
           room_price: editRoomPrice,
+          floor_id: editRoomFloor, // Include the floor_id in the update
         }
       );
-
+  
       // Fetch rooms again after the edit is completed
       fetchRooms(queryFloorId as string);
-
+  
       // Display success message
       message.success("Room updated successfully");
     } catch (error) {
       console.error("Error updating room:", error);
-
+  
       // Display error message
       message.error("Error updating room. Please try again.");
     }
-
+  
     // Reset state
     setEditRoomId("");
     setEditRoomName("");
@@ -233,11 +234,12 @@ const Rooms = () => {
     setEditRoomPrice("");
     setShowEditRoomModal(false);
   };
+  
 
   const handleConfirmDeleteRoom = async () => {
     try {
       const response = await axiosInstance.delete(
-        `admin/rooms/${deleteRoomId}`
+        `admin/rooms/delete/${deleteRoomId}`
       );
 
       // Fetch rooms again after the delete is completed
