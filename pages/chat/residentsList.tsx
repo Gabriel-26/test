@@ -27,6 +27,9 @@ const ResidentsList: React.FC<ResidentsListProps> = ({
   axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
   useEffect(() => {
+    // Retrieve the current user's resident_id from local storage
+    const currentUserResidentId = localStorage.getItem("resID");
+  
     axiosInstance
       .get("chatGroupUsers/get/firstAddResidents")
       .then((response) => {
@@ -34,13 +37,20 @@ const ResidentsList: React.FC<ResidentsListProps> = ({
         const filteredResidents = response.data.filter(
           (resident: Resident) => resident.isDeleted !== 1
         );
-        setResidents(filteredResidents);
-        console.log("Residents:", filteredResidents);
+  
+        // Filter out the current user from the list of residents
+        const updatedResidents = filteredResidents.filter(
+          (resident: Resident) => resident.resident_id !== currentUserResidentId
+        );
+  
+        setResidents(updatedResidents);
+        console.log("Residents:", updatedResidents);
       })
       .catch((error) => {
         console.error("Error fetching residents:", error);
       });
   }, []);
+  
   
 
   const handleCheckboxChange = (checkedValues: string[]) => {
