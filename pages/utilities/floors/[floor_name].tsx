@@ -210,7 +210,7 @@ const Rooms = () => {
           room_floor: editRoomFloor,
           room_type: editRoomType,
           room_price: editRoomPrice,
-          floor_id: editRoomFloor, // Include the floor_id in the update
+          floor_id: queryFloorId as string,
         }
       );
   
