@@ -635,8 +635,7 @@ const Rooms = () => {
 
           <Form.Item name="room_type" label="Room Type">
   <Select
-    value={editRoomType}
-    onChange={(value) => setEditRoomType(value)} // Allow the user to change the room type
+  
     placeholder="Select room type"
   >
     <Option value="Private">Private</Option>
