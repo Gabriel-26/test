@@ -500,9 +500,9 @@ const ChatWithChatmate: React.FC<{
                   style={{
                     textAlign: messageAlignment,
                     marginBottom: "8px",
-                    maxWidth: "80%", // Set a maximum width for the message container
-                    overflowX: "auto", // Allow horizontal scrolling if content exceeds the width
                     whiteSpace: "pre-wrap", // Enable wrapping for long lines
+                    wordWrap: "break-word", // Ensure long words are broken
+                
                   }}
                 >
                   <List.Item.Meta
