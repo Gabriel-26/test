@@ -157,10 +157,12 @@ const Medication = (props: any) => {
   const handleEdit = (medication) => {
     console.log("Selected Medication for Edit:", medication);
     setSelectedMedication(medication);
-    
+
     // Format the date to match the desired format
-    const formattedDate = moment(medication.patientMedicineDate).format("YYYY-MM-DD HH:mm:ss");
-    
+    const formattedDate = moment(medication.patientMedicineDate).format(
+      "YYYY-MM-DD HH:mm:ss"
+    );
+
     form.setFieldsValue({
       medicine_id: medication.medicine_name,
       medicine_frequency: medication.medicine_frequency,
@@ -168,7 +170,6 @@ const Medication = (props: any) => {
     });
     setEditModalVisible(true);
   };
-  
 
   const handleEditSubmit = async (values, selectedDate) => {
     try {
@@ -266,10 +267,16 @@ const Medication = (props: any) => {
     });
   };
 
+  const isPastDeadline = (medicationDate) => {
+    const currentDateTime = moment().tz("Asia/Manila");
+    return moment(medicationDate).isBefore(currentDateTime);
+  };
+
   useEffect(() => {
     fetchMedications();
     fetchPatientMedications();
   }, [patientId]);
+
   return (
     <div style={{ maxWidth: "800px", margin: "auto" }}>
       <Modal
@@ -489,7 +496,6 @@ const Medication = (props: any) => {
                         icon={<FiEdit style={{ fontSize: "20px" }} />}
                         key="edit"
                         onClick={() => handleEdit(medication)}
-                        // style={{ marginRight: "8px" }}
                       ></Button>
                       <Button
                         icon={<MdDelete style={{ fontSize: "20px" }} />}
@@ -501,6 +507,12 @@ const Medication = (props: any) => {
                       ></Button>
                     </div>
                   </div>
+                  {/* Render indicator if medication date is past the deadline */}
+                  {new Date(medication.patientMedicineDate) < new Date() && (
+                    <p style={{ color: "red" }}>
+                      {`Medication Status: Past Deadline`}
+                    </p>
+                  )}
                   <p style={{ marginBottom: "8px" }}>
                     {`Type: ${medication.medicine_type}`}
                   </p>

@@ -321,7 +321,7 @@ const RoomView = () => {
             disabled={patientData.length === 0}
             style={{ flex: 1 }}
           >
-            Checkout Patient
+            Discharge Patient
           </Button>
 
           <Button
