@@ -111,22 +111,40 @@ const HumanFigureEvaluation = (props: any) => {
   };
 
   return (
-    <div>
-      <StatusPage
-        patientId={patientId}
-        setEvaluationData={setEvaluationData}
-        evaluationData={evaluationData}
-        handleStatusChange={handleStatusChange}
-        handleNoteChange={handleNoteChange}
-      />
-      <Button
-        type="primary"
-        style={{ backgroundColor: "#4CAF50", borderColor: "#4CAF50" }}
-        onClick={handleSave}
+    <div style={{ display: "flex" }}>
+      {/* StatusPage */}
+      <div
+        style={{
+          flex: 0.5,
+          overflowY: "auto",
+          maxHeight: "60vh",
+          padding: "0 10px",
+        }}
       >
-        Save
-      </Button>{" "}
-      <ImagePage evaluationData={evaluationData} />
+        <StatusPage
+          patientId={patientId}
+          setEvaluationData={setEvaluationData}
+          evaluationData={evaluationData}
+          handleStatusChange={handleStatusChange}
+          handleNoteChange={handleNoteChange}
+        />
+        <Button
+          type="primary"
+          style={{
+            backgroundColor: "#4CAF50",
+            borderColor: "#4CAF50",
+            marginTop: "10px",
+          }}
+          onClick={handleSave}
+        >
+          Save
+        </Button>
+      </div>
+
+      {/* ImagePage */}
+      <div style={{ flex: 1, marginLeft: "0px" }}>
+        <ImagePage evaluationData={evaluationData} />
+      </div>
     </div>
   );
 };
