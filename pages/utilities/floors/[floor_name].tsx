@@ -213,19 +213,19 @@ const Rooms = () => {
           floor_id: queryFloorId as string,
         }
       );
-  
+
       // Fetch rooms again after the edit is completed
       fetchRooms(queryFloorId as string);
-  
+
       // Display success message
       message.success("Room updated successfully");
     } catch (error) {
       console.error("Error updating room:", error);
-  
+
       // Display error message
       message.error("Error updating room. Please try again.");
     }
-  
+
     // Reset state
     setEditRoomId("");
     setEditRoomName("");
@@ -234,7 +234,6 @@ const Rooms = () => {
     setEditRoomPrice("");
     setShowEditRoomModal(false);
   };
-  
 
   const handleConfirmDeleteRoom = async () => {
     try {
@@ -522,16 +521,16 @@ const Rooms = () => {
           </Form.Item>
 
           <Form.Item name="room_type" label="Room Type">
-  <Select
-    value={roomTypeInput}
-    onChange={(value) => setRoomTypeInput(value)}
-    placeholder="Select room type"
-  >
-    <Option value="Private">Private</Option>
-    <Option value="Semi-Private">Semi-Private</Option>
-    <Option value="Ward">Ward</Option>
-  </Select>
-</Form.Item>
+            <Select
+              value={roomTypeInput}
+              onChange={(value) => setRoomTypeInput(value)}
+              placeholder="Select room type"
+            >
+              <Option value="Private">Private</Option>
+              <Option value="Semi-Private">Semi-Private</Option>
+              <Option value="Ward">Ward</Option>
+            </Select>
+          </Form.Item>
 
           <Form.Item name="room_price" label="Room Price">
             <Input
@@ -633,16 +632,17 @@ const Rooms = () => {
             />
           </Form.Item>
 
-          <Form.Item name="room_type" label="Room Type">
-  <Select
-  
-    placeholder="Select room type"
-  >
-    <Option value="Private">Private</Option>
-    <Option value="Semi-Private">Semi-Private</Option>
-    <Option value="Ward">Ward</Option>
-  </Select>
-</Form.Item>
+          <Form.Item label="Room Type">
+            <Select
+              value={editRoomType} // Set the default value to the current room type
+              onChange={(value) => setEditRoomType(value)} // Allow the user to change the room type
+              placeholder="Select room type"
+            >
+              <Option value="Private">Private</Option>
+              <Option value="Semi-Private">Semi-Private</Option>
+              <Option value="Ward">Ward</Option>
+            </Select>
+          </Form.Item>
 
           <Form.Item label="Room Price">
             <Input
