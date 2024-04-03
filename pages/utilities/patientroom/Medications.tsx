@@ -160,7 +160,7 @@ const Medication = (props: any) => {
     form.setFieldsValue({
       medicine_id: medication.medicine_name,
       medicine_frequency: medication.medicine_frequency,
-      patientMedicineDate: moment(medication.patientMedicineDate),
+      patientMedicineDate: moment(medication.patientMedicineDate, "YYYY-MM-DD"), // Convert to moment object with correct format
     });
     setEditModalVisible(true);
   };
