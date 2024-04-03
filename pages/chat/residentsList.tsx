@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { List, Checkbox, Button, Modal } from "antd";
+import { List, Radio, Button, Modal } from "antd";
 import axiosInstance from "../../src/components/utils/axiosInstance";
 
 interface Resident {
@@ -20,28 +20,17 @@ const ResidentsList: React.FC<ResidentsListProps> = ({
   onCancel,
 }) => {
   const [residents, setResidents] = useState<Resident[]>([]);
-  const [selectedResidents, setSelectedResidents] = useState<string[]>([]);
+  const [selectedResident, setSelectedResident] = useState<string | null>(null);
 
   const token = localStorage.getItem("authToken");
-  // Set the token in Axios headers for this request
   axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
   useEffect(() => {
-    // Retrieve the current user's resident_id from local storage
     const currentUserResidentId = localStorage.getItem("resID");
   
     axiosInstance
       .get("chatGroupUsers/get/firstAddResidents")
       .then((response) => {
-        // // Filter out residents with isDeleted equal to 1
-        // const filteredResidents = response.data.filter(
-        //   (resident: Resident) => resident.isDeleted !== 1
-        // );
-  
-        // // Filter out the current user from the list of residents
-        // const updatedResidents = filteredResidents.filter(
-        //   (resident: Resident) => resident.resident_id !== currentUserResidentId
-        // );
         const filteredResidents = response.data.filter(
           (resident: Resident) => resident.isDeleted !== 1
         );
@@ -53,22 +42,20 @@ const ResidentsList: React.FC<ResidentsListProps> = ({
         console.error("Error fetching residents:", error);
       });
   }, []);
-  
-  
 
-  const handleCheckboxChange = (checkedValues: string[]) => {
-    setSelectedResidents(checkedValues);
+  const handleRadioChange = (e: any) => {
+    setSelectedResident(e.target.value);
   };
 
   const handleCreateChatGroup = () => {
-    onSelectResidents(selectedResidents);
-    onCancel(); // Close the modal after creating the chat group
+    onSelectResidents([selectedResident!]);
+    onCancel();
   };
 
   return (
     <Modal
-      title="Select Residents"
-      open={true} // Set this to true or false based on your logic
+      title="Select Resident"
+      visible={true} // Set this to true or false based on your logic
       onCancel={onCancel}
       footer={[
         <Button key="cancel" onClick={onCancel}>
@@ -78,36 +65,30 @@ const ResidentsList: React.FC<ResidentsListProps> = ({
           key="create"
           type="primary"
           onClick={handleCreateChatGroup}
-          disabled={selectedResidents.length === 0}
+          disabled={!selectedResident}
           style={{
-            background: selectedResidents.length > 0 ? "#4CAF50" : "#d9d9d9",
-            borderColor: selectedResidents.length > 0 ? "#4CAF50" : "#d9d9d9",
-            color:
-              selectedResidents.length > 0 ? "white" : "rgba(0, 0, 0, 0.25)",
+            background: selectedResident ? "#4CAF50" : "#d9d9d9",
+            borderColor: selectedResident ? "#4CAF50" : "#d9d9d9",
+            color: selectedResident ? "white" : "rgba(0, 0, 0, 0.25)",
           }}
         >
           Create Chat Group
         </Button>,
       ]}
     >
-      <Checkbox.Group
-        onChange={(checkedValues) =>
-          handleCheckboxChange(checkedValues as string[])
-        }
-        value={selectedResidents}
-      >
+      <Radio.Group onChange={handleRadioChange} value={selectedResident}>
         <List
           dataSource={residents}
           itemLayout="horizontal"
           renderItem={(resident) => (
             <List.Item>
-              <Checkbox value={resident.resident_id}>
+              <Radio value={resident.resident_id}>
                 {resident.resident_fName} {resident.resident_lName}
-              </Checkbox>
+              </Radio>
             </List.Item>
           )}
         />
-      </Checkbox.Group>
+      </Radio.Group>
     </Modal>
   );
 };
