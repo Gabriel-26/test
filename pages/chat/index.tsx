@@ -500,8 +500,8 @@ const ChatWithChatmate: React.FC<{
                   style={{
                     textAlign: messageAlignment,
                     marginBottom: "8px",
-                    wordWrap: "break-word", // Ensure long words are broken
-
+                    whiteSpace: "pre-wrap", // Enable wrapping for long lines
+    wordWrap: "break-word", // Ensure long words are broken
                 
                   }}
                 >
@@ -523,6 +523,8 @@ const ChatWithChatmate: React.FC<{
                   style={{
                     textAlign: messageAlignment,
                     marginBottom: "8px",
+                    whiteSpace: "pre-wrap", // Enable wrapping for long lines
+    wordWrap: "break-word", // Ensure long words are broken
                   }}
                 >
                   <List.Item.Meta
