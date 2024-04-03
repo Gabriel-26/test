@@ -157,19 +157,13 @@ const Medication = (props: any) => {
   const handleEdit = (medication) => {
     console.log("Selected Medication for Edit:", medication);
     setSelectedMedication(medication);
-    
-    // Format the date to match the desired format
-    const formattedDate = moment(medication.patientMedicineDate).format("dddd, MMMM D, YYYY [at] h:mm:ss A");
-    
     form.setFieldsValue({
       medicine_id: medication.medicine_name,
       medicine_frequency: medication.medicine_frequency,
-      patientMedicineDate: moment(formattedDate), // Convert to moment object
+      patientMedicineDate: moment(medication.patientMedicineDate),
     });
     setEditModalVisible(true);
   };
-  
-  
 
   const handleEditSubmit = async (values, selectedDate) => {
     try {
