@@ -522,11 +522,17 @@ const Rooms = () => {
           </Form.Item>
 
           <Form.Item name="room_type" label="Room Type">
-            <Input
-              value={roomTypeInput}
-              onChange={(e) => setRoomTypeInput(e.target.value)}
-            />
-          </Form.Item>
+  <Select
+    value={roomTypeInput}
+    onChange={(value) => setRoomTypeInput(value)}
+    placeholder="Select room type"
+  >
+    <Option value="Private">Private</Option>
+    <Option value="Semi-Private">Semi-Private</Option>
+    <Option value="Ward">Ward</Option>
+  </Select>
+</Form.Item>
+
           <Form.Item name="room_price" label="Room Price">
             <Input
               type="number" // Use the type attribute to ensure numeric input
@@ -627,12 +633,18 @@ const Rooms = () => {
             />
           </Form.Item>
 
-          <Form.Item label="Room Type">
-            <Input
-              value={editRoomType}
-              onChange={(e) => setEditRoomType(e.target.value)}
-            />
-          </Form.Item>
+          <Form.Item name="room_type" label="Room Type">
+  <Select
+    value={roomTypeInput}
+    onChange={(value) => setRoomTypeInput(value)}
+    placeholder="Select room type"
+  >
+    <Option value="Private">Private</Option>
+    <Option value="Semi-Private">Semi-Private</Option>
+    <Option value="Ward">Ward</Option>
+  </Select>
+</Form.Item>
+
           <Form.Item label="Room Price">
             <Input
               value={editRoomPrice}

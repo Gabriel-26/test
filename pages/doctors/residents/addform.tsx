@@ -108,16 +108,16 @@ const AddDoctorForm = ({
       >
         <Input />
       </Form.Item>
-      <Form.Item
-      label="Gender"
-      name="resident_gender"
-      rules={[{ required: true, message: "Please select a gender" }]}
-    >
-      <Select placeholder="Select a gender">
-        <Option value="Male">Male</Option>
-        <Option value="Female">Female</Option>
-      </Select>
-    </Form.Item>
+        <Form.Item
+        label="Gender"
+        name="resident_gender"
+        rules={[{ required: true, message: "Please select a gender" }]}
+      >
+        <Select placeholder="Select a gender">
+          <Option value="Male">Male</Option>
+          <Option value="Female">Female</Option>
+        </Select>
+      </Form.Item>
 
       <Form.Item label="Password" name="resident_password">
         <Input.Password />
