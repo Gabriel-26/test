@@ -14,12 +14,14 @@ import {
   Modal,
 } from "antd";
 import axiosInstance from "../../../src/components/utils/axiosInstance";
-import moment from "moment-timezone";
+import moment, { Moment } from "moment-timezone";
 import { MdAddCircle, MdDelete } from "react-icons/md";
 import { FiEdit } from "react-icons/fi";
+import momentGenerateConfig from 'rc-picker/lib/generate/moment';
 
 const { Title } = Typography;
 const { confirm } = Modal;
+const MyDatePicker = DatePicker.generatePicker<Moment>(momentGenerateConfig);
 
 const Medication = (props: any) => {
   const [form] = Form.useForm();
@@ -268,10 +270,10 @@ const Medication = (props: any) => {
     });
   };
 
-  const isPastDeadline = (medicationDate) => {
-    const currentDateTime = moment().tz("Asia/Manila");
-    return moment(medicationDate).isBefore(currentDateTime);
-  };
+  // const isPastDeadline = (medicationDate) => {
+  //   const currentDateTime = moment().tz("Asia/Manila");
+  //   return moment(medicationDate).isBefore(currentDateTime);
+  // };
 
   useEffect(() => {
     fetchMedications();
@@ -355,7 +357,7 @@ const Medication = (props: any) => {
             name="patientMedicineDate"
             rules={[{ required: true, message: "Please select a date" }]}
           >
-            <DatePicker format="YYYY-MM-DD" />
+            <MyDatePicker format="YYYY-MM-DD" />
           </Form.Item>
           <Form.Item>
             <Button
@@ -440,7 +442,7 @@ const Medication = (props: any) => {
             name="patientMedicineDate"
             rules={[{ required: true, message: "Please select a date" }]}
           >
-            <DatePicker format="YYYY-MM-DD" />
+            <MyDatePicker format="YYYY-MM-DD" />
           </Form.Item>
           <Form.Item>
             <Button
