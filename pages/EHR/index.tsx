@@ -6,6 +6,8 @@ import { useForm } from "react-hook-form";
 import axios from "../../src/components/utils/axiosInstance";
 import { message, Button } from "antd";
 import { Grid } from "@mui/material";
+import React from "react";
+import InputMask from "react-input-mask";
 
 export function EHRForm() {
   const [roomData, setRoomData] = useState([]);
@@ -1028,7 +1030,9 @@ export function EHRForm() {
                   <span>RR</span>
                   <input
                     {...register("phr_rr")}
-                    type="number"
+                    type="text"
+                    maxLength={2} // Limit input to 2 characters
+                    pattern="[0-9]{0,2}" // Use a regular expression to allow only digits and limit to 2
                     className="border border-gray-300 px-4 py-2 rounded-lg"
                   />
                 </label>
@@ -1038,10 +1042,11 @@ export function EHRForm() {
               <div className="my-4">
                 <label className="flex flex-col">
                   <span>T*</span>
-                  <input
-                    {...register("phr_T*")}
-                    type="number"
+                  <InputMask
+                    mask="99.9 °C" // Set the mask to accept up to 3 digits followed by decimal point and one digit, then " °C"
+                    maskChar={null} // Hide the mask character
                     className="border border-gray-300 px-4 py-2 rounded-lg"
+                    placeholder="Enter Temperature"
                   />
                 </label>
               </div>
@@ -1050,10 +1055,11 @@ export function EHRForm() {
               <div className="my-4">
                 <label className="flex flex-col">
                   <span>SpO2</span>
-                  <input
-                    {...register("phr_Sp-02")}
-                    type="number"
+                  <InputMask
+                    mask="99%" // Set the mask to accept up to 2 digits followed by "%"
+                    maskChar={null} // Hide the mask character
                     className="border border-gray-300 px-4 py-2 rounded-lg"
+                    placeholder="Enter SpO2"
                   />
                 </label>
               </div>
@@ -1067,10 +1073,13 @@ export function EHRForm() {
                 <div className="my-4">
                   <label className="flex flex-col">
                     <span>Sitting</span>
-                    <input
+                    <InputMask
+                      mask="999/999" // Mask for up to three digits for both numerator and denominator
+                      maskChar="" // Remove default masking character (_)
                       {...register("phr_bpSitting")}
-                      type="number"
+                      type="text"
                       className="border border-gray-300 px-4 py-2 rounded-lg"
+                      placeholder="Enter fraction (e.g., 120/80)"
                     />
                   </label>
                 </div>
@@ -1080,10 +1089,13 @@ export function EHRForm() {
                 <div className="my-4">
                   <label className="flex flex-col">
                     <span>Standing</span>
-                    <input
+                    <InputMask
+                      mask="999/999"
+                      maskChar=""
                       {...register("phr_bpStanding")}
-                      type="number"
+                      type="text"
                       className="border border-gray-300 px-4 py-2 rounded-lg"
+                      placeholder="Enter blood pressure (e.g., 120/80)"
                     />
                   </label>
                 </div>
@@ -1093,10 +1105,13 @@ export function EHRForm() {
                 <div className="my-4">
                   <label className="flex flex-col">
                     <span>Lying</span>
-                    <input
+                    <InputMask
+                      mask="999/999"
+                      maskChar=""
                       {...register("phr_bpLying")}
-                      type="number"
+                      type="text"
                       className="border border-gray-300 px-4 py-2 rounded-lg"
+                      placeholder="Enter blood pressure (e.g., 120/80)"
                     />
                   </label>
                 </div>
@@ -1131,12 +1146,12 @@ export function EHRForm() {
               <Grid item xs={4}>
                 <div className="my-4">
                   <label className="flex flex-col">
-                    <span>Height (cm)</span>
-                    <input
+                    <span>Height</span>
+                    <InputMask
+                      mask="999 cm"
+                      maskChar={null}
                       {...register("phr_heightCM")}
                       type="text"
-                      pattern="[0-9]*"
-                      onInput={handleInput}
                       className="border border-gray-300 px-4 py-2 rounded-lg"
                     />
                   </label>
@@ -1145,12 +1160,12 @@ export function EHRForm() {
               <Grid item xs={4}>
                 <div className="my-4">
                   <label className="flex flex-col">
-                    <span>Weight (kg)</span>
-                    <input
+                    <span>Weight</span>
+                    <InputMask
+                      mask="99 kg" // Square brackets indicate optional characters
+                      maskChar={null}
                       {...register("phr_weightKG")}
                       type="text"
-                      pattern="[0-9]*"
-                      onInput={handleInput}
                       className="border border-gray-300 px-4 py-2 rounded-lg"
                     />
                   </label>
@@ -1160,10 +1175,9 @@ export function EHRForm() {
                 <div className="my-4">
                   <label className="flex flex-col">
                     <span>BMI</span>
-                    <input
-                      {...register("phr_BMI")}
-                      type="text"
-                      onInput={handleBMIInput} // Call the custom input handler
+                    <InputMask
+                      mask="99.9"
+                      maskPlaceholder=""
                       className="border border-gray-300 px-4 py-2 rounded-lg"
                     />
                   </label>
@@ -1712,11 +1726,11 @@ export function EHRForm() {
           </div>
           <div className="my-4">
             <label className="flex flex-col">
-              <span className="font-bold">Grade</span>
-              <input //@ts-ignore
+              <span className="font-bold">GRADE</span>
+              <textarea
                 {...register("phr_grade")}
-                type="number"
                 className="border border-gray-300 px-4 py-2 rounded-lg"
+                placeholder="Enter Grade"
               />
             </label>
           </div>
@@ -1953,10 +1967,11 @@ export function EHRForm() {
           <div className="my-4">
             <label className="flex flex-col">
               <span className="font-bold">Capillary refill time</span>
-              <input //@ts-ignore
-                {...register("phr_capillaryRefillTime")}
-                type="number"
+              <InputMask
+                mask="99.99 s" // Set the mask to accept up to 2 digits followed by decimal point and two digits, then " s" for seconds
+                maskChar={null} // Hide the mask character
                 className="border border-gray-300 px-4 py-2 rounded-lg"
+                placeholder="Enter Capillary refill time"
               />
             </label>
           </div>
