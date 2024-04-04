@@ -1047,6 +1047,7 @@ export function EHRForm() {
                     maskChar={null} // Hide the mask character
                     className="border border-gray-300 px-4 py-2 rounded-lg"
                     placeholder="Enter Temperature"
+                    {...register("phr_T*")} // Register the field
                   />
                 </label>
               </div>
@@ -1060,6 +1061,7 @@ export function EHRForm() {
                     maskChar={null} // Hide the mask character
                     className="border border-gray-300 px-4 py-2 rounded-lg"
                     placeholder="Enter SpO2"
+                    {...register("phr_Sp-02")} // Register the field
                   />
                 </label>
               </div>

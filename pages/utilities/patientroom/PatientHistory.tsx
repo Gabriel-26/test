@@ -158,9 +158,9 @@ const PatientHistory = ({ patientData }) => {
       bpStanding: "Blood Pressure (Standing)",
       bpLying: "Blood Pressure (Lying)",
       chiefComplaint: "Chief Complaint",
-      nonVerbalPatient:"Non Verbal Patient",
-      endTime:"End Time",
-      startTime:"Start Time",
+      nonVerbalPatient: "Non Verbal Patient",
+      endTime: "End Time",
+      startTime: "Start Time",
       hrRegular: "Heart Rate (Regular)",
       hrIrregular: "Heart Rate (Irregular)",
       rr: "Respiratory Rate",
@@ -314,7 +314,6 @@ const PatientHistory = ({ patientData }) => {
     setEditingEntry(entry);
   };
 
-
   // Function to cancel editing
   const cancelEditing = () => {
     setEditedValue("");
@@ -355,8 +354,6 @@ const PatientHistory = ({ patientData }) => {
       // Handle error...
     }
   };
-
-
 
   return (
     <Card style={{ padding: "20px", margin: "20px", borderRadius: "15px" }}>
