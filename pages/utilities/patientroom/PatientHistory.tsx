@@ -157,6 +157,10 @@ const PatientHistory = ({ patientData }) => {
       bpSitting: "Blood Pressure (Sitting)",
       bpStanding: "Blood Pressure (Standing)",
       bpLying: "Blood Pressure (Lying)",
+      chiefComplaint: "Chief Complaint",
+      nonVerbalPatient:"Non Verbal Patient",
+      endTime:"End Time",
+      startTime:"Start Time",
       hrRegular: "Heart Rate (Regular)",
       hrIrregular: "Heart Rate (Irregular)",
       rr: "Respiratory Rate",
@@ -298,9 +302,18 @@ const PatientHistory = ({ patientData }) => {
   };
 
   const startEditing = (entry) => {
-    setEditedValue(entry.attributeVal_values);
+    // Convert 1 or 0 to "Yes" or "No" if it's a boolean attribute
+    const editedValue = booleanAttributes.includes(
+      entry.categoryAtt_name.replace(/^phr_/, "")
+    )
+      ? entry.attributeVal_values === "1"
+        ? "Yes"
+        : "No"
+      : entry.attributeVal_values;
+    setEditedValue(editedValue);
     setEditingEntry(entry);
   };
+
 
   // Function to cancel editing
   const cancelEditing = () => {
@@ -316,10 +329,19 @@ const PatientHistory = ({ patientData }) => {
         "Authorization"
       ] = `Bearer ${token}`;
 
+      // Convert "Yes" or "No" back to 1 or 0 if it's a boolean attribute
+      const valueToSave = booleanAttributes.includes(
+        editingEntry.categoryAtt_name.replace(/^phr_/, "")
+      )
+        ? editedValue === "Yes"
+          ? "1"
+          : "0"
+        : editedValue;
+
       await axiosInstance.put(
         `/attributeValues/${patient_id}/updateField/${editingEntry.attributeVal_id}`,
         {
-          attributeVal_values: editedValue,
+          attributeVal_values: valueToSave,
         }
       );
 
@@ -333,6 +355,8 @@ const PatientHistory = ({ patientData }) => {
       // Handle error...
     }
   };
+
+
 
   return (
     <Card style={{ padding: "20px", margin: "20px", borderRadius: "15px" }}>

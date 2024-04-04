@@ -111,7 +111,7 @@ const MedicineList = () => {
           setDeleteLoading(true);
 
           axiosInstance
-            .delete(`admin/medicines/delete/${medicineId}`)
+            .delete(`admin/medicines/${medicineId}`)
             .then(() => {
               handleUpdate();
               message.success("Medicine deleted successfully");

@@ -135,7 +135,7 @@ const PatientFiles = ({ patientData }) => {
       style={{
         maxWidth: "800px",
         margin: "auto",
-        height: "430px",
+        height: "465px",
       }}
     >
       <h3 className="mb-4">Uploaded Files:</h3>

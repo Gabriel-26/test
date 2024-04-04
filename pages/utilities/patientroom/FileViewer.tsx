@@ -154,7 +154,7 @@ const FileViewer = ({ patientData }) => {
   const displayedFiles = files.slice(startIndex, endIndex);
 
   return (
-    <div style={{ maxWidth: "800px", margin: "auto", height: "465px" }}>
+    <div style={{ maxWidth: "800px", margin: "auto", height: "475px" }}>
       <h3 className="mb-4">Uploaded Files:</h3>
       <List
         itemLayout="horizontal"

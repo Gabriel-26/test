@@ -8,12 +8,13 @@ const ImagePage = ({ evaluationData }) => {
   });
   const imageRef = useRef(null);
 
-  useEffect(() => {
+  const calculateImageDimensions = () => {
     if (imageRef.current) {
       const { naturalWidth, naturalHeight } = imageRef.current;
       setImageDimensions({ width: naturalWidth, height: naturalHeight });
     }
-  }, []); // Define a list of body parts
+  };
+
   const bodyParts = [
     { name: "patient_head", top: 60, left: 725 },
     { name: "patient_forehead", top: 40, left: 270 },
@@ -66,34 +67,40 @@ const ImagePage = ({ evaluationData }) => {
         width={1200}
         height={1200}
         ref={imageRef}
+        onLoad={calculateImageDimensions}
       />
-      {bodyParts.map((bodyPart, index) => (
-        <div
-          key={index}
-          className="absolute"
-          style={{
-            top: `${(bodyPart.top / imageDimensions.height) * 110}%`,
-            left: `${(bodyPart.left / imageDimensions.width) * 124}%`,
-            transform: "translate(-50%, -50%)",
-          }}
-        >
-          <div
-            className={`w-3 h-3 rounded-full ${
-              evaluationData[bodyPart.name]?.status === "Normal"
-                ? "bg-green-300 text-green-600"
-                : evaluationData[bodyPart.name]?.status === "Abnormal"
-                ? "bg-yellow-300 text-yellow-600"
-                : evaluationData[bodyPart.name]?.status === "Needs Attention"
-                ? "bg-red-300 text-red-600"
-                : "bg-gray-300 text-gray-600"
-            }`}
-          >
-            <span className="text-lg font-bold flex justify-center items-center h-full">
-              {/* You can optionally add text or initials here */}
-            </span>
-          </div>
-        </div>
-      ))}
+      {Object.keys(imageDimensions).length > 0 && (
+        <>
+          {bodyParts.map((bodyPart, index) => (
+            <div
+              key={index}
+              className="absolute"
+              style={{
+                top: `${(bodyPart.top / imageDimensions.height) * 110}%`,
+                left: `${(bodyPart.left / imageDimensions.width) * 124}%`,
+                transform: "translate(-50%, -50%)",
+              }}
+            >
+              <div
+                className={`w-3 h-3 rounded-full ${
+                  evaluationData[bodyPart.name]?.status === "Normal"
+                    ? "bg-green-300 text-green-600"
+                    : evaluationData[bodyPart.name]?.status === "Abnormal"
+                    ? "bg-yellow-300 text-yellow-600"
+                    : evaluationData[bodyPart.name]?.status ===
+                      "Needs Attention"
+                    ? "bg-red-300 text-red-600"
+                    : "bg-gray-300 text-gray-600"
+                }`}
+              >
+                <span className="text-lg font-bold flex justify-center items-center h-full">
+                  {/* You can optionally add text or initials here */}
+                </span>
+              </div>
+            </div>
+          ))}
+        </>
+      )}
     </div>
   );
 };

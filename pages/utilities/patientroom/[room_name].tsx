@@ -199,6 +199,7 @@ const RoomView = () => {
         console.log(response.data);
 
         setTransferError("");
+        setIsCheckoutModalVisible(false)
         setPatientData([]); // Clear patientData after successful checkout
       })
       .catch((error) => {
@@ -439,7 +440,7 @@ const RoomView = () => {
         okText="Confirm"
         cancelText="Cancel"
       >
-        Are you sure you want to checkout/remove this patient from the room?
+        Are you sure you want to discharge this patient from the room?
       </Modal>
     </PageContainer>
   );

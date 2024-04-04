@@ -130,6 +130,7 @@ const Medication = (props: any) => {
           });
 
           form.resetFields();
+          handleAddModalClose();
 
           const updatedMedicationsResponse = await axiosInstance.get(
             `/patientMedicines/patient/${patientId}`
@@ -241,7 +242,7 @@ const Medication = (props: any) => {
       okType: "danger",
       onOk() {
         axiosInstance
-          .delete(`/patientMedicines/delete/${medicationId}`)
+          .delete(`/patientMedicines/${medicationId}`)
           .then((response) => {
             if (response.status === 200) {
               message.success("Medication deleted successfully!");
@@ -332,12 +333,23 @@ const Medication = (props: any) => {
           </Form.Item>
 
           <Form.Item
-            label="Frequency"
-            name="medicine_frequency"
-            rules={[{ required: true, message: "Please enter frequency" }]}
-          >
-            <Input />
-          </Form.Item>
+  label="Frequency"
+  name="medicine_frequency"
+  rules={[{ required: true, message: "Please select frequency" }]}
+>
+  <Select placeholder="Select frequency">
+    <Select.Option value="Daily">Daily</Select.Option>
+    <Select.Option value="Every other day">Every other day</Select.Option>
+    <Select.Option value="BID/b.i.d. (Twice a day)">BID/b.i.d. (Twice a day)</Select.Option>
+    <Select.Option value="TID/t.i.d. (Three times a day)">TID/t.i.d (Three times a day)</Select.Option>
+    <Select.Option value="QID/q.i.d. (Four times a day">QID/q.i.d (Four times a day).</Select.Option>
+    <Select.Option value="QHS (Every bedtime)">QHS (Every bedtime)</Select.Option>
+    <Select.Option value="Q4h (Every 4 hours)">Q4h (Every 4 hours)</Select.Option>
+    <Select.Option value="Q4-6h (Every 4 to 6 hours)">Q4-6h (Every 4 to 6 hours)</Select.Option>
+    <Select.Option value="QWK (Every week)">QWK (Every week)</Select.Option>
+  </Select>
+</Form.Item>
+
           <Form.Item
             label="Patient Medicine Date"
             name="patientMedicineDate"
@@ -406,12 +418,23 @@ const Medication = (props: any) => {
           </Form.Item>
 
           <Form.Item
-            label="Frequency"
-            name="medicine_frequency"
-            rules={[{ required: true, message: "Please enter frequency" }]}
-          >
-            <Input />
-          </Form.Item>
+  label="Frequency"
+  name="medicine_frequency"
+  rules={[{ required: true, message: "Please select frequency" }]}
+>
+  <Select placeholder="Select frequency">
+    <Select.Option value="Daily">Daily</Select.Option>
+    <Select.Option value="Every other day">Every other day</Select.Option>
+    <Select.Option value="BID/b.i.d. (Twice a day)">BID/b.i.d. (Twice a day)</Select.Option>
+    <Select.Option value="TID/t.i.d. (Three times a day)">TID/t.i.d (Three times a day)</Select.Option>
+    <Select.Option value="QID/q.i.d. (Four times a day">QID/q.i.d (Four times a day).</Select.Option>
+    <Select.Option value="QHS (Every bedtime)">QHS (Every bedtime)</Select.Option>
+    <Select.Option value="Q4h (Every 4 hours)">Q4h (Every 4 hours)</Select.Option>
+    <Select.Option value="Q4-6h (Every 4 to 6 hours)">Q4-6h (Every 4 to 6 hours)</Select.Option>
+    <Select.Option value="QWK (Every week)">QWK (Every week)</Select.Option>
+  </Select>
+</Form.Item>
+
           <Form.Item
             label="Patient Medicine Date"
             name="patientMedicineDate"

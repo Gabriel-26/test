@@ -147,7 +147,7 @@ const LabResultsPage = ({ patientData }) => {
       okType: "danger",
       onOk() {
         axiosInstance
-          .delete(`/results/delete/${selectedResultId}`)
+          .delete(`/results/${selectedResultId}`)
           .then((response) => {
             if (response.status === 200) {
               const updatedResults = fetchedResults.filter(

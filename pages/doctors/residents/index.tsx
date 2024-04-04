@@ -102,7 +102,7 @@ const Doctors = () => {
           setDeleteLoading(true);
           // Make a DELETE request to your API endpoint
           axios
-            .delete(`/admin/residents/delete/${doctorId}`)
+            .delete(`/admin/residents/${doctorId}`)
             .then(() => {
               // Fetch updated data after deletion
               handleUpdate();

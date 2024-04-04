@@ -10,6 +10,9 @@ import {
   List,
   ListItem,
   ListItemText,
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
 } from "@mui/material";
 import PatientHistory from "../utilities/patientroom/PatientHistory";
 import axiosInstance from "../../src/components/utils/axiosInstance";
@@ -18,6 +21,7 @@ import FullLayout from "../../src/layouts/full/FullLayout";
 import Medication from "./MedicationPatientPage";
 import LabResultsPage from "./LabResultsPatientPage";
 import PatientFiles from "./PatientFiles";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 interface PatientDetails {
   patient: {
     created_at: string;
@@ -42,7 +46,13 @@ interface PatientDetails {
   created_at: string;
   updated_at: string;
 }
+interface AdmissionData {
+  created_at: string;
+}
 
+interface DischargeData {
+  dischargeDate: string;
+}
 const PatientHistoryPage = () => {
   const theme = useTheme();
   const router = useRouter();
@@ -53,7 +63,8 @@ const PatientHistoryPage = () => {
   );
   const [loadingDetails, setLoadingDetails] = useState(true);
   const [errorDetails, setErrorDetails] = useState(null);
-
+  const [admittedDates, setAdmittedDates] = useState<AdmissionData[]>([]);
+  const [dischargedDates, setDischargedDates] = useState<DischargeData[]>([]);
   useEffect(() => {
     const fetchPatientDetails = async (patientID) => {
       try {
@@ -81,11 +92,38 @@ const PatientHistoryPage = () => {
       }
     };
 
+    const fetchAdmittedAndDischargedDates = async (patientID) => {
+      try {
+        const response = await axiosInstance.get(
+          `patAssRooms/getNumberOfAdmissions/${patientID}`
+        );
+        console.log("Admitted Dates:", response.data);
+        console.log("Discharged Dates:", response.data);
+        setAdmittedDates(response.data);
+        setDischargedDates(response.data);
+      } catch (error) {
+        console.error("Error fetching admitted and discharged dates:", error);
+      }
+    };
+
     if (patientID) {
       console.log("Received patient ID:", patientID);
       fetchPatientDetails(patientID);
+      fetchAdmittedAndDischargedDates(patientID);
     }
   }, [patientID]);
+
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
 
   return (
     <Box p={3}>
@@ -160,16 +198,47 @@ const PatientHistoryPage = () => {
                 </ListItem>
                 <Divider />
                 <ListItem>
-                  <ListItemText
-                    primary={`Created At: ${patientDetails.patient.created_at}`}
-                  />
+                  <Accordion>
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="admitted-dates-content"
+                      id="admitted-dates-header"
+                    >
+                      <Typography>Admitted Dates</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails style={{ padding: "-10px 16px 1px 16px" }}>
+                      <List>
+                        {admittedDates.map((date, index) => (
+                          <ListItem key={index}>
+                            <ListItemText primary={formatDate(date.created_at)} />
+                          </ListItem>
+                        ))}
+                      </List>
+                    </AccordionDetails>
+                  </Accordion>
                 </ListItem>
                 <Divider />
                 <ListItem>
-                  <ListItemText
-                    primary={`Updated At: ${patientDetails.patient.updated_at}`}
-                  />
+                  <Accordion>
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="discharged-dates-content"
+                      id="discharged-dates-header"
+                    >
+                      <Typography>Discharged Dates</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails style={{ padding: "8px 16px" }}>
+                      <List>
+                        {dischargedDates.map((date, index) => (
+                          <ListItem key={index}>
+                            <ListItemText primary={formatDate(date.dischargeDate)} />
+                          </ListItem>
+                        ))}
+                      </List>
+                    </AccordionDetails>
+                  </Accordion>
                 </ListItem>
+
               </List>
             </Paper>
           </Grid>
