@@ -1048,6 +1048,7 @@ export function EHRForm() {
                     className="border border-gray-300 px-4 py-2 rounded-lg"
                     placeholder="Enter Temperature"
                     {...register("phr_T*")} // Register the field
+                    type="text"
                   />
                 </label>
               </div>
@@ -1062,6 +1063,7 @@ export function EHRForm() {
                     className="border border-gray-300 px-4 py-2 rounded-lg"
                     placeholder="Enter SpO2"
                     {...register("phr_Sp-02")} // Register the field
+                    type="text"
                   />
                 </label>
               </div>
