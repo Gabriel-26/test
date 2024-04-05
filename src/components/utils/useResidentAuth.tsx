@@ -1,8 +1,10 @@
 import axiosInstance from "./axiosInstance";
 import router from "next/router";
+import { useState, useEffect } from "react";
 
 const useResidentAuth = () => {
-  let clearLocalStorageTimer; // Declare the variable outside the login function
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  let clearLocalStorageTimer;
 
   const login = async ({ username, password }) => {
     try {
@@ -24,10 +26,6 @@ const useResidentAuth = () => {
       const resident_gender = response.data.resident_gender;
       const depName = response.data.department_name;
 
-      console.log("Resident ID:", resident_id);
-      console.log("Gender:", resident_gender);
-      console.log("Department Name:", response.data.department_name);
-
       localStorage.setItem("authToken", token);
       localStorage.setItem("userRole", role); // Save the role in the session
       localStorage.setItem("resID", resident_id);
@@ -38,35 +36,27 @@ const useResidentAuth = () => {
       localStorage.setItem("userN", username);
       localStorage.setItem("userGender", resident_gender);
 
-      clearLocalStorageTimer = setTimeout(() => {
-        logout(); // Call the logout function to clear local storage
-      }, 10 * 60 * 60 * 1000); // 10 hours
+      startInactivityTimer();
 
       router.push("/");
       return "success";
     } catch (error) {
       console.error("Resident login error:", error);
       return "failure";
-
-      // Handle authentication error here, e.g., show an error message to the user
     }
   };
 
-  const logout = async () => {
+  const startInactivityTimer = () => {
+    clearLocalStorageTimer = setTimeout(() => {
+      setShowLogoutModal(true); // Show the logout modal
+    }, 28800 * 1000); // 8 hours
+  };
+
+  const handleLogout = async () => {
     const token = localStorage.getItem("authToken");
-    // Set the token in Axios headers for this request
     axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("userRole");
-    localStorage.removeItem("resID");
-    localStorage.removeItem("resFirstName");
-    localStorage.removeItem("resLastname");
-    localStorage.removeItem("depID");
-    localStorage.removeItem("depName");
-    localStorage.removeItem("userN");
-    localStorage.removeItem("userGender");
-
+    localStorage.clear();
     clearTimeout(clearLocalStorageTimer);
 
     await axiosInstance.get("/logout");
@@ -75,7 +65,9 @@ const useResidentAuth = () => {
 
   return {
     login,
-    logout,
+    logout: handleLogout,
+    showLogoutModal,
+    setShowLogoutModal,
   };
 };
 

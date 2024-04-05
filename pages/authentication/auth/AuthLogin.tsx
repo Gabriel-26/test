@@ -76,6 +76,14 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
     }
   };
 
+  const handlePasswordKeyDown = (
+    event: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    if (event.key === "Enter") {
+      handleSignIn();
+    }
+  };
+
   return (
     <>
       {title ? (
@@ -140,6 +148,7 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
             name="password"
             value={password}
             onChange={handlePasswordChange}
+            onKeyDown={handlePasswordKeyDown}
           />
         </Box>
         {/* <FormGroup>
