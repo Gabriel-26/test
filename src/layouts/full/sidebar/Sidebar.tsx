@@ -35,6 +35,7 @@ const Sidebar = ({
             sx: {
               width: sidebarWidth,
               boxSizing: "border-box",
+              borderRight: "4px solid #E5EAEF", // Adjust thickness and color of the border
             },
           }}
         >

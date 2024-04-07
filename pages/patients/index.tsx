@@ -13,8 +13,10 @@ import {
   TableCell,
   TextField,
   TablePagination,
+  Typography,
 } from "@mui/material";
 import { getUserRole } from "../../src/components/utils/roles";
+import { Input } from "antd";
 
 interface PatientSearchProps {
   getLayout: (page: React.ReactNode) => React.ReactNode;
@@ -93,27 +95,50 @@ const PatientSearch: React.FC<PatientSearchProps> & {
 
   return (
     <PageContainer>
-      <DashboardCard>
-        <h1>Patient Search</h1>
+      <DashboardCard title="Patients">
         <div>
-          <TextField
+          <Input
             type="text"
             placeholder="Search by name or ID"
             value={searchTerm}
             onChange={handleInputChange}
-            fullWidth
+            style={{ marginBottom: 5 }} // Add bottom margin
           />
         </div>
         <TableContainer>
-          <Table>
+          <Table className="custom-table">
             <TableHead>
               <TableRow>
-                <TableCell>ID</TableCell>
-                <TableCell>First Name</TableCell>
-                <TableCell>Last Name</TableCell>
-                <TableCell>Middle Name</TableCell>
-                <TableCell>Age</TableCell>
-                <TableCell>Sex</TableCell>
+                <TableCell>
+                  <Typography variant="subtitle2" fontWeight={600}>
+                    ID
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="subtitle2" fontWeight={600}>
+                    First Name
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="subtitle2" fontWeight={600}>
+                    Last Name
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="subtitle2" fontWeight={600}>
+                    Middle Name
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="subtitle2" fontWeight={600}>
+                    Age
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="subtitle2" fontWeight={600}>
+                    Sex
+                  </Typography>
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -122,28 +147,50 @@ const PatientSearch: React.FC<PatientSearchProps> & {
                 .map((patient) => (
                   <TableRow key={patient.patient_id}>
                     <TableCell>
-                      {/* Use router.push to navigate to patient history page */}
-                      <span
-                        style={{ cursor: "pointer", color: "blue" }}
-                        onClick={() =>
-                          router.push(`patients/${patient.patient_id}`)
-                        }
-                      >
-                        {patient.patient_id}
-                      </span>
+                      <Typography variant="subtitle2">
+                        {/* Use router.push to navigate to patient history page */}
+                        <span
+                          style={{ cursor: "pointer", color: "blue" }}
+                          onClick={() =>
+                            router.push(`patients/${patient.patient_id}`)
+                          }
+                        >
+                          {patient.patient_id}
+                        </span>
+                      </Typography>
                     </TableCell>
-                    <TableCell>{patient.patient_fName}</TableCell>
-                    <TableCell>{patient.patient_lName}</TableCell>
-                    <TableCell>{patient.patient_mName}</TableCell>
-                    <TableCell>{patient.patient_age}</TableCell>
-                    <TableCell>{patient.patient_sex}</TableCell>
+                    <TableCell>
+                      <Typography variant="subtitle2">
+                        {patient.patient_fName}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="subtitle2">
+                        {patient.patient_lName}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="subtitle2">
+                        {patient.patient_mName}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="subtitle2">
+                        {patient.patient_age}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="subtitle2">
+                        {patient.patient_sex}
+                      </Typography>
+                    </TableCell>
                   </TableRow>
                 ))}
             </TableBody>
           </Table>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[10, 25]}
           component="div"
           count={displayedPatients.length}
           rowsPerPage={rowsPerPage}

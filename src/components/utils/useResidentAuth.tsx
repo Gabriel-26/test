@@ -52,7 +52,7 @@ const useResidentAuth = () => {
     }, 28800 * 1000); // 8 hours
   };
 
-  const handleLogout = async () => {
+  const logout = async () => {
     const token = localStorage.getItem("authToken");
     axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
@@ -65,7 +65,7 @@ const useResidentAuth = () => {
 
   return {
     login,
-    logout: handleLogout,
+    logout,
     showLogoutModal,
     setShowLogoutModal,
   };

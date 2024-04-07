@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
-import { List, Avatar, Modal, Button } from "antd";
+import { List, Avatar, Modal, Button, Tooltip } from "antd";
 import FullLayout from "../../src/layouts/full/FullLayout";
 import axiosInstance from "../../src/components/utils/axiosInstance";
 import ResidentsList from "./residentsList";
 import { TextareaAutosize } from "@mui/material";
 import { useRouter } from "next/router";
 import PatientListPage from "./patientList";
-
+import MessageWithTooltip from "./MessageWithToolTip";
 interface Message {
+  created_at: string;
   chatGroupMessages_id: string;
   message: string;
   resident_fName: string;
@@ -171,6 +172,7 @@ const ChatPage: React.FC = () => {
           resident_id: residentId,
           resident_fName: residentFirstName,
           resident_lName: residentLastName,
+          created_at: "",
         };
 
         setMessages([...messages, newMessage]);
@@ -395,19 +397,6 @@ const ChatWithChatmate: React.FC<{
     }
   }, [messages, selectedConversation, lastReceivedMessageId]);
 
-  // useEffect(() => {
-  //   // Display notification and clear after 3 seconds
-  //   if (isNewMessage) {
-  //     setNotification("New message received");
-  //     const timeoutId = setTimeout(() => {
-  //       setNotification(null);
-  //       setIsNewMessage(false);
-  //     }, 3000);
-
-  //     return () => clearTimeout(timeoutId);
-  //   }
-  // }, [isNewMessage, selectedConversation]);
-
   const currentUserFirstName = localStorage.getItem("resFirstName");
   const currentUserLastName = localStorage.getItem("resLastname");
 
@@ -501,17 +490,30 @@ const ChatWithChatmate: React.FC<{
                     textAlign: messageAlignment,
                     marginBottom: "8px",
                     whiteSpace: "pre-wrap", // Enable wrapping for long lines
-    wordWrap: "break-word", // Ensure long words are broken
-                
+                    wordWrap: "break-word", // Ensure long words are broken
                   }}
                 >
                   <List.Item.Meta
                     title={
-                      isCurrentUser
-                        ? `${currentUserFirstName} ${currentUserLastName}`
-                        : `${message.resident_fName} ${message.resident_lName}`
+                      <span
+                        style={{ color: isCurrentUser ? "#808080" : "#000000" }}
+                      >
+                        {isCurrentUser
+                          ? `${currentUserFirstName} ${currentUserLastName}`
+                          : `${message.resident_fName} ${message.resident_lName}`}
+                      </span>
                     }
-                    description={messageParts}
+                    description={
+                      <span
+                        style={{ color: isCurrentUser ? "#000000" : "#ffffff" }}
+                        className="message-content"
+                      >
+                        {message.message}
+                        <div className="message-timestamp">
+                          {message.created_at}
+                        </div>
+                      </span>
+                    }
                   />
                 </List.Item>
               );
@@ -524,16 +526,31 @@ const ChatWithChatmate: React.FC<{
                     textAlign: messageAlignment,
                     marginBottom: "8px",
                     whiteSpace: "pre-wrap", // Enable wrapping for long lines
-    wordWrap: "break-word", // Ensure long words are broken
+                    wordWrap: "break-word", // Ensure long words are broken
                   }}
                 >
                   <List.Item.Meta
                     title={
-                      isCurrentUser
-                        ? `${currentUserFirstName} ${currentUserLastName}`
-                        : `${message.resident_fName} ${message.resident_lName}`
+                      <span
+                        style={{ color: isCurrentUser ? "#808080" : "#000000" }}
+                      >
+                        {isCurrentUser
+                          ? `${currentUserFirstName} ${currentUserLastName}`
+                          : `${message.resident_fName} ${message.resident_lName}`}
+                      </span>
                     }
-                    description={message.message}
+                    description={
+                      <span
+                        style={{ color: isCurrentUser ? "#000000" : "#ffffff" }}
+                        className="message-content"
+                      >
+                        {/* Wrap message.message in a span with hover effect */}
+                        <MessageWithTooltip
+                          message={message}
+                          isCurrentUser={isCurrentUser}
+                        />
+                      </span>
+                    }
                   />
                 </List.Item>
               );

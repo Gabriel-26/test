@@ -68,11 +68,20 @@ const Profile = () => {
     }
   }, []);
 
-  const auth = userRole === "admin" ? useAdminAuth() : useResidentAuth();
+  const adminAuth = useAdminAuth();
+  const residentAuth = useResidentAuth();
 
+  // Function to handle logout based on user role
   const handleLogout = async () => {
-    await auth.logout();
+    if (userRole === "admin") {
+      await adminAuth.logout();
+    } else {
+      await residentAuth.logout();
+    }
   };
+  // const handleLogout = async () => {
+  //   await auth.logout();
+  // };
 
   // Set the image source based on user gender or default to admin image
   const avatarSrc =

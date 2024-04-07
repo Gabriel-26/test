@@ -9,8 +9,10 @@ import {
   TableRow,
   IconButton,
   TextField,
+  TableContainer,
   TablePagination,
   Stack,
+  Paper,
 } from "@mui/material";
 import DashboardCard from "../../../src/components/shared/DashboardCard";
 import BorderColorIcon from "@mui/icons-material/BorderColor";
@@ -19,7 +21,16 @@ import axios from "../../../src/components/utils/axiosInstance";
 import type { ReactElement } from "react";
 import PageContainer from "../../../src/components/container/PageContainer";
 import FullLayout from "../../../src/layouts/full/FullLayout";
-import { Modal, Button, Drawer, Select, Spin, message, Alert } from "antd";
+import {
+  Modal,
+  Button,
+  Drawer,
+  Select,
+  Spin,
+  message,
+  Alert,
+  Input,
+} from "antd";
 import EditDoctorForm from "./editform";
 import AddDoctorForm from "./addform";
 import { MdAddCircle, MdDelete } from "react-icons/md";
@@ -170,7 +181,7 @@ const Doctors = () => {
   };
 
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [rowsPerPage, setRowsPerPage] = React.useState(7);
 
   const filteredDoctors = doctors.filter(
     (doctor) =>
@@ -206,7 +217,7 @@ const Doctors = () => {
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setRowsPerPage(parseInt(event.target.value, 10)); // Change the base to 10
+    setRowsPerPage(parseInt(event.target.value, 7)); // Change the base to 10
     setPage(0); // Reset page to 0 when rows per page changes
   };
 
@@ -214,75 +225,67 @@ const Doctors = () => {
     <PageContainer>
       <DashboardCard title="Residents">
         <Spin spinning={loading}>
-          <Box sx={{ overflow: "auto", width: { xs: "600px", sm: "auto" } }}>
-            {/* Add Modal for confirmation */}
-            <Modal
-              title="Confirm Deletion"
-              open={deleteModalVisible}
-              onOk={() => setDeleteModalVisible(false)}
-              onCancel={() => setDeleteModalVisible(false)}
-              confirmLoading={deleteLoading}
-            >
-              <p>Are you sure you want to delete this resident?</p>
-              {deleteError && <Alert message={deleteError} type="error" />}
-            </Modal>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "flex-end	",
-                alignItems: "center",
-              }}
-            >
-              <Button
-                icon={<MdAddCircle style={{ fontSize: "22px" }} />}
-                onClick={handleAddDoctor}
-              ></Button>
-            </Box>
-            <Stack direction="column" spacing={2}>
-              <TextField
-                label="Search"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                InputProps={{
-                  type: "search",
-                }}
+          {/* <Box sx={{ overflow: "auto", width: { xs: "600px", sm: "auto" } }}> */}
+          {/* Add Modal for confirmation */}
+          <Modal
+            title="Confirm Deletion"
+            open={deleteModalVisible}
+            onOk={() => setDeleteModalVisible(false)}
+            onCancel={() => setDeleteModalVisible(false)}
+            confirmLoading={deleteLoading}
+          >
+            <p>Are you sure you want to delete this resident?</p>
+            {deleteError && <Alert message={deleteError} type="error" />}
+          </Modal>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end	",
+              alignItems: "center",
+            }}
+          >
+            <Button
+              icon={<MdAddCircle style={{ fontSize: "22px" }} />}
+              onClick={handleAddDoctor}
+            ></Button>
+          </Box>
+          {/* <Stack direction="column" spacing={2}> */}
+          <Input
+            placeholder="Search"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{ marginBottom: 5 }} // Add bottom margin
+          />
+          {/* </Stack> */}
+
+          <Drawer
+            title={isAddingDoctor ? "Add a Resident" : "Edit Resident"}
+            width={550}
+            onClose={() => {
+              setIsAddingDoctor(false);
+              setIsEditing(false);
+            }}
+            open={isAddingDoctor || isEditing}
+            bodyStyle={{ paddingBottom: 80 }}
+          >
+            {isAddingDoctor ? (
+              <AddDoctorForm
+                onUpdate={handleUpdate}
+                newDoctor={newDoctor}
+                handleInputChange={handleInputChange}
+                onFinish={handleCancel}
               />
-            </Stack>
+            ) : isEditing ? (
+              <EditDoctorForm
+                editDoctor={editDoctor}
+                onUpdate={handleUpdate}
+                onFinish={handleCancel}
+              />
+            ) : null}
+          </Drawer>
 
-            <Drawer
-              title={isAddingDoctor ? "Add a Resident" : "Edit Resident"}
-              width={550}
-              onClose={() => {
-                setIsAddingDoctor(false);
-                setIsEditing(false);
-              }}
-              open={isAddingDoctor || isEditing}
-              bodyStyle={{ paddingBottom: 80 }}
-            >
-              {isAddingDoctor ? (
-                <AddDoctorForm
-                  onUpdate={handleUpdate}
-                  newDoctor={newDoctor}
-                  handleInputChange={handleInputChange}
-                  onFinish={handleCancel}
-                />
-              ) : isEditing ? (
-                <EditDoctorForm
-                  editDoctor={editDoctor}
-                  onUpdate={handleUpdate}
-                  onFinish={handleCancel}
-                />
-              ) : null}
-            </Drawer>
-
-            <Table
-              aria-label="simple table"
-              sx={{
-                whiteSpace: "nowrap",
-                mt: 2,
-                minWidth: 600,
-              }}
-            >
+          <TableContainer component={Paper}>
+            <Table className="custom-table">
               <TableHead>
                 <TableRow>
                   <TableCell style={{ textAlign: "center" }}>
@@ -344,7 +347,7 @@ const Doctors = () => {
                         </Typography>
                       </TableCell>
                       <TableCell style={{ textAlign: "center" }}>
-                        <Typography variant="subtitle2" fontWeight={600}>
+                        <Typography variant="subtitle2">
                           {doctor.resident_userName}
                         </Typography>
                         <Typography
@@ -409,19 +412,21 @@ const Doctors = () => {
                 )}
               </TableBody>
             </Table>
-            {/* Conditionally render the TablePagination component */}
-            {filteredDoctors.length > 0 && (
-              <TablePagination
-                rowsPerPageOptions={[10, 25, 50, 100]}
-                component="div"
-                count={filteredDoctors.length}
-                page={page}
-                onPageChange={handleChangePage}
-                rowsPerPage={rowsPerPage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-              />
-            )}
-          </Box>
+          </TableContainer>
+
+          {/* Conditionally render the TablePagination component */}
+          {filteredDoctors.length > 0 && (
+            <TablePagination
+              rowsPerPageOptions={[7]}
+              component="div"
+              count={filteredDoctors.length}
+              page={page}
+              onPageChange={handleChangePage}
+              rowsPerPage={rowsPerPage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+          )}
+          {/* </Box> */}
         </Spin>
       </DashboardCard>
     </PageContainer>

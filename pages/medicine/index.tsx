@@ -23,6 +23,7 @@ import {
   TableRow,
   Paper,
   TablePagination,
+  Typography,
 } from "@mui/material";
 import { getUserRole } from "../../src/components/utils/roles";
 import DashboardCard from "../../src/components/shared/DashboardCard";
@@ -192,7 +193,7 @@ const MedicineList = () => {
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setRowsPerPage(parseInt(event.target.value, 7));
+    setRowsPerPage(parseInt(event.target.value, 8));
     setPage(1);
   };
 
@@ -223,20 +224,44 @@ const MedicineList = () => {
             placeholder="Search"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            style={{ marginBottom: 5 }} // Add bottom margin
           />
           {medicines.length > 0 ? (
             <TableContainer component={Paper}>
               <Table className="custom-table">
                 <TableHead>
                   <TableRow>
-                    <TableCell style={{ textAlign: "center" }}>ID</TableCell>
-                    <TableCell style={{ textAlign: "center" }}>Name</TableCell>
-                    <TableCell style={{ textAlign: "center" }}>Brand</TableCell>
                     <TableCell style={{ textAlign: "center" }}>
-                      Dosage
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        ID
+                      </Typography>
                     </TableCell>
-                    <TableCell style={{ textAlign: "center" }}>Type</TableCell>
-                    <TableCell style={{ textAlign: "center" }}>Price</TableCell>
+                    <TableCell style={{ textAlign: "center" }}>
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        Name
+                      </Typography>
+                    </TableCell>
+                    <TableCell style={{ textAlign: "center" }}>
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        Brand
+                      </Typography>
+                    </TableCell>
+                    <TableCell style={{ textAlign: "center" }}>
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        Dosage
+                      </Typography>
+                    </TableCell>
+                    <TableCell style={{ textAlign: "center" }}>
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        Type
+                      </Typography>
+                    </TableCell>
+                    <TableCell style={{ textAlign: "center" }}>
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        Price
+                      </Typography>
+                    </TableCell>
+
                     {userRole === "admin" && (
                       <TableCell style={{ textAlign: "center" }}>
                         Action
@@ -250,22 +275,34 @@ const MedicineList = () => {
                     .map((medicine) => (
                       <TableRow key={medicine.medicine_id}>
                         <TableCell style={{ textAlign: "center" }}>
-                          {medicine.medicine_id}
+                          <Typography variant="subtitle1">
+                            {medicine.medicine_id}
+                          </Typography>
                         </TableCell>
                         <TableCell style={{ textAlign: "center" }}>
-                          {medicine.medicine_name}
+                          <Typography variant="subtitle1">
+                            {medicine.medicine_name}
+                          </Typography>
                         </TableCell>
                         <TableCell style={{ textAlign: "center" }}>
-                          {medicine.medicine_brand}
+                          <Typography variant="subtitle1">
+                            {medicine.medicine_brand}
+                          </Typography>
                         </TableCell>
                         <TableCell style={{ textAlign: "center" }}>
-                          {medicine.medicine_dosage}
+                          <Typography variant="subtitle1">
+                            {medicine.medicine_dosage}
+                          </Typography>
                         </TableCell>
                         <TableCell style={{ textAlign: "center" }}>
-                          {medicine.medicine_type}
+                          <Typography variant="subtitle1">
+                            {medicine.medicine_type}
+                          </Typography>
                         </TableCell>
                         <TableCell style={{ textAlign: "center" }}>
-                          {medicine.medicine_price}
+                          <Typography variant="subtitle1">
+                            {medicine.medicine_price}
+                          </Typography>
                         </TableCell>
                         {userRole === "admin" && (
                           <TableCell style={{ textAlign: "center" }}>
@@ -301,7 +338,7 @@ const MedicineList = () => {
           )}
         </Spin>
         <TablePagination
-          rowsPerPageOptions={[8]}
+          rowsPerPageOptions={[7]}
           component="div"
           count={medicines.length}
           rowsPerPage={rowsPerPage}

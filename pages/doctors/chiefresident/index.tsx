@@ -11,13 +11,24 @@ import {
   TextField,
   TablePagination,
   Stack,
+  TableContainer,
+  Paper,
 } from "@mui/material";
 import DashboardCard from "../../../src/components/shared/DashboardCard";
 import axios from "../../../src/components/utils/axiosInstance";
 import type { ReactElement } from "react";
 import PageContainer from "../../../src/components/container/PageContainer";
 import FullLayout from "../../../src/layouts/full/FullLayout";
-import { Modal, Button, Drawer, Select, Spin, message, Alert } from "antd";
+import {
+  Modal,
+  Button,
+  Drawer,
+  Select,
+  Spin,
+  message,
+  Alert,
+  Input,
+} from "antd";
 import AddChiefResidentForm from "./addform";
 import EditChiefResidentForm from "./editform";
 import { MdAddCircle, MdDelete } from "react-icons/md";
@@ -55,7 +66,7 @@ const ChiefResident = () => {
     department_id: "",
   });
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [rowsPerPage, setRowsPerPage] = React.useState(7);
 
   useEffect(() => {
     setPage(0); // Reset page to 0 when search query changes
@@ -207,63 +218,55 @@ const ChiefResident = () => {
     <PageContainer>
       <DashboardCard title="Chief Residents">
         <Spin spinning={loading}>
-          <Box sx={{ overflow: "auto", width: { xs: "600px", sm: "auto" } }}>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "flex-end	",
-                alignItems: "center",
-              }}
-            >
-              <Button
-                icon={<MdAddCircle style={{ fontSize: "22px" }} />}
-                onClick={handleAddDoctor}
-              ></Button>
-            </Box>
-            <Stack direction="column" spacing={2}>
-              <TextField
-                label="Search"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                InputProps={{
-                  type: "search",
-                }}
+          {/* <Box sx={{ overflow: "auto", width: { xs: "600px", sm: "auto" } }}> */}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end	",
+              alignItems: "center",
+            }}
+          >
+            <Button
+              icon={<MdAddCircle style={{ fontSize: "22px" }} />}
+              onClick={handleAddDoctor}
+            ></Button>
+          </Box>
+          <Stack direction="column" spacing={2}>
+            <Input
+              placeholder="Search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{ marginBottom: 5 }} // Add bottom margin
+            />
+          </Stack>
+
+          <Drawer
+            title={
+              isAddingDoctor ? "Add Chief Resident" : "Edit Chief Resident"
+            }
+            width={550}
+            onClose={handleDrawerClose}
+            open={isAddingDoctor || isEditing}
+            bodyStyle={{ paddingBottom: 80 }}
+          >
+            {isAddingDoctor ? (
+              <AddChiefResidentForm
+                newChiefResident={newDoctor}
+                onUpdate={handleUpdate}
+                handleInputChange={handleInputChange}
+                onFinish={handleCancel}
               />
-            </Stack>
+            ) : isEditing ? (
+              <EditChiefResidentForm
+                editChiefResident={editDoctor}
+                onUpdate={handleUpdate}
+                onFinish={handleCancel}
+              />
+            ) : null}
+          </Drawer>
 
-            <Drawer
-              title={
-                isAddingDoctor ? "Add Chief Resident" : "Edit Chief Resident"
-              }
-              width={550}
-              onClose={handleDrawerClose}
-              open={isAddingDoctor || isEditing}
-              bodyStyle={{ paddingBottom: 80 }}
-            >
-              {isAddingDoctor ? (
-                <AddChiefResidentForm
-                  newChiefResident={newDoctor}
-                  onUpdate={handleUpdate}
-                  handleInputChange={handleInputChange}
-                  onFinish={handleCancel}
-                />
-              ) : isEditing ? (
-                <EditChiefResidentForm
-                  editChiefResident={editDoctor}
-                  onUpdate={handleUpdate}
-                  onFinish={handleCancel}
-                />
-              ) : null}
-            </Drawer>
-
-            <Table
-              aria-label="simple table"
-              sx={{
-                whiteSpace: "nowrap",
-                mt: 2,
-                minWidth: 600,
-              }}
-            >
+          <TableContainer component={Paper}>
+            <Table className="custom-table">
               <TableHead>
                 <TableRow>
                   <TableCell style={{ textAlign: "center" }}>
@@ -324,7 +327,7 @@ const ChiefResident = () => {
                         </Typography>
                       </TableCell>
                       <TableCell style={{ textAlign: "center" }}>
-                        <Typography variant="subtitle2" fontWeight={600}>
+                        <Typography variant="subtitle2">
                           {doctor.resident_userName}
                         </Typography>
                       </TableCell>
@@ -382,7 +385,9 @@ const ChiefResident = () => {
                 )}
               </TableBody>
             </Table>
-          </Box>
+          </TableContainer>
+
+          {/* </Box> */}
         </Spin>
 
         {filteredDoctors.length > 0 && (

@@ -13,6 +13,7 @@ import {
   TableCell,
   TableBody,
   TablePagination,
+  Typography,
 } from "@mui/material";
 import { Input, Form, Modal, Drawer, Spin, Select, message } from "antd";
 import { getUserRole } from "../../../src/components/utils/roles";
@@ -36,7 +37,7 @@ const Rooms = () => {
   const [showRoomDrawer, setShowRoomDrawer] = useState(false);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(8);
+  const [rowsPerPage, setRowsPerPage] = useState(7);
   const userRole = getUserRole();
 
   const [showAddForm, setShowAddForm] = useState(false);
@@ -379,25 +380,40 @@ const Rooms = () => {
           </div>
           <Spin spinning={loading}>
             <TableContainer component={Paper}>
-              <Table>
+              <Table className="custom-table">
                 <TableHead>
                   <TableRow>
                     <TableCell style={{ textAlign: "center" }}>
-                      Room ID
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        Room ID
+                      </Typography>
                     </TableCell>
                     <TableCell style={{ textAlign: "center" }}>
-                      Room Name
-                    </TableCell>
-                    <TableCell style={{ textAlign: "center" }}>Floor</TableCell>
-                    <TableCell style={{ textAlign: "center" }}>
-                      Room Type
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        Room Name
+                      </Typography>
                     </TableCell>
                     <TableCell style={{ textAlign: "center" }}>
-                      Floor ID
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        Floor
+                      </Typography>
                     </TableCell>
                     <TableCell style={{ textAlign: "center" }}>
-                      Room Price
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        Room Type
+                      </Typography>
                     </TableCell>
+                    <TableCell style={{ textAlign: "center" }}>
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        Floor ID
+                      </Typography>
+                    </TableCell>
+                    <TableCell style={{ textAlign: "center" }}>
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        Room Price
+                      </Typography>
+                    </TableCell>
+
                     {userRole === "admin" && ( // Only render Actions column for admin role
                       <TableCell style={{ textAlign: "center" }}>
                         Actions
@@ -411,38 +427,51 @@ const Rooms = () => {
                     .map((room) => (
                       <TableRow key={room.room_id}>
                         <TableCell style={{ textAlign: "center" }}>
-                          {userRole === "admin" ? (
-                            // Display room_id without link for admin
-                            room.room_id
-                          ) : (
-                            // Make room_id clickable for non-admin users
-                            <span
-                              style={{ cursor: "pointer", color: "blue" }}
-                              onClick={() =>
-                                router.push(
-                                  `/utilities/patientroom/${room.room_name}?room_id=${room.room_id}`
-                                )
-                              }
-                            >
-                              {room.room_id}
-                            </span>
-                          )}
+                          <Typography variant="subtitle2">
+                            {userRole === "admin" ? (
+                              // Display room_id without link for admin
+                              room.room_id
+                            ) : (
+                              // Make room_id clickable for non-admin users
+                              <span
+                                style={{ cursor: "pointer", color: "blue" }}
+                                onClick={() =>
+                                  router.push(
+                                    `/utilities/patientroom/${room.room_name}?room_id=${room.room_id}`
+                                  )
+                                }
+                              >
+                                {room.room_id}
+                              </span>
+                            )}
+                          </Typography>
                         </TableCell>
                         <TableCell style={{ textAlign: "center" }}>
-                          {room.room_name}
+                          <Typography variant="subtitle2">
+                            {room.room_name}
+                          </Typography>
                         </TableCell>
                         <TableCell style={{ textAlign: "center" }}>
-                          {room.room_floor}
+                          <Typography variant="subtitle2">
+                            {room.room_floor}
+                          </Typography>
                         </TableCell>
                         <TableCell style={{ textAlign: "center" }}>
-                          {room.room_type}
+                          <Typography variant="subtitle2">
+                            {room.room_type}
+                          </Typography>
                         </TableCell>
                         <TableCell style={{ textAlign: "center" }}>
-                          {room.floor_id}
+                          <Typography variant="subtitle2">
+                            {room.floor_id}
+                          </Typography>
                         </TableCell>
                         <TableCell style={{ textAlign: "center" }}>
-                          {room.room_price}
+                          <Typography variant="subtitle2">
+                            {room.room_price}
+                          </Typography>
                         </TableCell>
+
                         {userRole === "admin" && ( // Only render Actions for admin role
                           <TableCell style={{ textAlign: "center" }}>
                             <Button
@@ -474,7 +503,7 @@ const Rooms = () => {
             </TableContainer>
           </Spin>
           <TablePagination
-            rowsPerPageOptions={[8]}
+            rowsPerPageOptions={[7, 25]}
             component="div"
             count={rooms.length}
             page={page}
