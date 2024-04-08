@@ -105,22 +105,25 @@ const StatusPage = ({
         <Collapse accordion>
           {bodyParts.map((bodyPart) => (
             <Panel key={bodyPart} header={formatBodyPart(bodyPart)}>
-              <Select
-                value={
-                  evaluationData && evaluationData[bodyPart]
-                    ? evaluationData[bodyPart].status || "None"
-                    : "None"
-                }
-                onChange={(value) => {
-                  handleStatusChange(bodyPart, value);
-                }}
-                style={{ width: "200px", marginBottom: "8px" }}
-              >
-                <Option value="None">None</Option>
-                <Option value="Normal">Normal</Option>
-                <Option value="Abnormal">Abnormal</Option>
-                <Option value="Needs Attention">Needs Attention</Option>
-              </Select>
+             <Select
+  value={
+    evaluationData &&
+    evaluationData[bodyPart] &&
+    evaluationData[bodyPart].status !== undefined
+      ? evaluationData[bodyPart].status
+      : "None"
+  }
+  onChange={(value) => {
+    handleStatusChange(bodyPart, value);
+  }}
+  style={{ width: "200px", marginBottom: "8px" }}
+>
+  <Option value="None">None</Option>
+  <Option value="Normal">Normal</Option>
+  <Option value="Abnormal">Abnormal</Option>
+  <Option value="Needs Attention">Needs Attention</Option>
+</Select>
+
               <Input.TextArea
                 value={
                   evaluationData &&
