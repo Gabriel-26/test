@@ -104,17 +104,11 @@ const StatusPage = ({
       ) : (
         <Collapse accordion>
           {bodyParts.map((bodyPart) => {
-            const statusValue =
-              evaluationData && evaluationData[bodyPart]
-                ? evaluationData[bodyPart].status || "None"
-                : "None";
-  
-            const noteValue =
-              evaluationData &&
-              evaluationData[`specify_${bodyPart}`] &&
-              evaluationData[`specify_${bodyPart}`].note
-                ? evaluationData[`specify_${bodyPart}`].note
-                : "";
+            const evaluationDataForBodyPart = evaluationData && evaluationData[bodyPart] ? evaluationData[bodyPart] : {};
+            const statusValue = evaluationDataForBodyPart.status !== undefined ? evaluationDataForBodyPart.status : "None";
+            const specifyBodyPart = `specify_${bodyPart}`;
+            const specifyDataForBodyPart = evaluationData && evaluationData[specifyBodyPart] ? evaluationData[specifyBodyPart] : {};
+            const noteValue = specifyDataForBodyPart.note !== undefined ? specifyDataForBodyPart.note : "";
   
             return (
               <Panel key={bodyPart} header={formatBodyPart(bodyPart)}>
