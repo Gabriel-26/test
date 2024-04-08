@@ -103,42 +103,38 @@ const StatusPage = ({
         <p>Loading...</p>
       ) : (
         <Collapse accordion>
-          {bodyParts.map((bodyPart) => {
-            const evaluationDataForBodyPart = evaluationData && evaluationData[bodyPart] ? evaluationData[bodyPart] : {};
-            const statusValue = evaluationDataForBodyPart.status !== undefined ? evaluationDataForBodyPart.status : "None";
-            const specifyBodyPart = `specify_${bodyPart}`;
-            const specifyDataForBodyPart = evaluationData && evaluationData[specifyBodyPart] ? evaluationData[specifyBodyPart] : {};
-            const noteValue = specifyDataForBodyPart.note !== undefined ? specifyDataForBodyPart.note : "";
-  
-            return (
-              <Panel key={bodyPart} header={formatBodyPart(bodyPart)}>
-                <Select
-                  value={statusValue}
-                  onChange={(value) => {
-                    handleStatusChange(bodyPart, value);
-                  }}
-                  style={{ width: "200px", marginBottom: "8px" }}
-                >
-                  <Option value="None">None</Option>
-                  <Option value="Normal">Normal</Option>
-                  <Option value="Abnormal">Abnormal</Option>
-                  <Option value="Needs Attention">Needs Attention</Option>
-                </Select>
-                <Input.TextArea
-                  value={noteValue}
-                  onChange={(e) => {
-                    handleNoteChange(bodyPart, e.target.value);
-                  }}
-                  placeholder={`Add a note for ${formatBodyPart(bodyPart)}...`}
-                  rows={3}
-                />
-              </Panel>
-            );
-          })}
+          {bodyParts.map((bodyPart) => (
+            <Panel key={bodyPart} header={formatBodyPart(bodyPart)}>
+              <Select
+                value={
+                  evaluationData && evaluationData[bodyPart]
+                    ? evaluationData[bodyPart].status || "None"
+                    : "None"
+                }
+                onChange={(value) => {
+                  handleStatusChange(bodyPart, value);
+                }}
+                style={{ width: "200px", marginBottom: "8px" }}
+              >
+                <Option value="None">None</Option>
+                <Option value="Normal">Normal</Option>
+                <Option value="Abnormal">Abnormal</Option>
+                <Option value="Needs Attention">Needs Attention</Option>
+              </Select>
+              <Input.TextArea
+                value={evaluationData[`specify_${bodyPart}`]?.note || ""}
+                onChange={(e) => {
+                  handleNoteChange(bodyPart, e.target.value);
+                }}
+                placeholder={`Add a note for ${formatBodyPart(bodyPart)}...`}
+                rows={3}
+              />
+            </Panel>
+          ))}
         </Collapse>
       )}
     </div>
   );
-  };
+};
 
 export default StatusPage;
