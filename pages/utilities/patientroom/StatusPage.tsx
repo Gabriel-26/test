@@ -122,7 +122,13 @@ const StatusPage = ({
                 <Option value="Needs Attention">Needs Attention</Option>
               </Select>
               <Input.TextArea
-                value={evaluationData[`specify_${bodyPart}`]?.note || ""}
+                value={
+                  evaluationData &&
+                  evaluationData[`specify_${bodyPart}`] &&
+                  evaluationData[`specify_${bodyPart}`].note
+                    ? evaluationData[`specify_${bodyPart}`].note
+                    : ""
+                }
                 onChange={(e) => {
                   handleNoteChange(bodyPart, e.target.value);
                 }}
