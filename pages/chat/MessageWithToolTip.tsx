@@ -30,8 +30,13 @@ const MessageWithTooltip = ({ message, isCurrentUser }) => {
   // Format the timestamp
   const formattedTimestamp = formatTimestamp(message.created_at);
 
+  // Define the CSS classes based on isCurrentUser
+  const messageClass = isCurrentUser
+    ? "message-text-current-user"
+    : "message-text";
+
   return (
-    <span className="message-text" title={formattedTimestamp}>
+    <span className={messageClass} title={formattedTimestamp}>
       {message.message}
     </span>
   );

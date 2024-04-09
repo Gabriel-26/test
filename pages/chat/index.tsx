@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { List, Avatar, Modal, Button, Tooltip } from "antd";
+import { List, Avatar, Modal, Button } from "antd";
 import FullLayout from "../../src/layouts/full/FullLayout";
 import axiosInstance from "../../src/components/utils/axiosInstance";
 import ResidentsList from "./residentsList";
@@ -8,7 +8,6 @@ import { useRouter } from "next/router";
 import PatientListPage from "./patientList";
 import MessageWithTooltip from "./MessageWithToolTip";
 interface Message {
-  created_at: string;
   chatGroupMessages_id: string;
   message: string;
   resident_fName: string;
@@ -156,7 +155,7 @@ const ChatPage: React.FC = () => {
       const patientId = selectedPatients[0];
       const patientLink = generateShareLinks([patientId]);
       // Append patient link to the message
-      messageContent;
+      messageContent = `${messageContent} Patient ${patientId}: ${patientLink}`;
     }
 
     axiosInstance
@@ -172,7 +171,6 @@ const ChatPage: React.FC = () => {
           resident_id: residentId,
           resident_fName: residentFirstName,
           resident_lName: residentLastName,
-          created_at: "",
         };
 
         setMessages([...messages, newMessage]);
@@ -432,58 +430,26 @@ const ChatWithChatmate: React.FC<{
               message.resident_id === localStorage.getItem("resID");
             const messageAlignment = isCurrentUser ? "right" : "left";
             const patientLinkRegex = /Patient (\w+): (\S+)/g;
-            let matches = [];
-            let match;
+            let match = patientLinkRegex.exec(message.message); // Change to let instead of const
+            let messageContent = message.message;
 
-            // Use a loop to find all matches in the message
-            while ((match = patientLinkRegex.exec(message.message)) !== null) {
-              const patientId = match[1];
-              const patientLink = match[2];
-
-              matches.push({
-                patientId,
-                patientLink,
-                start: match.index,
-                end: match.index + match[0].length,
-              });
+            // If match is found, replace the matched text with a single patient link
+            if (match) {
+              messageContent = (
+                <>
+                  {messageContent.substring(0, match.index)}
+                  <a href={match[2]} target="_blank" rel="noopener noreferrer">
+                    {`Patient ${match[1]}`}
+                  </a>
+                  {messageContent.substring(match.index + match[0].length)}
+                </>
+              );
             }
 
-            // If matches found, render the message with patient links
-            if (matches.length > 0) {
-              const messageParts = [];
-              let lastIndex = 0;
-
-              matches.forEach((match, matchIndex) => {
-                // Add the text before the match
-                const beforeText = message.message.substring(
-                  lastIndex,
-                  match.start
-                );
-                messageParts.push(
-                  <span key={`before_${matchIndex}`}>{beforeText}</span>
-                );
-
-                // Add the patient link
-                messageParts.push(
-                  <a
-                    key={`link_${matchIndex}`}
-                    href={match.patientLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >{`Patient ${match.patientId}`}</a>
-                );
-
-                // Update the lastIndex
-                lastIndex = match.end;
-              });
-
-              // Add the text after the last match
-              const afterText = message.message.substring(lastIndex);
-              messageParts.push(
-                <span key={`after_${matches.length}`}>{afterText}</span>
-              );
-
-              return (
+            return (
+              <div className="message-container">
+                {" "}
+                {/* Add this container */}
                 <List.Item
                   key={index}
                   style={{
@@ -495,68 +461,23 @@ const ChatWithChatmate: React.FC<{
                 >
                   <List.Item.Meta
                     title={
-                      <span
-                        style={{ color: isCurrentUser ? "#808080" : "#000000" }}
-                      >
-                        {isCurrentUser
-                          ? `${currentUserFirstName} ${currentUserLastName}`
-                          : `${message.resident_fName} ${message.resident_lName}`}
-                      </span>
+                      isCurrentUser
+                        ? `${currentUserFirstName} ${currentUserLastName}`
+                        : `${message.resident_fName} ${message.resident_lName}`
                     }
                     description={
-                      <span
-                        style={{ color: isCurrentUser ? "#000000" : "#ffffff" }}
-                        className="message-content"
-                      >
-                        {message.message}
-                        <div className="message-timestamp">
-                          {message.created_at}
-                        </div>
-                      </span>
+                      <MessageWithTooltip
+                        message={{ ...message, message: messageContent }}
+                        isCurrentUser={isCurrentUser}
+                      />
                     }
                   />
                 </List.Item>
-              );
-            } else {
-              // If no matches found, render the message without a link
-              return (
-                <List.Item
-                  key={index}
-                  style={{
-                    textAlign: messageAlignment,
-                    marginBottom: "8px",
-                    whiteSpace: "pre-wrap", // Enable wrapping for long lines
-                    wordWrap: "break-word", // Ensure long words are broken
-                  }}
-                >
-                  <List.Item.Meta
-                    title={
-                      <span
-                        style={{ color: isCurrentUser ? "#808080" : "#000000" }}
-                      >
-                        {isCurrentUser
-                          ? `${currentUserFirstName} ${currentUserLastName}`
-                          : `${message.resident_fName} ${message.resident_lName}`}
-                      </span>
-                    }
-                    description={
-                      <span
-                        style={{ color: isCurrentUser ? "#000000" : "#ffffff" }}
-                        className="message-content"
-                      >
-                        {/* Wrap message.message in a span with hover effect */}
-                        <MessageWithTooltip
-                          message={message}
-                          isCurrentUser={isCurrentUser}
-                        />
-                      </span>
-                    }
-                  />
-                </List.Item>
-              );
-            }
+              </div>
+            );
           }}
         />
+
         {isNewMessage && <div ref={messagesEndRef} />}
       </div>
       <div className="p-4 border-t">

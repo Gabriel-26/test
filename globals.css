@@ -16,6 +16,7 @@
   font-size: 16px; /* Adjust the font size as needed */
 }
 
+
 .message-text {
   position: relative; /* Required for positioning the tooltip */
   display: inline-block; /* Ensure tooltip covers only the text */
@@ -25,7 +26,7 @@
   content: attr(title); /* Show the created_at timestamp as tooltip */
   position: absolute;
   top: 50%;
-  right: 100%; /* Position the tooltip to the left of the text */
+  left: 100%; /* Position the tooltip to the left of the text */
   transform: translateY(-50%);
   background-color: rgba(0, 0, 0, 0.8);
   color: #ffffff;
@@ -34,10 +35,37 @@
   opacity: 0; /* Initially hide the tooltip */
   transition: opacity 0.3s ease;
   white-space: nowrap; /* Prevent tooltip from wrapping */
+  z-index: 9999; /* Set the z-index to a high value */
 }
-
-
 
 .message-text:hover::after {
   opacity: 1; /* Show the tooltip on hover */
 }
+
+.message-text-current-user {
+  /* Define styles specific to the current user's messages */
+  /* For example, display the tooltip on the right */
+  position: relative; /* Required for positioning the tooltip */
+  display: inline-block; /* Ensure tooltip covers only the text */
+}
+
+.message-text-current-user:hover::after {
+  content: attr(title); /* Show the created_at timestamp as tooltip */
+  position: absolute;
+  top: 50%;
+  right: 100%; /* Position the tooltip to the right of the text */
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #ffffff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  opacity: 0; /* Initially hide the tooltip */
+  transition: opacity 0.3s ease;
+  white-space: nowrap; /* Prevent tooltip from wrapping */
+  z-index: 9999; /* Set the z-index to a high value */
+}
+
+.message-text-current-user:hover::after {
+  opacity: 1; /* Show the tooltip on hover */
+}
+
