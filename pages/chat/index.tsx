@@ -6,7 +6,7 @@ import ResidentsList from "./residentsList";
 import { TextareaAutosize } from "@mui/material";
 import { useRouter } from "next/router";
 import PatientListPage from "./patientList";
-
+import MessageWithTooltip from "./MessageWithToolTip";
 interface Message {
   chatGroupMessages_id: string;
   message: string;
