@@ -395,19 +395,6 @@ const ChatWithChatmate: React.FC<{
     }
   }, [messages, selectedConversation, lastReceivedMessageId]);
 
-  // useEffect(() => {
-  //   // Display notification and clear after 3 seconds
-  //   if (isNewMessage) {
-  //     setNotification("New message received");
-  //     const timeoutId = setTimeout(() => {
-  //       setNotification(null);
-  //       setIsNewMessage(false);
-  //     }, 3000);
-
-  //     return () => clearTimeout(timeoutId);
-  //   }
-  // }, [isNewMessage, selectedConversation]);
-
   const currentUserFirstName = localStorage.getItem("resFirstName");
   const currentUserLastName = localStorage.getItem("resLastname");
 
@@ -448,6 +435,8 @@ const ChatWithChatmate: React.FC<{
 
             // If match is found, replace the matched text with a single patient link
             if (match) {
+              //@ts-ignore
+
               messageContent = (
                 <>
                   {messageContent.substring(0, match.index)}
@@ -469,8 +458,7 @@ const ChatWithChatmate: React.FC<{
                     textAlign: messageAlignment,
                     marginBottom: "8px",
                     whiteSpace: "pre-wrap", // Enable wrapping for long lines
-    wordWrap: "break-word", // Ensure long words are broken
-                
+                    wordWrap: "break-word", // Ensure long words are broken
                   }}
                 >
                   <List.Item.Meta
