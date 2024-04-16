@@ -5,6 +5,7 @@ import {
   ListItemText,
   CircularProgress,
   Checkbox,
+  Typography,
 } from "@mui/material";
 import axiosInstance from "../../src/components/utils/axiosInstance";
 
@@ -45,24 +46,27 @@ const PatientListPage = ({ onSelectPatients }) => {
 
   return (
     <div>
-      {/* <h1>Patient List</h1> */}
       {loading ? (
         <CircularProgress />
       ) : (
         <div>
-          <List>
-            {patients.map((patient) => (
-              <ListItem key={patient.patient_id}>
-                <Checkbox
-                  onChange={() => handlePatientSelect(patient.patient_id)}
-                  checked={selectedPatients.includes(patient.patient_id)}
-                />
-                <ListItemText
-                  primary={`${patient.patient_fName} ${patient.patient_lName}`}
-                />
-              </ListItem>
-            ))}
-          </List>
+          {patients.length === 0 ? ( // Check if patients array is empty
+            <Typography variant="body1">No patients found.</Typography> // Render message if empty
+          ) : (
+            <List>
+              {patients.map((patient) => (
+                <ListItem key={patient.patient_id}>
+                  <Checkbox
+                    onChange={() => handlePatientSelect(patient.patient_id)}
+                    checked={selectedPatients.includes(patient.patient_id)}
+                  />
+                  <ListItemText
+                    primary={`${patient.patient_fName} ${patient.patient_lName}`}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          )}
         </div>
       )}
     </div>
