@@ -6,17 +6,14 @@ import PageContainer from "../../../src/components/container/PageContainer";
 import DashboardCard from "../../../src/components/shared/DashboardCard";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import React from "react";
+import { useRouter } from "next/router"; // Import the useRouter hook
 
 const AssignedRoomsPage: React.FC = () => {
   const [assignedRooms, setAssignedRooms] = useState([]);
   const [loading, setLoading] = useState(false);
+  const router = useRouter(); // Initialize the useRouter hook
 
   const columns = [
-    // {
-    //   title: "Assigned Room ID",
-    //   dataIndex: "resAssRoom_id",
-    //   key: "resAssRoom_id",
-    // },
     {
       title: "Room Name",
       dataIndex: "room_name",
@@ -42,6 +39,17 @@ const AssignedRoomsPage: React.FC = () => {
         </>
       ),
     },
+    {
+      title: "View Room",
+      key: "view",
+      render: (text, record) => (
+        <Button onClick={() => handleViewRoom(record)}>
+          {" "}
+          {/* Pass the entire room object to handleViewRoom */}
+          View Room
+        </Button>
+      ),
+    },
   ];
 
   const fetchAssignedRooms = async () => {
@@ -53,7 +61,7 @@ const AssignedRoomsPage: React.FC = () => {
 
       setLoading(true);
 
-      const response = await axiosInstance.get(`/resident-assigned-rooms`); // Update the route
+      const response = await axiosInstance.get(`/resident-assigned-rooms`);
 
       if (response.status === 200) {
         setAssignedRooms(response.data);
@@ -76,12 +84,11 @@ const AssignedRoomsPage: React.FC = () => {
 
       const response = await axiosInstance.put(
         `/resAssRooms/${resAssRoom_id}/updateIsFinished`,
-        { isFinished: isFinished ? 1 : 0 } // Toggle between 0 and 1
+        { isFinished: isFinished ? 1 : 0 }
       );
-      console.log("API Response:", response); // Log the response
+      console.log("API Response:", response);
 
       if (response.status === 200) {
-        // Update the local state or refetch the data
         fetchAssignedRooms();
         message.success("Update successful");
       }
@@ -91,6 +98,12 @@ const AssignedRoomsPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleViewRoom = (room) => {
+    const { room_id, room_name } = room; // Destructure room_id and room_name
+    const url = `/utilities/patientroom/${room_name}?room_id=${room_id}`; // Construct the URL
+    router.push(url); // Navigate to the room page
   };
 
   useEffect(() => {
@@ -109,7 +122,7 @@ const AssignedRoomsPage: React.FC = () => {
           columns={columns}
           rowKey={(record) => record.resAssRoom_id}
           loading={loading}
-          pagination={{ pageSize: 5 }} // Set the page size as per your requirement
+          pagination={{ pageSize: 5 }}
         />
       </DashboardCard>
     </PageContainer>

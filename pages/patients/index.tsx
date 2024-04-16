@@ -32,7 +32,9 @@ const PatientSearch: React.FC<PatientSearchProps> & {
   const [searchTerm, setSearchTerm] = useState("");
   const [patients, setPatients] = useState([]);
   const [filteredPatients, setFilteredPatients] = useState([]);
-  const [apiRoute, setApiRoute] = useState("/patients"); // Default API route
+  const [apiRoute, setApiRoute] = useState(
+    "/residentAssignedPatients/get/PatientsByResident"
+  );
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -46,7 +48,7 @@ const PatientSearch: React.FC<PatientSearchProps> & {
     if (role === "admin") {
       setApiRoute("/admin/patients");
     } else {
-      setApiRoute("/patients");
+      setApiRoute("/residentAssignedPatients/get/PatientsByResident");
     }
   }, []); // Fetch the initial API route
 
@@ -105,89 +107,102 @@ const PatientSearch: React.FC<PatientSearchProps> & {
             style={{ marginBottom: 5 }} // Add bottom margin
           />
         </div>
-        <TableContainer>
-          <Table className="custom-table">
-            <TableHead>
-              <TableRow>
-                <TableCell>
-                  <Typography variant="subtitle2" fontWeight={600}>
-                    ID
-                  </Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="subtitle2" fontWeight={600}>
-                    First Name
-                  </Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="subtitle2" fontWeight={600}>
-                    Last Name
-                  </Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="subtitle2" fontWeight={600}>
-                    Middle Name
-                  </Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="subtitle2" fontWeight={600}>
-                    Age
-                  </Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="subtitle2" fontWeight={600}>
-                    Sex
-                  </Typography>
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {displayedPatients
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((patient) => (
-                  <TableRow key={patient.patient_id}>
-                    <TableCell>
-                      <Typography variant="subtitle2">
-                        {/* Use router.push to navigate to patient history page */}
-                        <span
-                          style={{ cursor: "pointer", color: "blue" }}
-                          onClick={() =>
-                            router.push(`patients/${patient.patient_id}`)
-                          }
-                        >
-                          {patient.patient_id}
-                        </span>
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant="subtitle2">
-                        {patient.patient_fName}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant="subtitle2">
-                        {patient.patient_lName}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant="subtitle2">
-                        {patient.patient_mName}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant="subtitle2">
-                        {patient.patient_age}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant="subtitle2">
-                        {patient.patient_sex}
-                      </Typography>
-                    </TableCell>
-                  </TableRow>
-                ))}
-            </TableBody>
-          </Table>
+        <TableContainer
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            minHeight: "200px",
+          }}
+        >
+          {displayedPatients.length === 0 ? (
+            <Typography variant="subtitle2" color="textSecondary">
+              No patients found.
+            </Typography>
+          ) : (
+            <Table className="custom-table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>
+                    <Typography variant="subtitle2" fontWeight={600}>
+                      ID
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2" fontWeight={600}>
+                      First Name
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2" fontWeight={600}>
+                      Last Name
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2" fontWeight={600}>
+                      Middle Name
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2" fontWeight={600}>
+                      Age
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2" fontWeight={600}>
+                      Sex
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {displayedPatients
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((patient) => (
+                    <TableRow key={patient.patient_id}>
+                      <TableCell>
+                        <Typography variant="subtitle2">
+                          {/* Use router.push to navigate to patient history page */}
+                          <span
+                            style={{ cursor: "pointer", color: "blue" }}
+                            onClick={() =>
+                              router.push(`patients/${patient.patient_id}`)
+                            }
+                          >
+                            {patient.patient_id}
+                          </span>
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="subtitle2">
+                          {patient.patient_fName}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="subtitle2">
+                          {patient.patient_lName}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="subtitle2">
+                          {patient.patient_mName}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="subtitle2">
+                          {patient.patient_age}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="subtitle2">
+                          {patient.patient_sex}
+                        </Typography>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+              </TableBody>
+            </Table>
+          )}
         </TableContainer>
         <TablePagination
           rowsPerPageOptions={[10, 25]}

@@ -163,7 +163,7 @@ const RoomView = () => {
     axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
     axiosInstance
-      .post(apiUrl, requestBody)
+      .put(apiUrl, requestBody)
       .then((response) => {
         console.log("Patients transferred successfully");
         console.log(response.data);
@@ -199,7 +199,7 @@ const RoomView = () => {
         console.log(response.data);
 
         setTransferError("");
-        setIsCheckoutModalVisible(false)
+        setIsCheckoutModalVisible(false);
         setPatientData([]); // Clear patientData after successful checkout
       })
       .catch((error) => {

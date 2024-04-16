@@ -24,29 +24,6 @@ export function EHRForm() {
   const [maxDigits] = useState(3); // Maximum number of digits allowed
   const [massPresentChecked, setMassPresentChecked] = useState(false);
 
-  const handleInput = (e) => {
-    const input = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
-    const maxLengthInput = input.slice(0, maxDigits); // Limit input to maxDigits
-    e.target.value = maxLengthInput; // Update input field value
-  };
-
-  const handleBMIInput = (e) => {
-    let input = e.target.value.replace(/[^\d.]/g, ""); // Remove non-numeric and non-decimal point characters
-    const decimalIndex = input.indexOf("."); // Check if a decimal point exists
-
-    if (decimalIndex !== -1) {
-      // If a decimal point exists, limit the input before and after the decimal point
-      const integerPart = input.slice(0, decimalIndex);
-      const decimalPart = input.slice(decimalIndex + 1, decimalIndex + 2); // Limit decimal part to one digit
-      input = `${integerPart}.${decimalPart}`;
-    } else {
-      // If there's no decimal point, limit the input to max 4 digits
-      input = input.slice(0, 4);
-    }
-
-    e.target.value = input; // Update input field value
-  };
-
   const handleMassPresentChange = (e) => {
     setMassPresentChecked(e.target.checked);
   };

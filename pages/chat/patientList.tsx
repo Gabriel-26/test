@@ -16,7 +16,9 @@ const PatientListPage = ({ onSelectPatients }) => {
   useEffect(() => {
     const fetchPatients = async () => {
       try {
-        const response = await axiosInstance.get("patients");
+        const response = await axiosInstance.get(
+          "residentAssignedPatients/get/PatientsByResident"
+        );
         setPatients(response.data);
         setLoading(false);
       } catch (error) {

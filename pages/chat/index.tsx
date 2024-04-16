@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { List, Avatar, Modal, Button } from "antd";
+import { List, Avatar, Modal, Button, message } from "antd";
 import FullLayout from "../../src/layouts/full/FullLayout";
 import axiosInstance from "../../src/components/utils/axiosInstance";
 import ResidentsList from "./residentsList";
@@ -190,26 +190,77 @@ const ChatPage: React.FC = () => {
   };
 
   const handleConfirmShare = () => {
-    // Handle confirmation and generate links here
-    const links = generateShareLinks(selectedPatients);
-    console.log("Share Links:", links);
-
-    // Create messages for each patient with their respective link
-    const messages = links.map(
-      (link, index) => `Patient ${selectedPatients[index]}: ${link}`
+    // Get the selected conversation
+    const selectedConversationObj = conversations.find(
+      (conversation) => conversation.chatGroup_id === selectedConversation
     );
 
-    // Preserve the existing content of inputMessage and append the new messages
-    setInputMessage((prevInputMessage) => {
-      return prevInputMessage + " " + messages.join(" ");
-    });
+    // Check if the selected conversation exists and has a resident_id
+    if (selectedConversationObj && selectedConversationObj.resident_id) {
+      // Use the resident_id from the selected conversation
+      const residentId = selectedConversationObj.resident_id;
 
-    // Close the modal
-    setModalVisible(false);
+      // Make an API request to share the selected patients
+      selectedPatients.forEach((patientId) => {
+        axiosInstance
+          .post(`/residentAssignedPatients/sharePatient/${patientId}`, {
+            resident_id: residentId,
+          })
+          .then((response) => {
+            // Handle success response
+            const successMessage = `Patient ${patientId} shared successfully.`;
+            message.success(successMessage);
 
-    // Clear selected patients after sharing
-    clearSelectedPatients();
+            // Generate the patient link
+            const patientLink = generateShareLinks([patientId])[0];
+
+            // Construct the message with the patient link
+            const messageContent = `Patient ${patientId} shared. Patient Page: ${patientLink}`;
+
+            // Send the message to the chat group
+            axiosInstance
+              .post(`/chatGroupMessages`, {
+                chatGroup_id: selectedConversation,
+                message: messageContent,
+                resident_id: localStorage.getItem("resID"),
+              })
+              .then((response) => {
+                // Handle success response
+                // console.log("Message sent successfully:", response.data);
+
+                // Clear the input message after sending the message
+                setInputMessage("");
+              })
+              .catch((error) => {
+                console.error("Error sending message:", error);
+              });
+          })
+          .catch((error) => {
+            if (error.response && error.response.status === 400) {
+              const errorMessage = `Patient ${patientId} has already been shared with this Resident.`;
+              message.error(errorMessage);
+            } else {
+              console.error(`Error sharing patient ${patientId}:`, error);
+            }
+          });
+      });
+
+      // Close the modal
+      setModalVisible(false);
+
+      // Clear selected patients after sharing
+      clearSelectedPatients();
+    } else {
+      const errorMessage =
+        "Error: Selected conversation not found or missing resident_id.";
+      message.error(errorMessage);
+    }
   };
+
+  // const generateShareLink = (patientId) => {
+  //   // Implement your logic to generate the patient link
+  //   return `/patients/${patientId}`;
+  // };
 
   const generateShareLinks = (selectedPatients: string[]): string[] => {
     // Implement your logic to generate a share link for each patient

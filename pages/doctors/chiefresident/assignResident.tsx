@@ -16,13 +16,9 @@ import axiosInstance from "../../../src/components/utils/axiosInstance";
 import FullLayout from "../../../src/layouts/full/FullLayout";
 import PageContainer from "../../../src/components/container/PageContainer";
 import DashboardCard from "../../../src/components/shared/DashboardCard";
-import {
-  UserOutlined,
-  CheckCircleOutlined,
-  CloseCircleOutlined,
-} from "@ant-design/icons";
-import { MdDelete } from "react-icons/md";
 
+import { MdDelete } from "react-icons/md";
+import SharedPatientDataPage from "./sharedPatientData";
 const { Option } = Select;
 
 const AssignResidentRoom = () => {
@@ -89,9 +85,20 @@ const AssignResidentRoom = () => {
     },
     {
       title: "Is Finished",
-      dataIndex: "isFinished",
+      dataIndex: "resident_id",
       key: "isFinished",
-      render: (text) => (text ? "Yes" : "No"),
+      render: (residentId) => {
+        const assignedRoomsForResident = assignedRooms.filter(
+          (room) => room.resident_id === residentId
+        );
+        if (assignedRoomsForResident.length === 0) {
+          return "No"; // Default to "No" if there are no assigned rooms
+        }
+        const allRoomsFinished = assignedRoomsForResident.every(
+          (room) => room.isFinished
+        );
+        return allRoomsFinished ? "Yes" : "No";
+      },
     },
   ];
 
@@ -358,7 +365,7 @@ const AssignResidentRoom = () => {
             columns={unassignedColumns}
             rowKey={(record) => record.resident_id}
             pagination={false}
-            scroll={{ y: 300 }}
+            scroll={{ y: 250 }}
           />
         </Form>
         <Row gutter={16} className="mb-4">
@@ -368,7 +375,8 @@ const AssignResidentRoom = () => {
                 dataSource={residents}
                 columns={mainTableColumns}
                 rowKey={(record) => record.resident_id}
-                pagination={false}
+                pagination={{ pageSize: 4 }} // Set pageSize to 1 to display one item per page
+                // scroll={{ y: 250 }}
                 expandable={{
                   expandedRowRender: renderAssignedRooms,
                   rowExpandable: (record) =>
@@ -379,7 +387,6 @@ const AssignResidentRoom = () => {
               />
             </DashboardCard>
           </Col>
-          <Col span={12}>{/* Additional content for the right column */}</Col>
         </Row>
         <Modal
           title="Confirm Assignment Deletion"
@@ -405,6 +412,7 @@ const AssignResidentRoom = () => {
           </p>
         </Modal>
       </DashboardCard>
+      <SharedPatientDataPage />
     </PageContainer>
   );
 };

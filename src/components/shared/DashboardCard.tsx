@@ -37,7 +37,7 @@ const DashboardCard = ({
     (theme: { breakpoints: { up: (arg0: string) => string } }) =>
       theme.breakpoints.up("md")
   );
-  const calculatedCardWidth = cardWidth ?? (isLargeScreen ? 1000 : 600);
+  const calculatedCardWidth = cardWidth ?? (isLargeScreen ? 1100 : 600);
   return (
     <>
       <Card
@@ -56,8 +56,8 @@ const DashboardCard = ({
           <CardContent sx={{ p: "30px" }}>
             {title ? (
               <Stack
-                direction="row"
-                spacing={2}
+                direction="column"
+                spacing={3}
                 justifyContent="space-between"
                 alignItems={"center"}
                 mb={3}
