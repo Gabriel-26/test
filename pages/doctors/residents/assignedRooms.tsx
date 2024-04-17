@@ -7,6 +7,7 @@ import DashboardCard from "../../../src/components/shared/DashboardCard";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import React from "react";
 import { useRouter } from "next/router"; // Import the useRouter hook
+import SharedPatientDataPage from "../chiefresident/sharedPatientData";
 
 const AssignedRoomsPage: React.FC = () => {
   const [assignedRooms, setAssignedRooms] = useState([]);
@@ -125,6 +126,7 @@ const AssignedRoomsPage: React.FC = () => {
           pagination={{ pageSize: 5 }}
         />
       </DashboardCard>
+      <SharedPatientDataPage />
     </PageContainer>
   );
 };
