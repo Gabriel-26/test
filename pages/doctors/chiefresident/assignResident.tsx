@@ -160,7 +160,7 @@ const AssignResidentRoom = () => {
 
       setLoading(true);
       const response = await axiosInstance.delete(
-        `resAssRooms/delete/${resAssRoomId}`
+        `resAssRooms/${resAssRoomId}`
       );
 
       if (response.status === 200) {
