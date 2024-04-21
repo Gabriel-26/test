@@ -67,7 +67,7 @@ const FileViewer = ({ patientData }) => {
       okType: "danger",
       onOk() {
         axiosInstance
-          .delete(`/fileUpload/delete/${fileId}`)
+          .delete(`/fileUpload/${fileId}`)
           .then((response) => {
             message.success("File deleted successfully!");
             fetchFiles(); // Refresh files after deletion

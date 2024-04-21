@@ -239,7 +239,7 @@ const Rooms = () => {
   const handleConfirmDeleteRoom = async () => {
     try {
       const response = await axiosInstance.delete(
-        `admin/rooms/delete/${deleteRoomId}`
+        `admin/rooms/${deleteRoomId}`
       );
 
       // Fetch rooms again after the delete is completed
