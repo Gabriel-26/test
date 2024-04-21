@@ -84,8 +84,15 @@ const PatientSearch: React.FC<PatientSearchProps> & {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   };
-
   const displayedPatients = searchTerm ? filteredPatients : patients;
+
+  const displayedPatientsArray = Array.isArray(displayedPatients)
+    ? displayedPatients
+    : [];
+  const slicedPatients = displayedPatientsArray.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -118,7 +125,7 @@ const PatientSearch: React.FC<PatientSearchProps> & {
             minHeight: "200px",
           }}
         >
-          {displayedPatients.length === 0 ? (
+          {slicedPatients.length === 0 ? (
             <Typography variant="subtitle2" color="textSecondary">
               No patients found.
             </Typography>
@@ -159,7 +166,7 @@ const PatientSearch: React.FC<PatientSearchProps> & {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {displayedPatients
+                {slicedPatients
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((patient) => (
                     <TableRow key={patient.patient_id}>
