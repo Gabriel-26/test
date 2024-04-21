@@ -183,7 +183,7 @@ const PatientHistoryPage = () => {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleString("en", {
+    return date.toLocaleString("en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",
@@ -303,7 +303,11 @@ const PatientHistoryPage = () => {
                               {dischargedDates.map((date, index) => (
                                 <ListItem key={index}>
                                   <ListItemText
-                                    primary={formatDate(date.dischargeDate)}
+                                    primary={
+                                      date.dischargeDate
+                                        ? formatDate(date.dischargeDate)
+                                        : ""
+                                    }
                                   />
                                 </ListItem>
                               ))}
