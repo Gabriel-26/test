@@ -183,7 +183,7 @@ const PatientHistoryPage = () => {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleString("en-US", {
+    return date.toLocaleString("zh-hk", {
       year: "numeric",
       month: "short",
       day: "numeric",
