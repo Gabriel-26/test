@@ -61,20 +61,23 @@ const PatientSearch: React.FC<PatientSearchProps> & {
 
   useEffect(() => {
     // Filter patients based on the search term
-    const filtered = patients.filter((patient) =>
-      Object.keys(patient).some(
-        (field) =>
-          [
-            "patient_id",
-            "patient_fName",
-            "patient_lName",
-            "patient_mName",
-            "patient_age",
-            "patient_sex",
-          ].includes(field) &&
-          `${patient[field]}`.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+    const filtered = patients.filter(
+      (patient) =>
+        typeof patient === "object" &&
+        Object.keys(patient).some(
+          (field) =>
+            [
+              "patient_id",
+              "patient_fName",
+              "patient_lName",
+              "patient_mName",
+              "patient_age",
+              "patient_sex",
+            ].includes(field) &&
+            `${patient[field]}`.toLowerCase().includes(searchTerm.toLowerCase())
+        )
     );
+
     setFilteredPatients(filtered);
   }, [searchTerm, patients]);
 
