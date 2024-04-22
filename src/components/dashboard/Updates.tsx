@@ -97,9 +97,9 @@ const RoomUpdates = () => {
             renderItem={(update, index) => (
               <Item key={`${update.RA_id}_${index}`}>
                 <Typography.Text strong>
-                  {`Resident/ Dr. ${
-                    update.residentLastName || update.resident_id
-                  } has performed the action: ${update.action}`}
+                  {`Resident ${update.residentLastName || update.resident_id} ${
+                    update.action
+                  }`}
                 </Typography.Text>
                 <br />
                 <Typography.Text type="secondary">

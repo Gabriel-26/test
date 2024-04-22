@@ -21,13 +21,13 @@ export function EHRForm() {
   const [recDrugs, setRecDrugs] = useState("");
   const [alcohol, setAlcohol] = useState("");
   const [massPresentChecked, setMassPresentChecked] = useState(false);
-  const [heightCM, setHeightCM] = useState("");
-  const [weightKG, setWeightKG] = useState("");
-  const [bmi, setBMI] = useState("");
+  const [height, setHeightCM] = useState("");
+  const [weight, setWeightKG] = useState("");
+  const [BMI, setBMI] = useState("");
 
   const calculateBMI = () => {
-    const heightInMeters = parseInt(heightCM) / 100;
-    const weightInKG = parseInt(weightKG);
+    const heightInMeters = parseInt(height) / 100;
+    const weightInKG = parseInt(weight);
     const bmiValue = (weightInKG / (heightInMeters * heightInMeters)).toFixed(
       1
     );
@@ -97,7 +97,7 @@ export function EHRForm() {
       patient_sex: "",
       date: "",
       room_id: "",
-      patient_vaccination_stat: "",
+      phr_vaccinationStatus: "",
       phr_chiefComplaint: "",
       phr_startTime: "",
       phr_endTime: "",
@@ -105,7 +105,7 @@ export function EHRForm() {
       phr_nonVerbalPatient: "",
       phr_HxFromParent: "",
       phr_HxFromFamily: "",
-      phr_medRecAvailable: "",
+      phr_medRecords: "",
       phr_PMH_Asthma: "",
       phr_PMH_HTN: "",
       phr_PMH_Thyroid: "",
@@ -150,8 +150,8 @@ export function EHRForm() {
       phr_bodyHabitusWNL: "",
       phr_bodyHabitusCathetic: "",
       phr_bodyHabitusObese: "",
-      phr_heightCM: "",
-      phr_weightKG: "",
+      phr_height: "",
+      phr_weight: "",
       phr_BMI: "",
       phr_nasalMucosaSeptumTurbinatesWNL: "",
       phr_nasalMucosaSeptumTurbinatesEdeOrEryPresent: "",
@@ -209,6 +209,7 @@ export function EHRForm() {
       phr_bowelSoundsNormaoactive: "",
       phr_bowelSoundsUp: "",
       phr_bowelSoundsDown: "",
+      phr_liverAndSpleenPalpableAndWNL: "",
       phr_unableToPalpateLiver: "",
       phr_unableToPalpateSpleen: "",
       phr_organomegalyLiver: "",
@@ -228,7 +229,7 @@ export function EHRForm() {
       phr_skinEccymosis: "",
       phr_skinNodules: "",
       phr_skinUlcer: "",
-      phr_Assessment: "",
+      phr_assessment: "",
     },
   });
 
@@ -252,7 +253,7 @@ export function EHRForm() {
       phr_bodyHabitusWNL: data.phr_bodyHabitusWNL ? 1 : 0,
       phr_bodyHabitusCathetic: data.phr_bodyHabitusCathetic ? 1 : 0,
       phr_bodyHabitusObese: data.phr_bodyHabitusObese ? 1 : 0,
-
+      phr_medRecords: data.phr_medRecords ? 1 : 0,
       phr_nasalMucosaSeptumTurbinatesWNL:
         data.phr_nasalMucosaSeptumTurbinatesWNL ? 1 : 0,
       phr_nasalMucosaSeptumTurbinatesEdeOrEryPresent:
@@ -504,17 +505,17 @@ export function EHRForm() {
                 </div>
               </Grid>
 
-              <Grid item xs={12}>
+              {/* <Grid item xs={12}>
                 <div className="my-4">
                   <label className="flex flex-col">
                     <span>Vaccination Status (Covid)</span>
                     <textarea
-                      {...register("patient_vaccination_stat")}
+                      {...register("phr_vaccinationStatus")}
                       className="border border-gray-300 px-4 py-2 rounded-lg"
                     />
                   </label>
                 </div>
-              </Grid>
+              </Grid> */}
 
               <Grid item xs={12} md={6}>
                 <div className="my-4">
@@ -621,7 +622,7 @@ export function EHRForm() {
                   <label className="flex items-center">
                     <span className="mr-2">Med Records</span>
                     <input
-                      {...register("phr_medRecAvailable")}
+                      {...register("phr_medRecords")}
                       className="form-checkbox h-5 w-5 text-indigo-600 rounded"
                       type="checkbox"
                     />
@@ -805,7 +806,7 @@ export function EHRForm() {
               <label className="flex flex-col">
                 <span>Vaccination History</span>
                 <textarea
-                  {...register("phr_vaccinationHistory")}
+                  {...register("phr_vaccinationStatus")}
                   className="border border-gray-300 px-4 py-2 rounded-lg"
                 />
               </label>
@@ -1130,7 +1131,8 @@ export function EHRForm() {
                       <InputMask
                         mask="999 cm"
                         maskChar={null}
-                        value={heightCM}
+                        value={height}
+                        {...register("phr_height")}
                         onChange={handleHeightChange}
                         type="text"
                         className="border border-gray-300 px-4 py-2 rounded-lg"
@@ -1145,7 +1147,8 @@ export function EHRForm() {
                       <InputMask
                         mask="99 kg"
                         maskChar={null}
-                        value={weightKG}
+                        value={weight}
+                        {...register("phr_weight")}
                         onChange={handleWeightChange}
                         type="text"
                         className="border border-gray-300 px-4 py-2 rounded-lg"
@@ -1160,7 +1163,8 @@ export function EHRForm() {
                       <InputMask
                         mask="99.9"
                         maskPlaceholder=""
-                        value={bmi}
+                        value={BMI}
+                        {...register("phr_BMI")}
                         readOnly
                         className="border border-gray-300 px-4 py-2 rounded-lg"
                       />
@@ -1739,7 +1743,7 @@ export function EHRForm() {
                   <div className="flex items-center">
                     <p className="mr-4">Palpable and WNL</p>
                     <input //@ts-ignore
-                      {...register("liver-spleen")}
+                      {...register("phr_liverAndSpleenPalpableAndWNL")}
                       type="checkbox"
                       className="form-checkbox h-4 w-4 text-indigo-600 rounded"
                     />
@@ -1933,7 +1937,7 @@ export function EHRForm() {
               <label className="flex flex-col">
                 <span className="font-bold">Assessment</span>
                 <textarea
-                  {...register("phr_Assessment")}
+                  {...register("phr_assessment")}
                   className="border border-gray-300 px-4 py-2 rounded-lg"
                 ></textarea>
               </label>
