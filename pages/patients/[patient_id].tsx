@@ -181,8 +181,12 @@ const PatientHistoryPage = () => {
     }
   }, [patientID]);
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string, isDischargeDate: boolean) => {
     const date = new Date(dateString);
+    if (isDischargeDate) {
+      // Subtract 8 hours (28800000 milliseconds) from the date if it's a discharge date
+      date.setTime(date.getTime() - 28800000);
+    }
     return date.toLocaleString("en-US", {
       year: "numeric",
       month: "short",
@@ -280,7 +284,7 @@ const PatientHistoryPage = () => {
                               {admittedDates.map((date, index) => (
                                 <ListItem key={index}>
                                   <ListItemText
-                                    primary={formatDate(date.created_at)}
+                                    primary={formatDate(date.created_at, false)}
                                   />
                                 </ListItem>
                               ))}
@@ -305,7 +309,7 @@ const PatientHistoryPage = () => {
                                   <ListItemText
                                     primary={
                                       date.dischargeDate
-                                        ? formatDate(date.dischargeDate)
+                                        ? formatDate(date.dischargeDate, true)
                                         : ""
                                     }
                                   />
