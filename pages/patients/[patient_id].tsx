@@ -185,7 +185,7 @@ const PatientHistoryPage = () => {
     const date = new Date(dateString);
     if (isDischargeDate) {
       // Subtract 8 hours (28800000 milliseconds) from the date if it's a discharge date
-      date.setTime(date.getTime() - 28800000);
+      date.setTime(date.getTime() + 28800000);
     }
     return date.toLocaleString("en-US", {
       year: "numeric",
