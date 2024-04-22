@@ -1101,31 +1101,7 @@ export function EHRForm() {
                   </div>
                 </Grid>
               </Grid>
-              <div className="my-4">
-                <p className="font-bold">Body Habitus</p>
-                {[
-                  { label: "WNL", field: "phr_bodyHabitusWNL" },
-                  { label: "Cathetic", field: "phr_bodyHabitusCathetic" },
-                  { label: "Obese", field: "phr_bodyHabitusObese" },
-                ].map(({ label, field }, index) => {
-                  return (
-                    <label key={field} className="flex items-center">
-                      <span>{label}</span>
-                      <input
-                        //@ts-ignore
-                        {...register(field)}
-                        aria-invalid={errors[field] ? "true" : "false"}
-                        value={1}
-                        type="radio"
-                        className="form-radio h-4 w-4 text-indigo-600 rounded"
-                      />
-                    </label>
-                  );
-                })}
-                {errors["body-habitus"] && (
-                  <p role="alert">{errors["body-habitus"]?.message}</p>
-                )}
-              </div>
+
               <Grid container spacing={2}>
                 <Grid item xs={4}>
                   <div className="my-4">
@@ -1197,39 +1173,6 @@ export function EHRForm() {
                   </p>
                 )}
               </div>
-              <div className="my-4">
-                <p className="font-bold">Dentition & gums</p>
-                {[
-                  { label: "WNL", field: "phr_dentionAndGumsWNL" },
-                  {
-                    label: "Dental canes",
-                    field: "phr_dentionAndGumsDentalCanes",
-                  },
-                  {
-                    label: "Gingivitis",
-                    field: "phr_dentionAndGumsGingivitis",
-                  },
-                ].map(({ label, field }, index) => {
-                  return (
-                    <label key={field} className="flex items-center">
-                      <span>{label}</span>
-                      <input
-                        //@ts-ignore
-                        {...register(field)}
-                        aria-invalid={errors[field] ? "true" : "false"}
-                        value={errors[field] ? 0 : 1}
-                        type="checkbox"
-                        className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
-                      />
-                    </label>
-                  );
-                })}
-                {errors["dentition-gums"] && (
-                  <p role="alert" className="text-red-500 text-sm">
-                    {errors["dentition-gums"]?.message}
-                  </p>
-                )}
-              </div>
 
               <div className="my-4">
                 <p className="font-bold">Body Habitus</p>
@@ -1258,43 +1201,6 @@ export function EHRForm() {
               </div>
 
               <Grid container spacing={2}>
-                <Grid item xs={12} md={6}>
-                  <div className="my-4">
-                    <p className="font-bold">
-                      Nasal mucosa, septum, & turbinates
-                    </p>
-                    {[
-                      {
-                        label: "WNL",
-                        field: "phr_nasalMucosaSeptumTurbinatesWNL",
-                      },
-                      {
-                        label: "Edema or erythema present",
-                        field: "phr_nasalMucosaSeptumTurbinatesEdeOrEryPresent",
-                      },
-                    ].map(({ label, field }, index) => {
-                      return (
-                        <label key={field} className="flex items-center">
-                          <span>{label}</span>
-                          <input
-                            //@ts-ignore
-                            {...register(field)}
-                            aria-invalid={errors[field] ? "true" : "false"}
-                            value={errors[field] ? 0 : 1}
-                            type="checkbox"
-                            className="form-checkbox h-4 w-4 text-indigo-600 rounded ml-2"
-                          />
-                        </label>
-                      );
-                    })}
-                    {errors["nasal-mucosa-septum-turbinates"] && (
-                      <p role="alert" className="text-red-500 text-sm">
-                        {errors["nasal-mucosa-septum-turbinates"]?.message}
-                      </p>
-                    )}
-                  </div>
-                </Grid>
-
                 <Grid item xs={12} md={6}>
                   <div className="my-4">
                     <p className="font-bold">Dentition & gums</p>
