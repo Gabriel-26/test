@@ -12,7 +12,6 @@ import InputMask from "react-input-mask";
 export function EHRForm() {
   const [roomData, setRoomData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [allergiesChecked, setAllergiesChecked] = useState(false);
   const [othersChecked, setOthersChecked] = useState(false);
   const [maintenanceMedsChecked, setMaintenanceMedsChecked] = useState(false);
@@ -21,8 +20,29 @@ export function EHRForm() {
   const [tobacco, setTobacco] = useState("");
   const [recDrugs, setRecDrugs] = useState("");
   const [alcohol, setAlcohol] = useState("");
-  const [maxDigits] = useState(3); // Maximum number of digits allowed
   const [massPresentChecked, setMassPresentChecked] = useState(false);
+  const [heightCM, setHeightCM] = useState("");
+  const [weightKG, setWeightKG] = useState("");
+  const [bmi, setBMI] = useState("");
+
+  const calculateBMI = () => {
+    const heightInMeters = parseInt(heightCM) / 100;
+    const weightInKG = parseInt(weightKG);
+    const bmiValue = (weightInKG / (heightInMeters * heightInMeters)).toFixed(
+      1
+    );
+    setBMI(bmiValue);
+  };
+
+  const handleHeightChange = (event) => {
+    setHeightCM(event.target.value);
+    calculateBMI();
+  };
+
+  const handleWeightChange = (event) => {
+    setWeightKG(event.target.value);
+    calculateBMI();
+  };
 
   const handleMassPresentChange = (e) => {
     setMassPresentChecked(e.target.checked);
@@ -1110,7 +1130,8 @@ export function EHRForm() {
                       <InputMask
                         mask="999 cm"
                         maskChar={null}
-                        {...register("phr_heightCM")}
+                        value={heightCM}
+                        onChange={handleHeightChange}
                         type="text"
                         className="border border-gray-300 px-4 py-2 rounded-lg"
                       />
@@ -1122,9 +1143,10 @@ export function EHRForm() {
                     <label className="flex flex-col">
                       <span>Weight</span>
                       <InputMask
-                        mask="99 kg" // Square brackets indicate optional characters
+                        mask="99 kg"
                         maskChar={null}
-                        {...register("phr_weightKG")}
+                        value={weightKG}
+                        onChange={handleWeightChange}
                         type="text"
                         className="border border-gray-300 px-4 py-2 rounded-lg"
                       />
@@ -1138,12 +1160,40 @@ export function EHRForm() {
                       <InputMask
                         mask="99.9"
                         maskPlaceholder=""
+                        value={bmi}
+                        readOnly
                         className="border border-gray-300 px-4 py-2 rounded-lg"
                       />
                     </label>
                   </div>
                 </Grid>
               </Grid>
+
+              <div className="my-4">
+                <p className="font-bold">Body Habitus</p>
+                {[
+                  { label: "WNL", field: "phr_bodyHabitusWNL" },
+                  { label: "Cathetic", field: "phr_bodyHabitusCathetic" },
+                  { label: "Obese", field: "phr_bodyHabitusObese" },
+                ].map(({ label, field }, index) => {
+                  return (
+                    <label key={field} className="flex items-center">
+                      <span>{label}</span>
+                      <input
+                        //@ts-ignore
+                        {...register(field)}
+                        aria-invalid={errors[field] ? "true" : "false"}
+                        value={1}
+                        type="radio"
+                        className="form-radio h-4 w-4 text-indigo-600 rounded"
+                      />
+                    </label>
+                  );
+                })}
+                {errors["body-habitus"] && (
+                  <p role="alert">{errors["body-habitus"]?.message}</p>
+                )}
+              </div>
               <div className="my-4">
                 <p className="font-bold">Nasal mucosa, septum, & turbinates</p>
                 {[
@@ -1171,32 +1221,6 @@ export function EHRForm() {
                   <p role="alert" className="text-red-500 text-sm">
                     {errors["nasal-mucosa-septum-turbinates"]?.message}
                   </p>
-                )}
-              </div>
-
-              <div className="my-4">
-                <p className="font-bold">Body Habitus</p>
-                {[
-                  { label: "WNL", field: "phr_bodyHabitusWNL" },
-                  { label: "Cathetic", field: "phr_bodyHabitusCathetic" },
-                  { label: "Obese", field: "phr_bodyHabitusObese" },
-                ].map(({ label, field }, index) => {
-                  return (
-                    <label key={field} className="flex items-center">
-                      <span>{label}</span>
-                      <input
-                        //@ts-ignore
-                        {...register(field)}
-                        aria-invalid={errors[field] ? "true" : "false"}
-                        value={1}
-                        type="radio"
-                        className="form-radio h-4 w-4 text-indigo-600 rounded"
-                      />
-                    </label>
-                  );
-                })}
-                {errors["body-habitus"] && (
-                  <p role="alert">{errors["body-habitus"]?.message}</p>
                 )}
               </div>
 
@@ -1626,13 +1650,16 @@ export function EHRForm() {
             <div className="my-4">
               <label className="flex flex-col">
                 <span className="font-bold">GRADE</span>
-                <textarea
+                <input
                   {...register("phr_grade")}
                   className="border border-gray-300 px-4 py-2 rounded-lg"
                   placeholder="Enter Grade"
+                  maxLength={1} // Set maximum length to 1 character
+                  pattern="[0-9]" // Allow only digits (0-9)
                 />
               </label>
             </div>
+
             <div className="my-4">
               <label className="flex flex-col">
                 <span className="font-bold">Additional Findings</span>
