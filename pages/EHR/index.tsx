@@ -23,7 +23,7 @@ export function EHRForm() {
   const [massPresentChecked, setMassPresentChecked] = useState(false);
   const [height, setHeightCM] = useState("");
   const [weight, setWeightKG] = useState("");
-  const [BMI, setBMI] = useState("");
+  const [bmi, setBMI] = useState("");
 
   const calculateBMI = () => {
     const heightInMeters = parseInt(height) / 100;
@@ -236,6 +236,7 @@ export function EHRForm() {
   const onSubmit = (data: any) => {
     const mappedData = {
       ...data,
+      phr_BMI: bmi,
       phr_maintenanceMeds: data.phr_maintenanceMeds ? 1 : 0,
       phr_PMH_Asthma: data.phr_PMH_Asthma ? 1 : 0,
       phr_PMH_HTN: data.phr_PMH_HTN ? 1 : 0,
@@ -605,11 +606,11 @@ export function EHRForm() {
                         <span className="mr-2">{label}</span>
                         <input
                           //@ts-ignore
-                          {...register("hxObtainedFrom")}
-                          className="form-radio h-5 w-5 text-indigo-600 rounded"
+                          {...register(field)} // Register the field directly
+                          className="form-checkbox h-5 w-5 text-indigo-600 rounded"
                           aria-invalid={errors[field] ? "true" : "false"}
-                          value={field} // Use unique values for each radio button
-                          type="radio"
+                          value={errors[field] ? 0 : 1}
+                          type="checkbox"
                         />
                       </label>
                     );
@@ -1163,7 +1164,7 @@ export function EHRForm() {
                       <InputMask
                         mask="99.9"
                         maskPlaceholder=""
-                        value={BMI}
+                        value={bmi}
                         {...register("phr_BMI")}
                         readOnly
                         className="border border-gray-300 px-4 py-2 rounded-lg"

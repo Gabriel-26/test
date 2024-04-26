@@ -32,7 +32,10 @@ import {
 import AddChiefResidentForm from "./addform";
 import EditChiefResidentForm from "./editform";
 import { MdAddCircle, MdDelete } from "react-icons/md";
+import { MdPersonAddAlt1 } from "react-icons/md";
+
 import { FiEdit } from "react-icons/fi";
+import AddDepartmentModal from "../addDepartment";
 
 const ChiefResident = () => {
   const [doctors, setDoctors] = useState([]);
@@ -42,7 +45,8 @@ const ChiefResident = () => {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteError, setDeleteError] = useState(null);
   const { confirm } = Modal;
-
+  const [addDepartmentModalVisible, setAddDepartmentModalVisible] =
+    useState(false);
   const [newDoctor, setNewDoctor] = useState({
     resident_id: "",
     resident_userName: "",
@@ -219,15 +223,23 @@ const ChiefResident = () => {
       <DashboardCard title="Chief Residents">
         <Spin spinning={loading}>
           {/* <Box sx={{ overflow: "auto", width: { xs: "600px", sm: "auto" } }}> */}
+          <AddDepartmentModal
+            visible={addDepartmentModalVisible}
+            onClose={() => setAddDepartmentModalVisible(false)}
+          />
           <Box
             sx={{
               display: "flex",
-              justifyContent: "flex-end	",
+              justifyContent: "space-between", // Adjusted to space-between
               alignItems: "center",
             }}
           >
             <Button
               icon={<MdAddCircle style={{ fontSize: "22px" }} />}
+              onClick={() => setAddDepartmentModalVisible(true)}
+            ></Button>
+            <Button
+              icon={<MdPersonAddAlt1 style={{ fontSize: "22px" }} />}
               onClick={handleAddDoctor}
             ></Button>
           </Box>

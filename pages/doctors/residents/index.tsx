@@ -33,7 +33,10 @@ import {
 } from "antd";
 import EditDoctorForm from "./editform";
 import AddDoctorForm from "./addform";
+import AddDepartmentModal from "../addDepartment";
 import { MdAddCircle, MdDelete } from "react-icons/md";
+import { MdPersonAddAlt1 } from "react-icons/md";
+
 import { FiEdit } from "react-icons/fi";
 const { Option } = Select;
 
@@ -57,7 +60,8 @@ const Doctors = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [noResults, setNoResults] = useState(false); // State to track if there are no search results
   const { confirm } = Modal;
-
+  const [addDepartmentModalVisible, setAddDepartmentModalVisible] =
+    useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editDoctor, setEditDoctor] = useState({
     resident_id: "",
@@ -227,6 +231,11 @@ const Doctors = () => {
         <Spin spinning={loading}>
           {/* <Box sx={{ overflow: "auto", width: { xs: "600px", sm: "auto" } }}> */}
           {/* Add Modal for confirmation */}
+
+          <AddDepartmentModal
+            visible={addDepartmentModalVisible}
+            onClose={() => setAddDepartmentModalVisible(false)}
+          />
           <Modal
             title="Confirm Deletion"
             open={deleteModalVisible}
@@ -240,12 +249,16 @@ const Doctors = () => {
           <Box
             sx={{
               display: "flex",
-              justifyContent: "flex-end	",
+              justifyContent: "space-between", // Adjusted to space-between
               alignItems: "center",
             }}
           >
             <Button
               icon={<MdAddCircle style={{ fontSize: "22px" }} />}
+              onClick={() => setAddDepartmentModalVisible(true)}
+            ></Button>
+            <Button
+              icon={<MdPersonAddAlt1 style={{ fontSize: "22px" }} />}
               onClick={handleAddDoctor}
             ></Button>
           </Box>

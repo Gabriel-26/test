@@ -96,15 +96,15 @@ const EditChiefResidentForm = ({ editChiefResident, onFinish, onUpdate }) => {
         <Input />
       </Form.Item>
       <Form.Item
-      label="Gender"
-      name="resident_gender"
-      rules={[{ required: true, message: "Please select a gender" }]}
-    >
-      <Select placeholder="Select a gender">
-        <Option value="Male">Male</Option>
-        <Option value="Female">Female</Option>
-      </Select>
-    </Form.Item>
+        label="Gender"
+        name="resident_gender"
+        rules={[{ required: true, message: "Please select a gender" }]}
+      >
+        <Select placeholder="Select a gender">
+          <Option value="Male">Male</Option>
+          <Option value="Female">Female</Option>
+        </Select>
+      </Form.Item>
 
       <Form.Item label="Password" name="resident_password">
         <Input.Password />
@@ -128,10 +128,10 @@ const EditChiefResidentForm = ({ editChiefResident, onFinish, onUpdate }) => {
         <Select>
           {departments.map((department) => (
             <Option
-              key={department.department_id}
+              key={department.department_name}
               value={department.department_id}
             >
-              {department.department_id}
+              {department.department_name}
             </Option>
           ))}
         </Select>
