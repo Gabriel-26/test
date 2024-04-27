@@ -113,7 +113,7 @@ const StatusPage = ({
                 value={
                   evaluationData &&
                   evaluationData[bodyPart] &&
-                  evaluationData[bodyPart].status
+                  evaluationData[bodyPart].status !== undefined // Check if status is defined
                     ? evaluationData[bodyPart].status
                     : "None"
                 }
