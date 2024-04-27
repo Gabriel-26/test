@@ -74,22 +74,18 @@ const StatusPage = ({
           `/physicalExam/values/getPE/${patientId}`
         );
 
-        if (Array.isArray(response.data)) {
-          const responseDataMap = response.data.reduce((acc, item) => {
-            const attributeName = item.attribute_Name;
-            const isSpecifyAttribute = attributeName.startsWith("specify_");
+        const responseDataMap = response.data((acc, item) => {
+          const attributeName = item.attribute_Name;
+          const isSpecifyAttribute = attributeName.startsWith("specify_");
 
-            acc[attributeName] = isSpecifyAttribute
-              ? { note: item.value || "" }
-              : { status: item.value, note: item.specify_value || "" };
+          acc[attributeName] = isSpecifyAttribute
+            ? { note: item.value || "" }
+            : { status: item.value, note: item.specify_value || "" };
 
-            return acc;
-          }, {});
+          return acc;
+        }, {});
 
-          setEvaluationData(responseDataMap);
-        } else {
-          console.error("Response data is not an array:", response.data);
-        }
+        setEvaluationData(responseDataMap);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -111,10 +107,8 @@ const StatusPage = ({
             <Panel key={bodyPart} header={formatBodyPart(bodyPart)}>
               <Select
                 value={
-                  evaluationData &&
-                  evaluationData[bodyPart] &&
-                  evaluationData[bodyPart].status !== undefined // Check if status is defined
-                    ? evaluationData[bodyPart].status
+                  evaluationData && evaluationData[bodyPart]
+                    ? evaluationData[bodyPart].status || "None"
                     : "None"
                 }
                 onChange={(value) => {
@@ -128,13 +122,7 @@ const StatusPage = ({
                 <Option value="Needs Attention">Needs Attention</Option>
               </Select>
               <Input.TextArea
-                value={
-                  evaluationData &&
-                  evaluationData[`specify_${bodyPart}`] &&
-                  evaluationData[`specify_${bodyPart}`].note
-                    ? evaluationData[`specify_${bodyPart}`].note
-                    : ""
-                }
+                value={evaluationData[`specify_${bodyPart}`]?.note || ""}
                 onChange={(e) => {
                   handleNoteChange(bodyPart, e.target.value);
                 }}
