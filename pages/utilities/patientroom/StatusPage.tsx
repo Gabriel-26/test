@@ -75,30 +75,25 @@ const StatusPage = ({
         );
 
         if (!Array.isArray(response.data)) {
-          console.error("Error: Response data is not an array.", response.data);
-          setEvaluationData({});
-          return;
+          console.error("Error: Response data is not an array:", response.data);
+          setLoading(false); // Set loading to false to prevent infinite loading
+          return; // Exit the function early
+        }
+
+        // Check if response.data is empty
+        if (response.data.length === 0) {
+          console.log("Response data is empty."); // Log a message
+          setLoading(false); // Set loading to false
+          return; // Exit the function early
         }
 
         const responseDataMap = response.data.reduce((acc, item) => {
           const attributeName = item.attribute_Name;
-          if (!attributeName) {
-            console.error(
-              "Error: Missing attribute_Name property in response item.",
-              item
-            );
-            return acc;
-          }
-
           const isSpecifyAttribute = attributeName.startsWith("specify_");
-          const value = item.value || "";
-          const specifyValue = item.specify_value || "";
 
-          if (isSpecifyAttribute) {
-            acc[attributeName] = { note: value };
-          } else {
-            acc[attributeName] = { status: value, note: specifyValue };
-          }
+          acc[attributeName] = isSpecifyAttribute
+            ? { note: item.value || "" }
+            : { status: item.value, note: item.specify_value || "" };
 
           return acc;
         }, {});
@@ -106,8 +101,9 @@ const StatusPage = ({
         setEvaluationData(responseDataMap);
       } catch (error) {
         console.error("Error fetching data:", error);
+        setLoading(false); // Set loading to false in case of error
       } finally {
-        setLoading(false);
+        setLoading(false); // Ensure loading is set to false in all cases
       }
     };
 

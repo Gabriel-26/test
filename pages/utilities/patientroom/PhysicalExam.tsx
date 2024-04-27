@@ -53,6 +53,16 @@ const HumanFigureEvaluation = (props: any) => {
 
   const handleStatusChange = (bodyPart, newStatus) => {
     setEvaluationData((prevData) => {
+      if (!prevData || !prevData[bodyPart]) {
+        // If prevData or prevData[bodyPart] is null or undefined, return prevData as is
+        console.error(
+          "Error: Missing or invalid evaluationData or bodyPart:",
+          prevData,
+          bodyPart
+        );
+        return prevData;
+      }
+
       const updatedData = { ...prevData };
       updatedData[bodyPart].status = newStatus;
 
