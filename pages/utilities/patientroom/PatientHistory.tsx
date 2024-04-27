@@ -77,6 +77,7 @@ const PatientHistory = ({ patientData }) => {
     "phr_medRecords",
     "phr_vaccinationStatus",
     "phr_assessment",
+    "medRecords",
     "alcohol",
     "historyOfPresentIllness",
     "nasalMucosaSeptumTurbinatesWNL",
@@ -159,6 +160,8 @@ const PatientHistory = ({ patientData }) => {
     "PMH_Tuberculosis",
     "PMH_Psychiatric",
     "PMH_CAD",
+    "maintenanceMeds",
+    "liverAndSpleenPalpableAndWNL",
   ];
 
   const formatAttributeName = (categoryAtt_name, attributeVal_values) => {
@@ -300,6 +303,12 @@ const PatientHistory = ({ patientData }) => {
       PMH_Tuberculosis: "PMH - Tuberculosis",
       PMH_Psychiatric: "PMH - Psychiatric Disorders",
       PMH_CAD: "PMH - Coronary Artery Disease",
+      liverAndSpleenPalpableAndWNL:
+        "Liver and Spleen Palpable - Within Normal Limits",
+      bodyHabitusWNL: "Body Habitus - Within Normal Limits",
+      bodyHabitusCathetic: "Body Habitus - Cathetic",
+      bodyHabitusObese: "Body Habitus - Obese",
+      medRecords: "Medical Records",
       // ... (add more attribute names as needed)
     };
 

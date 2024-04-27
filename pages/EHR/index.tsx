@@ -126,6 +126,7 @@ export function EHRForm() {
       phr_specifyMalignancy: "",
       phr_surgeries: "",
       phr_specifySurgeries: "",
+      phr_capillaryRefillTime: "",
       phr_vaccinationHistory: "",
       phr_tobacco: "",
       phr_tobaccoPacks: "",
@@ -223,7 +224,6 @@ export function EHRForm() {
       phr_extremitiesClubbing: "",
       phr_extremitiesCyanosis: "",
       phr_extremitiesPetachiae: "",
-      phr_capillaryRefillTime: "",
       phr_skinWNL: "",
       phr_skinRash: "",
       phr_skinEccymosis: "",
@@ -1015,7 +1015,7 @@ export function EHRForm() {
                       {...register(field)}
                       aria-invalid={errors[field] ? "true" : "false"}
                       value={errors[field] ? 0 : 1}
-                      type="radio"
+                      type="checkbox"
                       className="form-radio h-4 w-4 text-indigo-600 rounded"
                     />
                   </label>
@@ -1907,6 +1907,7 @@ export function EHRForm() {
                   maskChar={null} // Hide the mask character
                   className="border border-gray-300 px-4 py-2 rounded-lg"
                   placeholder="Enter Capillary refill time"
+                  {...register("phr_capillaryRefillTime")} // Register the field
                 />
               </label>
             </div>
