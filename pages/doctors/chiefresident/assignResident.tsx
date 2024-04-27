@@ -42,8 +42,8 @@ const AssignResidentRoom = () => {
     //   key: "resAssRoom_id",
     // },
     {
-      title: "Room ID",
-      dataIndex: "room_id",
+      title: "Room Name",
+      dataIndex: "room_name",
       key: "room_id",
     },
     {
@@ -75,7 +75,7 @@ const AssignResidentRoom = () => {
 
   const mainTableColumns = [
     {
-      title: "Resident Name/Last Name",
+      title: "Resident Name",
       dataIndex: "resident_id",
       key: "resident_id",
       render: (residentId) => {
