@@ -249,7 +249,7 @@ export function EHRForm() {
       phr_PMH_CHF: data.phr_PMH_CHF ? 1 : 0,
       phr_PMH_otherIllness: data.phr_PMH_otherIllness ? 1 : 0,
       phr_HxFromParent: data.phr_HxFromParent ? 1 : 0,
-      phr_HxFromFamily: data.phr_HxFromParent ? 1 : 0,
+      phr_HxFromFamily: data.phr_HxFromFamily ? 1 : 0,
       phr_abdomenWNL: data.phr_abdomenWNL ? 1 : 0,
       phr_bodyHabitusWNL: data.phr_bodyHabitusWNL ? 1 : 0,
       phr_bodyHabitusCathetic: data.phr_bodyHabitusCathetic ? 1 : 0,
