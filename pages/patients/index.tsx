@@ -32,7 +32,6 @@ const PatientSearch: React.FC<PatientSearchProps> & {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [patients, setPatients] = useState([]);
-  const [filteredPatients, setFilteredPatients] = useState([]);
   const [apiRoute, setApiRoute] = useState(
     "/residentAssignedPatients/get/PatientsByResident"
   );
@@ -60,37 +59,21 @@ const PatientSearch: React.FC<PatientSearchProps> & {
     });
   }, [apiRoute]); // Re-fetch patients when the API route changes
 
-  useEffect(() => {
-    // Filter patients based on the search term
-    const filtered = patients.filter(
-      (patient) =>
-        typeof patient === "object" &&
-        Object.keys(patient).some(
-          (field) =>
-            [
-              "patient_id",
-              "patient_fName",
-              "patient_lName",
-              "patient_mName",
-              "patient_age",
-              "patient_sex",
-            ].includes(field) &&
-            `${patient[field]}`.toLowerCase().includes(searchTerm.toLowerCase())
-        )
-    );
-
-    setFilteredPatients(filtered);
-  }, [searchTerm, patients]);
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   };
+
+  const filteredPatients = patients.filter((patient) =>
+    Object.values(patient).some(
+      (value) =>
+        typeof value === "string" &&
+        value.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  );
+
   const displayedPatients = searchTerm ? filteredPatients : patients;
 
-  const displayedPatientsArray = Array.isArray(displayedPatients)
-    ? displayedPatients
-    : [];
-  const slicedPatients = displayedPatientsArray.slice(
+  const slicedPatients = displayedPatients.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
@@ -167,50 +150,48 @@ const PatientSearch: React.FC<PatientSearchProps> & {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {slicedPatients
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((patient) => (
-                    <TableRow key={patient.patient_id}>
-                      <TableCell>
-                        <Typography variant="subtitle2">
-                          {/* Use router.push to navigate to patient history page */}
-                          <span
-                            style={{ cursor: "pointer", color: "blue" }}
-                            onClick={() =>
-                              router.push(`patients/${patient.patient_id}`)
-                            }
-                          >
-                            {patient.patient_id}
-                          </span>
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="subtitle2">
-                          {patient.patient_fName}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="subtitle2">
-                          {patient.patient_lName}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="subtitle2">
-                          {patient.patient_mName}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="subtitle2">
-                          {patient.patient_age}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="subtitle2">
-                          {patient.patient_sex}
-                        </Typography>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                {slicedPatients.map((patient) => (
+                  <TableRow key={patient.patient_id}>
+                    <TableCell>
+                      <Typography variant="subtitle2">
+                        {/* Use router.push to navigate to patient history page */}
+                        <span
+                          style={{ cursor: "pointer", color: "blue" }}
+                          onClick={() =>
+                            router.push(`patients/${patient.patient_id}`)
+                          }
+                        >
+                          {patient.patient_id}
+                        </span>
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="subtitle2">
+                        {patient.patient_fName}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="subtitle2">
+                        {patient.patient_lName}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="subtitle2">
+                        {patient.patient_mName}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="subtitle2">
+                        {patient.patient_age}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="subtitle2">
+                        {patient.patient_sex}
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
           )}
