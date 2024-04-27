@@ -74,13 +74,31 @@ const StatusPage = ({
           `/physicalExam/values/getPE/${patientId}`
         );
 
-        const responseDataMap = response.data((acc, item) => {
-          const attributeName = item.attribute_Name;
-          const isSpecifyAttribute = attributeName.startsWith("specify_");
+        if (!Array.isArray(response.data)) {
+          console.error("Error: Response data is not an array.", response.data);
+          setEvaluationData({});
+          return;
+        }
 
-          acc[attributeName] = isSpecifyAttribute
-            ? { note: item.value || "" }
-            : { status: item.value, note: item.specify_value || "" };
+        const responseDataMap = response.data.reduce((acc, item) => {
+          const attributeName = item.attribute_Name;
+          if (!attributeName) {
+            console.error(
+              "Error: Missing attribute_Name property in response item.",
+              item
+            );
+            return acc;
+          }
+
+          const isSpecifyAttribute = attributeName.startsWith("specify_");
+          const value = item.value || "";
+          const specifyValue = item.specify_value || "";
+
+          if (isSpecifyAttribute) {
+            acc[attributeName] = { note: value };
+          } else {
+            acc[attributeName] = { status: value, note: specifyValue };
+          }
 
           return acc;
         }, {});
