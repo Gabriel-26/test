@@ -162,6 +162,8 @@ const PatientHistory = ({ patientData }) => {
     "PMH_CAD",
     "maintenanceMeds",
     "liverAndSpleenPalpableAndWNL",
+    "HxFromParent",
+    "HxFromFamily",
   ];
 
   const formatAttributeName = (categoryAtt_name, attributeVal_values) => {
