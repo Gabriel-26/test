@@ -129,7 +129,7 @@ const AssignResidentRoom = () => {
           >
             {rooms.map((room) => (
               <Option key={room.room_id} value={room.room_id}>
-                {room.room_id}
+                {room.room_name}
               </Option>
             ))}
           </Select>
