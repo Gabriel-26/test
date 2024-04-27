@@ -69,7 +69,7 @@ export function EHRForm() {
       const token = localStorage.getItem("authToken");
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-      const response = await axios.get("patAssRooms/get/unassignedRooms"); // Adjust the endpoint as per your API
+      const response = await axios.get("/rooms"); // Adjust the endpoint as per your API
       const data = response.data;
 
       if (data && data.length > 0) {
