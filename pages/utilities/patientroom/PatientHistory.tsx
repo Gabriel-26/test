@@ -170,6 +170,8 @@ const PatientHistory = ({ patientData }) => {
     // Hardcoded attribute names for a more professional appearance
 
     const attributeNames = {
+      HxFromParent: "Hx From Parent",
+      HxFromFamily: "Hx From Family",
       bpSitting: "Blood Pressure (Sitting)",
       bpStanding: "Blood Pressure (Standing)",
       bpLying: "Blood Pressure (Lying)",
