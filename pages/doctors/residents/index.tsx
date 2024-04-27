@@ -36,7 +36,7 @@ import AddDoctorForm from "./addform";
 import AddDepartmentModal from "../addDepartment";
 import { MdAddCircle, MdDelete } from "react-icons/md";
 import { MdPersonAddAlt1 } from "react-icons/md";
-
+import DeleteDepartmentModal from "../deleteDepartment";
 import { FiEdit } from "react-icons/fi";
 const { Option } = Select;
 
@@ -61,6 +61,8 @@ const Doctors = () => {
   const [noResults, setNoResults] = useState(false); // State to track if there are no search results
   const { confirm } = Modal;
   const [addDepartmentModalVisible, setAddDepartmentModalVisible] =
+    useState(false);
+  const [deleteDepartmentModalVisible, setdeleteDepartmentModalVisible] =
     useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editDoctor, setEditDoctor] = useState({
@@ -236,6 +238,11 @@ const Doctors = () => {
             visible={addDepartmentModalVisible}
             onClose={() => setAddDepartmentModalVisible(false)}
           />
+          <DeleteDepartmentModal
+            visible={deleteDepartmentModalVisible}
+            onClose={() => setdeleteDepartmentModalVisible(false)}
+            setDepartments={undefined}
+          />
           <Modal
             title="Confirm Deletion"
             open={deleteModalVisible}
@@ -253,10 +260,18 @@ const Doctors = () => {
               alignItems: "center",
             }}
           >
-            <Button
-              icon={<MdAddCircle style={{ fontSize: "22px" }} />}
-              onClick={() => setAddDepartmentModalVisible(true)}
-            ></Button>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              {" "}
+              {/* Container for Add/Delete Department Modals */}
+              <Button
+                icon={<MdAddCircle style={{ fontSize: "22px" }} />}
+                onClick={() => setAddDepartmentModalVisible(true)}
+              ></Button>
+              <Button
+                icon={<MdDelete style={{ fontSize: "22px" }} />}
+                onClick={() => setdeleteDepartmentModalVisible(true)}
+              ></Button>
+            </Box>
             <Button
               icon={<MdPersonAddAlt1 style={{ fontSize: "22px" }} />}
               onClick={handleAddDoctor}
