@@ -1599,7 +1599,9 @@ export function EHRForm() {
 
             <div className="my-4">
               <label className="flex flex-col">
-                <span className="font-bold">Additional Findings</span>
+                <span className="font-bold">
+                  Additional Findings (Respiratory)
+                </span>
                 <textarea
                   {...register("phr_RespiratoryAdditionalFindings")}
                   className="border border-gray-300 px-4 py-2 rounded-lg"
@@ -1667,7 +1669,9 @@ export function EHRForm() {
 
             <div className="my-4">
               <label className="flex flex-col">
-                <span className="font-bold">Additional Findings</span>
+                <span className="font-bold">
+                  Additional Findings (Cardiovascular)
+                </span>
                 <textarea
                   {...register("phr_CardiovascularAdditionalFindings")}
                   className="border border-gray-300 px-4 py-2 rounded-lg"
