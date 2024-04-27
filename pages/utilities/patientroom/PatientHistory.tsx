@@ -164,6 +164,7 @@ const PatientHistory = ({ patientData }) => {
     "liverAndSpleenPalpableAndWNL",
     "HxFromParent",
     "HxFromFamily",
+    "nonVerbalPatient",
   ];
 
   const formatAttributeName = (categoryAtt_name, attributeVal_values) => {
