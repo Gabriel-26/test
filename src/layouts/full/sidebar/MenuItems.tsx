@@ -97,7 +97,7 @@ const Menuitems = [
     title: "Home",
     type: "expandable-card", // Add the type property for the expandable-card
     children: [],
-    role: "admin", // This item is visible to all roles
+    role: ["chiefResident", "admin"], // This item is visible to residents and admin
   },
   // {
   //   navlabel: true,
