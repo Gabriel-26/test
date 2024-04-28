@@ -165,6 +165,11 @@ const PatientHistory = ({ patientData }) => {
     "HxFromParent",
     "HxFromFamily",
     "nonVerbalPatient",
+    "bodyHabitusWNL",
+    "bodyHabitusCathetic",
+    "bodyHabitusObese",
+    "hrRegular",
+    "hrIrregular",
   ];
 
   const formatAttributeName = (categoryAtt_name, attributeVal_values) => {
