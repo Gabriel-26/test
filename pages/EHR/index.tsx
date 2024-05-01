@@ -268,8 +268,8 @@ export function EHRForm() {
       phr_oropharynxEdeOrEryPresent: data.phr_oropharynxEdeOrEryPresent ? 1 : 0,
       phr_oropharynxOralUlcers: data.phr_oropharynxOralUlcers ? 1 : 0,
       phr_oropharynxOralPetachie: data.phr_oropharynxOralPetachie ? 1 : 0,
-      phr_recDrugs: data.phr_recDrugs ? 1 : 0,
-      phr_alcohol: data.phr_alcohol ? 1 : 0,
+      // phr_recDrugs: data.phr_recDrugs ? 1 : 0,
+      // phr_alcohol: data.phr_alcohol ? 1 : 0,
       phr_mallampati1: data.phr_mallampati1 ? 1 : 0,
       phr_mallampati2: data.phr_mallampati2 ? 1 : 0,
       phr_mallampati3: data.phr_mallampati3 ? 1 : 0,
@@ -362,24 +362,25 @@ export function EHRForm() {
     console.log(mappedData);
 
     axios
-      .post("/patients", mappedData) // <-- Send mappedData instead of the original data
+      .post("/patients", mappedData)
       .then((response) => {
-        console.log("Data sent successfully:", response.data);
-        // Display success message
-        message.success("Patient saved successfully");
-        // Handle success or redirect to another page
-        const formElement = document.getElementById(
-          "myForm"
-        ) as HTMLFormElement;
-        if (formElement) {
-          formElement.reset();
+        if (response.data === "stored") {
+          console.log("Data sent successfully:", response.data);
+          message.success("Patient saved successfully");
+          const formElement = document.getElementById(
+            "myForm"
+          ) as HTMLFormElement;
+          if (formElement) {
+            formElement.reset();
+          }
+        } else if (response.data === "invalid input") {
+          // Display error message for invalid input
+          message.error("Invalid input. Please check your data and try again.");
         }
       })
       .catch((error) => {
         console.error("Error sending data:", error);
-        // Display error message
         message.error("Error saving patient. Please try again.");
-        // Handle error
       });
   };
 
@@ -737,25 +738,25 @@ export function EHRForm() {
               <p className="mb-2 font-medium">Malignancy</p>
               <Grid container spacing={3}>
                 {[
-                  { label: "Yes", field: "Yes" },
-                  { label: "No", field: "No" },
-                ].map(({ label, field }, index) => (
-                  <Grid item key={field}>
+                  { label: "Yes", value: 1 },
+                  { label: "No", value: 0 },
+                ].map(({ label, value }, index) => (
+                  <Grid item key={value}>
                     <label className="flex items-center">
                       <input
                         {...register("phr_malignancy")}
                         className="form-radio h-4 w-4 text-indigo-600 rounded mr-2"
-                        value={errors[field] ? 0 : 1}
+                        value={value}
                         type="radio"
-                        checked={malignancy === field}
-                        onChange={() => setMalignancy(field)}
+                        checked={malignancy === value.toString()}
+                        onChange={() => setMalignancy(value.toString())}
                       />
                       <span>{label}</span>
                     </label>
                   </Grid>
                 ))}
               </Grid>
-              {malignancy === "Yes" && (
+              {malignancy === "1" && (
                 <div className="my-4">
                   <label className="flex flex-col">
                     <span className="mb-2">Specify Malignancy</span>
@@ -772,18 +773,18 @@ export function EHRForm() {
               <p className="mb-2 font-medium">Surgeries</p>
               <Grid container spacing={3}>
                 {[
-                  { label: "Yes", field: "Yes" },
-                  { label: "No", field: "No" },
-                ].map(({ label, field }, index) => (
-                  <Grid item key={field}>
+                  { label: "Yes", value: "Yes" },
+                  { label: "No", value: "No" },
+                ].map(({ label, value }, index) => (
+                  <Grid item key={value}>
                     <label className="flex items-center">
                       <input
                         {...register("phr_surgeries")}
                         className="form-radio h-4 w-4 text-indigo-600 rounded mr-2"
-                        value={errors[field] ? 0 : 1}
+                        value={value === "Yes" ? 1 : 0}
                         type="radio"
-                        checked={surgeries === field}
-                        onChange={() => setSurgeries(field)}
+                        checked={surgeries === value}
+                        onChange={() => setSurgeries(value)}
                       />
                       <span>{label}</span>
                     </label>
@@ -803,6 +804,7 @@ export function EHRForm() {
                 </div>
               )}
             </div>
+
             <div className="my-4">
               <label className="flex flex-col">
                 <span>Vaccination History</span>
@@ -816,19 +818,19 @@ export function EHRForm() {
               <p>Tobacco/Cigarette</p>
               <Grid container spacing={3}>
                 {[
-                  { label: "Yes", field: "Yes" },
-                  { label: "No", field: "No" },
-                ].map(({ label, field }, index) => (
-                  <Grid item key={field}>
+                  { label: "Yes", value: "Yes" },
+                  { label: "No", value: "No" },
+                ].map(({ label, value }, index) => (
+                  <Grid item key={value}>
                     <label className="flex items-center">
                       <span className="mr-2">{label}</span>
                       <input
                         {...register("phr_tobacco")}
                         className="form-radio h-4 w-4 text-indigo-600 rounded"
-                        value={errors[field] ? 0 : 1}
+                        value={value === "Yes" ? 1 : 0}
                         type="radio"
-                        checked={tobacco === field}
-                        onChange={() => setTobacco(field)}
+                        checked={tobacco === value}
+                        onChange={() => setTobacco(value)}
                       />
                     </label>
                   </Grid>
@@ -860,25 +862,28 @@ export function EHRForm() {
                 </>
               )}
             </div>
+
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <div className="my-4">
                   <p>Recreational Drugs</p>
                   {[
-                    { label: "Yes", field: "1" },
-                    { label: "No", field: "0" },
-                  ].map(({ label, field }) => (
-                    <label key={field} className="flex items-center">
-                      <span className="mr-2">{label}</span>
-                      <input
-                        {...register("phr_recDrugs")}
-                        aria-invalid={errors["phr_recDrugs"] ? "true" : "false"}
-                        value={recDrugs === field ? 1 : 0}
-                        type="radio"
-                        className="form-radio h-4 w-4 text-indigo-600 rounded"
-                        onChange={() => setRecDrugs(field)}
-                      />
-                    </label>
+                    { label: "Yes", value: 1 },
+                    { label: "No", value: 0 },
+                  ].map(({ label, value }) => (
+                    <Grid item key={value}>
+                      <label className="flex items-center">
+                        <input
+                          {...register("phr_recDrugs")}
+                          className="form-radio h-4 w-4 text-indigo-600 rounded mr-2"
+                          value={value}
+                          type="radio"
+                          checked={recDrugs === value.toString()}
+                          onChange={() => setRecDrugs(value.toString())}
+                        />
+                        <span>{label}</span>
+                      </label>
+                    </Grid>
                   ))}
                   {errors["phr_recDrugs"] && (
                     <p role="alert">{errors["phr_recDrugs"]?.message}</p>
@@ -903,15 +908,18 @@ export function EHRForm() {
               <Grid item xs={12}>
                 <div className="my-4">
                   <p>Alcohol</p>
-                  {["Yes", "No"].map((label, index) => (
-                    <label key={label} className="flex items-center">
+                  {[
+                    { label: "Yes", value: "Yes" },
+                    { label: "No", value: "No" },
+                  ].map(({ label, value }) => (
+                    <label key={value} className="flex items-center">
                       <span className="mr-2">{label}</span>
                       <input
                         {...register("phr_alcohol")}
                         type="radio"
-                        value={label === "Yes" ? "1" : "0"}
-                        checked={alcohol === (label === "Yes" ? "1" : "0")}
-                        onChange={(e) => setAlcohol(e.target.value)}
+                        value={value === "Yes" ? 1 : 0}
+                        checked={alcohol === value}
+                        onChange={() => setAlcohol(value)}
                         className="form-radio h-4 w-4 text-indigo-600 rounded"
                       />
                     </label>
@@ -922,7 +930,7 @@ export function EHRForm() {
                 </div>
               </Grid>
 
-              {alcohol === "1" && (
+              {alcohol === "Yes" && (
                 <>
                   <Grid item xs={12}>
                     <div className="my-4">
@@ -1189,7 +1197,7 @@ export function EHRForm() {
                         {...register(field)}
                         aria-invalid={errors[field] ? "true" : "false"}
                         value={1}
-                        type="radio"
+                        type="checkbox"
                         className="form-radio h-4 w-4 text-indigo-600 rounded"
                       />
                     </label>
