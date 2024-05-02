@@ -83,6 +83,7 @@ const PatientHistoryPage = () => {
           response.data
         );
         const currentUserResidentId = localStorage.getItem("resID");
+        const currentUserPatientId = router.query.patient_id;
 
         if (response.data) {
           // Check for chiefResident role or matching department_id
@@ -99,11 +100,14 @@ const PatientHistoryPage = () => {
             return;
           }
 
+          // Check if isMainResident is equal to 0 and resident_id matches the resident_id in local storage and patient_id matches the router query patient_id
+          const isMainResident = response.data[0].isMainResident;
           const resident_id = response.data[0].resident_id;
           const patient_id = response.data[0].patient_id;
           if (
+            isMainResident === 0 &&
             resident_id === currentUserResidentId &&
-            patient_id === router.query.patient_id
+            patient_id === currentUserPatientId
           ) {
             setAuthorized(true);
             fetchPatientDetails(patientID);
