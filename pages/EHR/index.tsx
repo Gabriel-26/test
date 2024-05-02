@@ -347,7 +347,7 @@ export function EHRForm() {
       phr_extremitiesClubbing: data.phr_extremitiesClubbing ? 1 : 0,
       phr_extremitiesCyanosis: data.phr_extremitiesCyanosis ? 1 : 0,
       phr_extremitiesPetachiae: data.phr_extremitiesPetachiae ? 1 : 0,
-      phr_capillaryRefillTime: data.phr_capillaryRefillTime ? 1 : 0,
+      // phr_capillaryRefillTime: data.phr_capillaryRefillTime ? 1 : 0,
 
       phr_skinWNL: data.phr_skinWNL ? 1 : 0,
       phr_skinRash: data.phr_skinRash ? 1 : 0,

@@ -79,7 +79,6 @@ const PatientHistory = ({ patientData }) => {
     "phr_assessment",
     "medRecords",
     "alcohol",
-    "historyOfPresentIllness",
     "nasalMucosaSeptumTurbinatesWNL",
     "nasalMucosaSeptumTurbinatesEdeOrEryPresent",
     "mallampati1",
