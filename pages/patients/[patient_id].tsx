@@ -84,8 +84,31 @@ const PatientHistoryPage = () => {
         );
         const currentUserResidentId = localStorage.getItem("resID");
         const currentUserPatientId = router.query.patient_id;
+        const currentUserRole = localStorage.getItem("userRole");
+        const currentUserDepartmentId = localStorage.getItem("depID");
 
         if (response.data) {
+          // Check if the user is chiefResident of the same department
+          if (currentUserRole === "chiefResident") {
+            setAuthorized(true);
+            fetchPatientDetails(patientID);
+            fetchAdmittedAndDischargedDates(patientID);
+            return;
+          }
+
+          // Check if the user isMainResident and the resident_id and patient_id match
+          const isMainResident = response.data[0].isMainResident;
+          if (
+            isMainResident === 1 &&
+            currentUserResidentId === response.data[0].resident_id &&
+            currentUserPatientId === response.data[0].patient_id
+          ) {
+            setAuthorized(true);
+            fetchPatientDetails(patientID);
+            fetchAdmittedAndDischargedDates(patientID);
+            return;
+          }
+
           // Check if there are shared records matching the current patient ID
           const sharedRecords = response.data.filter((record) => {
             return (
