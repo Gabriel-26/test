@@ -76,20 +76,29 @@ const PatientSearch: React.FC<PatientSearchProps> & {
     // Fetch the list of patients from the constructed APXI route
     axiosInstance.get(apiRoute).then((response) => {
       setPatients(response.data);
-
+      console.log(response.data);
       // Store PHR data in patientHistory with patientID as the key
-      const patientData = Array.isArray(response.data)
-        ? response.data.map((patient) => ({
-            patientID: patient.patient_id,
-            phrData: patient.phr_data,
-          }))
-        : [];
       const updatedPatientHistory = {};
-      patientData.forEach((data) => {
-        updatedPatientHistory[data.patientID] = data.phrData;
-      });
 
-      //@ts-ignore
+      // Iterate over each patient ID
+      Object.keys(response.data).forEach((patientID) => {
+        // Access the patient object for the current patient ID
+        const patient = response.data[patientID];
+
+        // Ensure that the patient object exists and has the necessary properties
+        if (
+          patient &&
+          patient.assigned_patient &&
+          patient.assigned_patient.patient_id
+        ) {
+          const phrData = patient.phr_data;
+          console.log("Patient ID:", patientID);
+          console.log("PHR Data:", phrData);
+          updatedPatientHistory[patientID] = phrData;
+        }
+      });
+      console.log("Updated Patient History:", updatedPatientHistory);
+
       setPatientHistory(updatedPatientHistory);
     });
   }, []); // Fetch the initial list of patients
@@ -104,7 +113,6 @@ const PatientSearch: React.FC<PatientSearchProps> & {
               typeof value === "string" &&
               value.toLowerCase().includes(searchTerm.toLowerCase())
           );
-
           // Check if any patient history matches the search term for categoryAtt_name and value
           const matchesCategoryAttName = patientHistory[
             patient.patient_id
@@ -196,7 +204,6 @@ const PatientSearch: React.FC<PatientSearchProps> & {
           return matchesSearchTerm || matchesCategoryAttName;
         })
       : [];
-
     setFilteredPatients(filteredPatients);
   }, [searchTerm, patients, patientHistory]);
 
@@ -392,52 +399,52 @@ const PatientSearch: React.FC<PatientSearchProps> & {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {Array.from(displayedPatients)
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((patient: any) => (
-                      <TableRow key={patient.patient_id}>
+                  {Object.keys(displayedPatients).map((patientID) => {
+                    const patient = displayedPatients[patientID];
+                    return (
+                      <TableRow key={patientID}>
                         <TableCell>
                           <Typography variant="subtitle2">
                             {/* Use router.push to navigate to patient history page */}
                             <span
                               style={{ cursor: "pointer", color: "blue" }}
                               onClick={() =>
-                                router.push(`patients/${patient.patient_id}`)
+                                router.push(`patients/${patientID}`)
                               }
                             >
-                              {patient.patient_id}
+                              {patientID}
                             </span>
                           </Typography>
                         </TableCell>
                         <TableCell>
                           <Typography variant="subtitle2">
-                            {patient.patient_fName}
+                            {patient.patient.patient_fName}
                           </Typography>
                         </TableCell>
                         <TableCell>
                           <Typography variant="subtitle2">
-                            {patient.patient_lName}
+                            {patient.patient.patient_lName}
                           </Typography>
                         </TableCell>
                         <TableCell>
                           <Typography variant="subtitle2">
-                            {patient.patient_mName}
+                            {patient.patient.patient_mName}
                           </Typography>
                         </TableCell>
                         <TableCell>
                           <Typography variant="subtitle2">
-                            {patient.patient_age}
+                            {patient.patient.patient_age}
                           </Typography>
                         </TableCell>
                         <TableCell>
                           <Typography variant="subtitle2">
-                            {patient.patient_sex}
+                            {patient.patient.patient_sex}
                           </Typography>
                         </TableCell>
                         {/* Display PHR fields for each patient */}
                         <TableCell>
                           <Typography variant="subtitle2">
-                            {patientHistory[patient.patient_id]?.map(
+                            {patientHistory[patient.patient.patient_id]?.map(
                               (phrData) => {
                                 const attributeName =
                                   phrData.categoryAtt_name.replace("phr_", "");
@@ -455,7 +462,7 @@ const PatientSearch: React.FC<PatientSearchProps> & {
 
                         <TableCell>
                           <Typography variant="subtitle2">
-                            {patientHistory[patient.patient_id]?.map(
+                            {patientHistory[patient.patient.patient_id]?.map(
                               (phrData) => {
                                 const attributeName =
                                   phrData.categoryAtt_name.replace("phr_", "");
@@ -473,7 +480,7 @@ const PatientSearch: React.FC<PatientSearchProps> & {
 
                         <TableCell>
                           <Typography variant="subtitle2">
-                            {patientHistory[patient.patient_id]?.map(
+                            {patientHistory[patient.patient.patient_id]?.map(
                               (phrData) => {
                                 const attributeName =
                                   phrData.categoryAtt_name.replace("phr_", "");
@@ -490,7 +497,7 @@ const PatientSearch: React.FC<PatientSearchProps> & {
                         </TableCell>
                         <TableCell>
                           <Typography variant="subtitle2">
-                            {patientHistory[patient.patient_id]?.map(
+                            {patientHistory[patient.patient.patient_id]?.map(
                               (phrData) => {
                                 const attributeName =
                                   phrData.categoryAtt_name.replace("phr_", "");
@@ -508,7 +515,7 @@ const PatientSearch: React.FC<PatientSearchProps> & {
                         </TableCell>
                         <TableCell>
                           <Typography variant="subtitle2">
-                            {patientHistory[patient.patient_id]?.map(
+                            {patientHistory[patient.patient.patient_id]?.map(
                               (phrData) => {
                                 const attributeName =
                                   phrData.categoryAtt_name.replace("phr_", "");
@@ -526,7 +533,7 @@ const PatientSearch: React.FC<PatientSearchProps> & {
                         </TableCell>
                         <TableCell>
                           <Typography variant="subtitle2">
-                            {patientHistory[patient.patient_id]?.map(
+                            {patientHistory[patient.patient.patient_id]?.map(
                               (phrData) => {
                                 const attributeName =
                                   phrData.categoryAtt_name.replace("phr_", "");
@@ -543,7 +550,7 @@ const PatientSearch: React.FC<PatientSearchProps> & {
                         </TableCell>
                         <TableCell>
                           <Typography variant="subtitle2">
-                            {patientHistory[patient.patient_id]?.map(
+                            {patientHistory[patient.patient.patient_id]?.map(
                               (phrData) => {
                                 const attributeName =
                                   phrData.categoryAtt_name.replace("phr_", "");
@@ -561,7 +568,7 @@ const PatientSearch: React.FC<PatientSearchProps> & {
                         </TableCell>
                         <TableCell>
                           <Typography variant="subtitle2">
-                            {patientHistory[patient.patient_id]?.map(
+                            {patientHistory[patient.patient.patient_id]?.map(
                               (phrData) => {
                                 const attributeName =
                                   phrData.categoryAtt_name.replace("phr_", "");
@@ -578,7 +585,7 @@ const PatientSearch: React.FC<PatientSearchProps> & {
                         </TableCell>
                         <TableCell>
                           <Typography variant="subtitle2">
-                            {patientHistory[patient.patient_id]?.map(
+                            {patientHistory[patient.patient.patient_id]?.map(
                               (phrData) => {
                                 const attributeName =
                                   phrData.categoryAtt_name.replace("phr_", "");
@@ -595,7 +602,7 @@ const PatientSearch: React.FC<PatientSearchProps> & {
                         </TableCell>
                         <TableCell>
                           <Typography variant="subtitle2">
-                            {patientHistory[patient.patient_id]?.map(
+                            {patientHistory[patient.patient.patient_id]?.map(
                               (phrData) => {
                                 const attributeName =
                                   phrData.categoryAtt_name.replace("phr_", "");
@@ -612,7 +619,7 @@ const PatientSearch: React.FC<PatientSearchProps> & {
                         </TableCell>
                         <TableCell>
                           <Typography variant="subtitle2">
-                            {patientHistory[patient.patient_id]?.map(
+                            {patientHistory[patient.patient.patient_id]?.map(
                               (phrData) => {
                                 const attributeName =
                                   phrData.categoryAtt_name.replace("phr_", "");
@@ -629,7 +636,7 @@ const PatientSearch: React.FC<PatientSearchProps> & {
                         </TableCell>
                         <TableCell>
                           <Typography variant="subtitle2">
-                            {patientHistory[patient.patient_id]?.map(
+                            {patientHistory[patient.patient.patient_id]?.map(
                               (phrData) => {
                                 const attributeName =
                                   phrData.categoryAtt_name.replace("phr_", "");
@@ -646,7 +653,7 @@ const PatientSearch: React.FC<PatientSearchProps> & {
                         </TableCell>
                         <TableCell>
                           <Typography variant="subtitle2">
-                            {patientHistory[patient.patient_id]?.map(
+                            {patientHistory[patient.patient.patient_id]?.map(
                               (phrData) => {
                                 const attributeName =
                                   phrData.categoryAtt_name.replace("phr_", "");
@@ -663,7 +670,7 @@ const PatientSearch: React.FC<PatientSearchProps> & {
                         </TableCell>
                         <TableCell>
                           <Typography variant="subtitle2">
-                            {patientHistory[patient.patient_id]?.map(
+                            {patientHistory[patient.patient.patient_id]?.map(
                               (phrData) => {
                                 const attributeName =
                                   phrData.categoryAtt_name.replace("phr_", "");
@@ -680,7 +687,7 @@ const PatientSearch: React.FC<PatientSearchProps> & {
                         </TableCell>
                         <TableCell>
                           <Typography variant="subtitle2">
-                            {patientHistory[patient.patient_id]?.map(
+                            {patientHistory[patient.patient.patient_id]?.map(
                               (phrData) => {
                                 const attributeName =
                                   phrData.categoryAtt_name.replace("phr_", "");
@@ -697,7 +704,7 @@ const PatientSearch: React.FC<PatientSearchProps> & {
                         </TableCell>
                         <TableCell>
                           <Typography variant="subtitle2">
-                            {patientHistory[patient.patient_id]?.map(
+                            {patientHistory[patient.patient.patient_id]?.map(
                               (phrData) => {
                                 const attributeName =
                                   phrData.categoryAtt_name.replace("phr_", "");
@@ -714,7 +721,7 @@ const PatientSearch: React.FC<PatientSearchProps> & {
                         </TableCell>
                         <TableCell>
                           <Typography variant="subtitle2">
-                            {patientHistory[patient.patient_id]?.map(
+                            {patientHistory[patient.patient.patient_id]?.map(
                               (phrData) => {
                                 const attributeName =
                                   phrData.categoryAtt_name.replace("phr_", "");
@@ -731,7 +738,7 @@ const PatientSearch: React.FC<PatientSearchProps> & {
                         </TableCell>
                         <TableCell>
                           <Typography variant="subtitle2">
-                            {patientHistory[patient.patient_id]?.map(
+                            {patientHistory[patient.patient.patient_id]?.map(
                               (phrData) => {
                                 const attributeName =
                                   phrData.categoryAtt_name.replace("phr_", "");
@@ -748,7 +755,7 @@ const PatientSearch: React.FC<PatientSearchProps> & {
                         </TableCell>
                         <TableCell>
                           <Typography variant="subtitle2">
-                            {patientHistory[patient.patient_id]?.map(
+                            {patientHistory[patient.patient.patient_id]?.map(
                               (phrData) => {
                                 const attributeName =
                                   phrData.categoryAtt_name.replace("phr_", "");
@@ -765,7 +772,7 @@ const PatientSearch: React.FC<PatientSearchProps> & {
                         </TableCell>
                         <TableCell>
                           <Typography variant="subtitle2">
-                            {patientHistory[patient.patient_id]?.map(
+                            {patientHistory[patient.patient.patient_id]?.map(
                               (phrData) => {
                                 const attributeName =
                                   phrData.categoryAtt_name.replace("phr_", "");
@@ -782,7 +789,8 @@ const PatientSearch: React.FC<PatientSearchProps> & {
                         </TableCell>
                         {/* Add more cells for additional PHR fields */}
                       </TableRow>
-                    ))}
+                    );
+                  })}
                 </TableBody>
               </Table>
             </TableContainer>
