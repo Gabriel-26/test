@@ -95,7 +95,7 @@ const PatientSearch: React.FC<PatientSearchProps> & {
 
   useEffect(() => {
     // Filter patients based on the search term and categoryAtt_name
-    const filteredPatients = patients.filter((patient) => {
+    const filteredPatients = Array.isArray(patients) ? patients.filter((patient) => {
       // Check if any patient's attributes match the search term
       const matchesSearchTerm = Object.values(patient).some(
         (value) =>
