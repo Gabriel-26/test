@@ -7,11 +7,19 @@
   border-collapse: collapse;
   width: 100%;
   font-family: 'Roboto', sans-serif; /* Change font family */
+  overflow-x: auto; /* Enable horizontal scrolling */
+  min-width: 800px; /* Set a minimum width for the table */
 }
 
+
 .custom-table tr:hover {
-  background-color: #ddd; /* Hover color for rows */
+  background-color: #ddd; 
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
+
+
 .form-container * {
   font-size: 16px; /* Adjust the font size as needed */
 }

@@ -13,7 +13,6 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  TextField,
   TablePagination,
   Typography,
 } from "@mui/material";
@@ -34,11 +33,33 @@ const PatientSearch: React.FC<PatientSearchProps> & {
   const [searchTerm, setSearchTerm] = useState("");
   const [patients, setPatients] = useState([]);
   const [filteredPatients, setFilteredPatients] = useState([]);
-  const [apiRoute, setApiRoute] = useState(
-    "/residentAssignedPatients/get/PatientsByResident"
-  );
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [loading, setLoading] = useState(false);
+  const [patientHistory, setPatientHistory] = useState<any[]>([]);
+  const [error, setError] = useState<any>(null);
+
+  // const fetchPatientHistory = async (patientID) => {
+  //   try {
+  //     const token = localStorage.getItem("authToken");
+  //     axiosInstance.defaults.headers.common[
+  //       "Authorization"
+  //     ] = `Bearer ${token}`;
+  //     const response = await axiosInstance.get(
+  //       `/attributeValues/getPHR/${patientID}`
+  //     );
+  //     const phrData = response.data;
+  //     setPatientHistory((prevPatientHistory) => ({
+  //       ...prevPatientHistory,
+  //       [patientID]: phrData,
+  //     }));
+  //   } catch (error) {
+  //     console.error(
+  //       `Error fetching patient history for patient ${patientID}:`,
+  //       error
+  //     );
+  //   }
+  // };
 
   useEffect(() => {
     // Fetch user role using the getUserRole function
@@ -47,54 +68,136 @@ const PatientSearch: React.FC<PatientSearchProps> & {
     // Set the token in Axios headers for this request
     axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     // Dynamically construct the API route based on user role
-    if (role === "admin") {
-      setApiRoute("/admin/patients");
-    } else {
-      setApiRoute("/residentAssignedPatients/get/PatientsByResident");
-    }
-  }, []); // Fetch the initial API route
+    const apiRoute =
+      role === "admin"
+        ? "/admin/patients"
+        : "/residentAssignedPatients/get/PatientsByResident";
 
-  useEffect(() => {
     // Fetch the list of patients from the constructed API route
     axiosInstance.get(apiRoute).then((response) => {
       setPatients(response.data);
+
+      // Store PHR data in patientHistory with patientID as the key
+      const patientData = response.data.map((patient) => ({
+        patientID: patient.patient_id,
+        phrData: patient.phr_data,
+      }));
+      const updatedPatientHistory = {};
+      patientData.forEach((data) => {
+        updatedPatientHistory[data.patientID] = data.phrData;
+      });
+      //@ts-ignore
+      setPatientHistory(updatedPatientHistory);
     });
-  }, [apiRoute]); // Re-fetch patients when the API route changes
+  }, []); // Fetch the initial list of patients
 
   useEffect(() => {
-    // Filter patients based on the search term
-    const filtered = patients.filter(
-      (patient) =>
-        patient === "object" &&
-        Object.keys(patient).some(
-          (field) =>
-            [
-              "patient_id",
-              "patient_fName",
-              "patient_lName",
-              "patient_mName",
-              "patient_age",
-              "patient_sex",
-            ].includes(field) &&
-            `${patient[field]}`.toLowerCase().includes(searchTerm.toLowerCase())
-        )
-    );
+    // Filter patients based on the search term and categoryAtt_name
+    const filteredPatients = patients.filter((patient) => {
+      // Check if any patient's attributes match the search term
+      const matchesSearchTerm = Object.values(patient).some(
+        (value) =>
+          typeof value === "string" &&
+          value.toLowerCase().includes(searchTerm.toLowerCase())
+      );
 
-    setFilteredPatients(filtered);
-  }, [searchTerm, patients]);
+      // Check if any patient history matches the search term for categoryAtt_name and value
+      const matchesCategoryAttName = patientHistory[patient.patient_id]?.some(
+        (phrData) => {
+          // Remove "phr_" prefix from categoryAtt_name
+          const attributeName = phrData.categoryAtt_name.replace("phr_", "");
+          // Check if categoryAtt_name matches the search term and the value is not "No"
+          const value =
+            phrData.attributeVal_values === "1" ? "Malignancy" : "No";
+          const value2 =
+            phrData.attributeVal_values === "1" ? "Cathetic" : "No";
+          const value3 = phrData.attributeVal_values === "1" ? "Obese" : "No";
+          const value4 =
+            phrData.attributeVal_values === "1" ? "DentalCanes" : "No";
+          const value5 =
+            phrData.attributeVal_values === "1" ? "Gingivitis" : "No";
+          const value6 =
+            phrData.attributeVal_values === "1" ? "OralUlcers" : "No";
+          const value7 =
+            phrData.attributeVal_values === "1" ? "OralPetachie" : "No";
+          const value8 =
+            phrData.attributeVal_values === "1" ? "SkinRash" : "No";
+          const value9 =
+            phrData.attributeVal_values === "1" ? "SkinEccymosis" : "No";
+          const value10 =
+            phrData.attributeVal_values === "1" ? "SkinNodules" : "No";
+          const value11 =
+            phrData.attributeVal_values === "1" ? "SkinUlcer" : "No";
+          const value12 = phrData.attributeVal_values === "1" ? "CHF" : "No";
+          const value13 = phrData.attributeVal_values === "1" ? "Asthma" : "No";
+          const value14 = phrData.attributeVal_values === "1" ? "HTN" : "No";
+          const value15 =
+            phrData.attributeVal_values === "1" ? "Thyroid" : "No";
+          const value16 =
+            phrData.attributeVal_values === "1" ? "Diabetes" : "No";
+          const value17 =
+            phrData.attributeVal_values === "1" ? "HepaticRenal" : "No";
+          const value18 =
+            phrData.attributeVal_values === "1" ? "Tuberculosis" : "No";
+          const value19 =
+            phrData.attributeVal_values === "1" ? "Psychiatric" : "No";
+          const value20 = phrData.attributeVal_values === "1" ? "CAD" : "No";
+          return (
+            (attributeName.toLowerCase().includes(searchTerm.toLowerCase()) &&
+              value.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (attributeName.toLowerCase().includes(searchTerm.toLowerCase()) &&
+              value2.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (attributeName.toLowerCase().includes(searchTerm.toLowerCase()) &&
+              value3.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (attributeName.toLowerCase().includes(searchTerm.toLowerCase()) &&
+              value4.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (attributeName.toLowerCase().includes(searchTerm.toLowerCase()) &&
+              value5.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (attributeName.toLowerCase().includes(searchTerm.toLowerCase()) &&
+              value6.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (attributeName.toLowerCase().includes(searchTerm.toLowerCase()) &&
+              value7.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (attributeName.toLowerCase().includes(searchTerm.toLowerCase()) &&
+              value8.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (attributeName.toLowerCase().includes(searchTerm.toLowerCase()) &&
+              value9.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (attributeName.toLowerCase().includes(searchTerm.toLowerCase()) &&
+              value10.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (attributeName.toLowerCase().includes(searchTerm.toLowerCase()) &&
+              value11.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (attributeName.toLowerCase().includes(searchTerm.toLowerCase()) &&
+              value12.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (attributeName.toLowerCase().includes(searchTerm.toLowerCase()) &&
+              value13.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (attributeName.toLowerCase().includes(searchTerm.toLowerCase()) &&
+              value14.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (attributeName.toLowerCase().includes(searchTerm.toLowerCase()) &&
+              value15.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (attributeName.toLowerCase().includes(searchTerm.toLowerCase()) &&
+              value16.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (attributeName.toLowerCase().includes(searchTerm.toLowerCase()) &&
+              value17.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (attributeName.toLowerCase().includes(searchTerm.toLowerCase()) &&
+              value18.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (attributeName.toLowerCase().includes(searchTerm.toLowerCase()) &&
+              value19.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (attributeName.toLowerCase().includes(searchTerm.toLowerCase()) &&
+              value20.toLowerCase().includes(searchTerm.toLowerCase()))
+          );
+        }
+      );
+
+      // Return true if either the patient's attributes or patient history matches the search term
+      return matchesSearchTerm || matchesCategoryAttName;
+    });
+
+    setFilteredPatients(filteredPatients);
+  }, [searchTerm, patients, patientHistory]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   };
   const displayedPatients = searchTerm ? filteredPatients : patients;
-
-  const displayedPatientsArray = Array.isArray(displayedPatients)
-    ? displayedPatients
-    : [];
-  const slicedPatients = displayedPatientsArray.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
-  );
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -107,32 +210,40 @@ const PatientSearch: React.FC<PatientSearchProps> & {
     setPage(0);
   };
 
+  // useEffect(() => {
+  //   // Fetch patient history when patient_id changes
+  //   displayedPatients.forEach((patient: any) => {
+  //     fetchPatientHistory(patient.patient_id);
+  //   });
+  // }, [displayedPatients]);
+
   return (
     <PageContainer>
       <DashboardCard title="Patients">
         <div>
           <Input
             type="text"
-            placeholder="Search by name or ID"
+            placeholder="Search"
             value={searchTerm}
             onChange={handleInputChange}
             style={{ marginBottom: 5 }} // Add bottom margin
           />
         </div>
-        <TableContainer
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            minHeight: "200px",
-          }}
-        >
-          {slicedPatients.length === 0 ? (
-            <Typography variant="subtitle2" color="textSecondary">
-              No patients found.
-            </Typography>
-          ) : (
-            <Table className="custom-table">
+        <div style={{ overflowX: "auto", maxWidth: "100%" }}>
+          <TableContainer
+            style={{
+              display: "flex",
+              // justifyContent: "center",
+              // textAlign: "center",
+              // minHeight: "400px",
+              minWidth: "2800px",
+            }}
+          >
+            <Table
+              className="custom-table"
+              stickyHeader
+              aria-label="sticky table"
+            >
               <TableHead>
                 <TableRow>
                   <TableCell>
@@ -165,12 +276,114 @@ const PatientSearch: React.FC<PatientSearchProps> & {
                       Sex
                     </Typography>
                   </TableCell>
+                  {/* Display PHR fields */}
+                  <TableCell>
+                    <Typography variant="subtitle2" fontWeight={600}>
+                      Malignancy
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2" fontWeight={600}>
+                      Cathetic
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2" fontWeight={600}>
+                      Obese
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2" fontWeight={600}>
+                      Dental Canes
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2" fontWeight={600}>
+                      Gingivitis
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2" fontWeight={600}>
+                      Oral Ulcers
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2" fontWeight={600}>
+                      Oral Petachie
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2" fontWeight={600}>
+                      Skin Rash
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2" fontWeight={600}>
+                      Skin Eccymosis
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2" fontWeight={600}>
+                      Skin Nodules
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2" fontWeight={600}>
+                      Skin Ulcer
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2" fontWeight={600}>
+                      CHF
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2" fontWeight={600}>
+                      Asthma
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2" fontWeight={600}>
+                      HTN
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2" fontWeight={600}>
+                      Thyroid
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2" fontWeight={600}>
+                      Diabetes
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2" fontWeight={600}>
+                      HepaticRenal
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2" fontWeight={600}>
+                      Tuberculosis
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2" fontWeight={600}>
+                      Psychiatric
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2" fontWeight={600}>
+                      CAD
+                    </Typography>
+                  </TableCell>
+                  {/* Add more columns for additional PHR fields */}
                 </TableRow>
               </TableHead>
               <TableBody>
-                {slicedPatients
+                {displayedPatients
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((patient) => (
+                  .map((patient: any) => (
                     <TableRow key={patient.patient_id}>
                       <TableCell>
                         <Typography variant="subtitle2">
@@ -210,12 +423,352 @@ const PatientSearch: React.FC<PatientSearchProps> & {
                           {patient.patient_sex}
                         </Typography>
                       </TableCell>
+                      {/* Display PHR fields for each patient */}
+                      <TableCell>
+                        <Typography variant="subtitle2">
+                          {patientHistory[patient.patient_id]?.map(
+                            (phrData) => {
+                              const attributeName =
+                                phrData.categoryAtt_name.replace("phr_", "");
+                              const value =
+                                phrData.attributeVal_values === "1"
+                                  ? "Yes"
+                                  : "No";
+                              return attributeName === "malignancy"
+                                ? value
+                                : null;
+                            }
+                          )}
+                        </Typography>
+                      </TableCell>
+
+                      <TableCell>
+                        <Typography variant="subtitle2">
+                          {patientHistory[patient.patient_id]?.map(
+                            (phrData) => {
+                              const attributeName =
+                                phrData.categoryAtt_name.replace("phr_", "");
+                              const value =
+                                phrData.attributeVal_values === "1"
+                                  ? "Yes"
+                                  : "No";
+                              return attributeName === "bodyHabitusCathetic"
+                                ? value
+                                : null;
+                            }
+                          )}
+                        </Typography>
+                      </TableCell>
+
+                      <TableCell>
+                        <Typography variant="subtitle2">
+                          {patientHistory[patient.patient_id]?.map(
+                            (phrData) => {
+                              const attributeName =
+                                phrData.categoryAtt_name.replace("phr_", "");
+                              const value =
+                                phrData.attributeVal_values === "1"
+                                  ? "Yes"
+                                  : "No";
+                              return attributeName === "bodyHabitusObese"
+                                ? value
+                                : null;
+                            }
+                          )}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="subtitle2">
+                          {patientHistory[patient.patient_id]?.map(
+                            (phrData) => {
+                              const attributeName =
+                                phrData.categoryAtt_name.replace("phr_", "");
+                              const value =
+                                phrData.attributeVal_values === "1"
+                                  ? "Yes"
+                                  : "No";
+                              return attributeName ===
+                                "dentionAndGumsDentalCanes"
+                                ? value
+                                : null;
+                            }
+                          )}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="subtitle2">
+                          {patientHistory[patient.patient_id]?.map(
+                            (phrData) => {
+                              const attributeName =
+                                phrData.categoryAtt_name.replace("phr_", "");
+                              const value =
+                                phrData.attributeVal_values === "1"
+                                  ? "Yes"
+                                  : "No";
+                              return attributeName ===
+                                "dentionAndGumsGingivitis"
+                                ? value
+                                : null;
+                            }
+                          )}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="subtitle2">
+                          {patientHistory[patient.patient_id]?.map(
+                            (phrData) => {
+                              const attributeName =
+                                phrData.categoryAtt_name.replace("phr_", "");
+                              const value =
+                                phrData.attributeVal_values === "1"
+                                  ? "Yes"
+                                  : "No";
+                              return attributeName === "oropharynxOralUlcers"
+                                ? value
+                                : null;
+                            }
+                          )}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="subtitle2">
+                          {patientHistory[patient.patient_id]?.map(
+                            (phrData) => {
+                              const attributeName =
+                                phrData.categoryAtt_name.replace("phr_", "");
+                              const value =
+                                phrData.attributeVal_values === "1"
+                                  ? "Yes"
+                                  : "No";
+                              return attributeName === "oropharynxOralPetachie"
+                                ? value
+                                : null;
+                            }
+                          )}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="subtitle2">
+                          {patientHistory[patient.patient_id]?.map(
+                            (phrData) => {
+                              const attributeName =
+                                phrData.categoryAtt_name.replace("phr_", "");
+                              const value =
+                                phrData.attributeVal_values === "1"
+                                  ? "Yes"
+                                  : "No";
+                              return attributeName === "skinRash"
+                                ? value
+                                : null;
+                            }
+                          )}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="subtitle2">
+                          {patientHistory[patient.patient_id]?.map(
+                            (phrData) => {
+                              const attributeName =
+                                phrData.categoryAtt_name.replace("phr_", "");
+                              const value =
+                                phrData.attributeVal_values === "1"
+                                  ? "Yes"
+                                  : "No";
+                              return attributeName === "skinEccymosis"
+                                ? value
+                                : null;
+                            }
+                          )}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="subtitle2">
+                          {patientHistory[patient.patient_id]?.map(
+                            (phrData) => {
+                              const attributeName =
+                                phrData.categoryAtt_name.replace("phr_", "");
+                              const value =
+                                phrData.attributeVal_values === "1"
+                                  ? "Yes"
+                                  : "No";
+                              return attributeName === "skinNodules"
+                                ? value
+                                : null;
+                            }
+                          )}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="subtitle2">
+                          {patientHistory[patient.patient_id]?.map(
+                            (phrData) => {
+                              const attributeName =
+                                phrData.categoryAtt_name.replace("phr_", "");
+                              const value =
+                                phrData.attributeVal_values === "1"
+                                  ? "Yes"
+                                  : "No";
+                              return attributeName === "skinUlcer"
+                                ? value
+                                : null;
+                            }
+                          )}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="subtitle2">
+                          {patientHistory[patient.patient_id]?.map(
+                            (phrData) => {
+                              const attributeName =
+                                phrData.categoryAtt_name.replace("phr_", "");
+                              const value =
+                                phrData.attributeVal_values === "1"
+                                  ? "Yes"
+                                  : "No";
+                              return attributeName === "PMH_CHF" ? value : null;
+                            }
+                          )}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="subtitle2">
+                          {patientHistory[patient.patient_id]?.map(
+                            (phrData) => {
+                              const attributeName =
+                                phrData.categoryAtt_name.replace("phr_", "");
+                              const value =
+                                phrData.attributeVal_values === "1"
+                                  ? "Yes"
+                                  : "No";
+                              return attributeName === "PMH_Asthma"
+                                ? value
+                                : null;
+                            }
+                          )}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="subtitle2">
+                          {patientHistory[patient.patient_id]?.map(
+                            (phrData) => {
+                              const attributeName =
+                                phrData.categoryAtt_name.replace("phr_", "");
+                              const value =
+                                phrData.attributeVal_values === "1"
+                                  ? "Yes"
+                                  : "No";
+                              return attributeName === "PMH_HTN" ? value : null;
+                            }
+                          )}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="subtitle2">
+                          {patientHistory[patient.patient_id]?.map(
+                            (phrData) => {
+                              const attributeName =
+                                phrData.categoryAtt_name.replace("phr_", "");
+                              const value =
+                                phrData.attributeVal_values === "1"
+                                  ? "Yes"
+                                  : "No";
+                              return attributeName === "PMH_Thyroid"
+                                ? value
+                                : null;
+                            }
+                          )}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="subtitle2">
+                          {patientHistory[patient.patient_id]?.map(
+                            (phrData) => {
+                              const attributeName =
+                                phrData.categoryAtt_name.replace("phr_", "");
+                              const value =
+                                phrData.attributeVal_values === "1"
+                                  ? "Yes"
+                                  : "No";
+                              return attributeName === "PMH_Diabetes"
+                                ? value
+                                : null;
+                            }
+                          )}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="subtitle2">
+                          {patientHistory[patient.patient_id]?.map(
+                            (phrData) => {
+                              const attributeName =
+                                phrData.categoryAtt_name.replace("phr_", "");
+                              const value =
+                                phrData.attributeVal_values === "1"
+                                  ? "Yes"
+                                  : "No";
+                              return attributeName === "PMH_HepaticRenal"
+                                ? value
+                                : null;
+                            }
+                          )}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="subtitle2">
+                          {patientHistory[patient.patient_id]?.map(
+                            (phrData) => {
+                              const attributeName =
+                                phrData.categoryAtt_name.replace("phr_", "");
+                              const value =
+                                phrData.attributeVal_values === "1"
+                                  ? "Yes"
+                                  : "No";
+                              return attributeName === "PMH_Tuberculosis"
+                                ? value
+                                : null;
+                            }
+                          )}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="subtitle2">
+                          {patientHistory[patient.patient_id]?.map(
+                            (phrData) => {
+                              const attributeName =
+                                phrData.categoryAtt_name.replace("phr_", "");
+                              const value =
+                                phrData.attributeVal_values === "1"
+                                  ? "Yes"
+                                  : "No";
+                              return attributeName === "PMH_Psychiatric"
+                                ? value
+                                : null;
+                            }
+                          )}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="subtitle2">
+                          {patientHistory[patient.patient_id]?.map(
+                            (phrData) => {
+                              const attributeName =
+                                phrData.categoryAtt_name.replace("phr_", "");
+                              const value =
+                                phrData.attributeVal_values === "1"
+                                  ? "Yes"
+                                  : "No";
+                              return attributeName === "PMH_CAD" ? value : null;
+                            }
+                          )}
+                        </Typography>
+                      </TableCell>
+                      {/* Add more cells for additional PHR fields */}
                     </TableRow>
                   ))}
               </TableBody>
             </Table>
-          )}
-        </TableContainer>
+          </TableContainer>
+        </div>
         <TablePagination
           rowsPerPageOptions={[10, 25]}
           component="div"
