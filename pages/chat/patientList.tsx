@@ -20,7 +20,30 @@ const PatientListPage = ({ onSelectPatients }) => {
         const response = await axiosInstance.get(
           "residentAssignedPatients/get/PatientsByResident"
         );
-        setPatients(response.data);
+
+        // Check if the response contains the expected properties
+        if (response.data) {
+          const patientsData = Object.keys(response.data).map((patientId) => {
+            const patient = response.data[patientId];
+            if (patient && patient.patient) {
+              return patient.patient;
+            } else {
+              console.error(`Patient data not found for ID: ${patientId}`);
+              return null;
+            }
+          });
+
+          // Filter out null values
+          const filteredPatientsData = patientsData.filter(
+            (patient) => patient !== null
+          );
+
+          // Set the patients state with the extracted data
+          setPatients(filteredPatientsData);
+        } else {
+          console.error("Invalid response format: Expected data object.");
+        }
+
         setLoading(false);
       } catch (error) {
         console.error("Error fetching patients:", error);

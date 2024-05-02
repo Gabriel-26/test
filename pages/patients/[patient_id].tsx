@@ -76,40 +76,53 @@ const PatientHistoryPage = () => {
         ] = `Bearer ${token}`;
 
         const response = await axiosInstance.get(
-          `/residentAssignedPatients/get/PatientsByResident`
+          "/residentAssignedPatients/get/PatientsByResident"
         );
         console.log(
           "Response from residentAssignedPatients route:",
           response.data
         );
-        const currentUserResidentId = localStorage.getItem("resID");
+        const currentUserPatientId = router.query.patient_id;
 
         if (response.data) {
-          // Check for chiefResident role or matching department_id
+          const patientsData = response.data;
+          //@ts-ignore
+          const patient = patientsData[currentUserPatientId];
+
+          if (!patient) {
+            // Patient data not found for the current user's patient ID
+            setErrorDetails(
+              "You are not authorized to view this page. Request access from assigned resident"
+            );
+            setLoadingDetails(false);
+            return;
+          }
+
+          const currentUserResidentId = localStorage.getItem("resID");
           const role = localStorage.getItem("userRole");
           const currentUserDepartmentId = localStorage.getItem("depID");
-          const department_id = response.data[0].resident.department_id;
+          const department_id = patient.assigned_patient.department_id;
+
           if (
             role === "chiefResident" ||
             department_id === currentUserDepartmentId
           ) {
             setAuthorized(true);
-            fetchPatientDetails(patientID);
-            fetchAdmittedAndDischargedDates(patientID);
+            fetchPatientDetails(currentUserPatientId);
+            fetchAdmittedAndDischargedDates(currentUserPatientId);
             return;
           }
 
-          const resident_id = response.data[0].resident_id;
-          const patient_id = response.data[0].patient_id;
+          const resident_id = patient.assigned_patient.resident_id;
+
           if (
             resident_id === currentUserResidentId &&
-            patient_id === router.query.patient_id
+            patient.assigned_patient.patient_id === currentUserPatientId
           ) {
             setAuthorized(true);
-            fetchPatientDetails(patientID);
-            fetchAdmittedAndDischargedDates(patientID);
+            fetchPatientDetails(currentUserPatientId);
+            fetchAdmittedAndDischargedDates(currentUserPatientId);
           } else {
-            // Reset the error message
             setErrorDetails(
               "You are not authorized to view this page. Request access from assigned resident"
             );
