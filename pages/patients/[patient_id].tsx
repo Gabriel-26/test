@@ -83,25 +83,15 @@ const PatientHistoryPage = () => {
           response.data
         );
         const currentUserResidentId = localStorage.getItem("resID");
-        const currentUserPatientId = router.query.patient_id;
-        const currentUserRole = localStorage.getItem("userRole");
-        const currentUserDepartmentId = localStorage.getItem("depID");
 
         if (response.data) {
-          // Check if the user is chiefResident of the same department
-          if (currentUserRole === "chiefResident") {
-            setAuthorized(true);
-            fetchPatientDetails(patientID);
-            fetchAdmittedAndDischargedDates(patientID);
-            return;
-          }
-
-          // Check if the user isMainResident and the resident_id and patient_id match
-          const isMainResident = response.data[0].isMainResident;
+          // Check for chiefResident role or matching department_id
+          const role = localStorage.getItem("userRole");
+          const currentUserDepartmentId = localStorage.getItem("depID");
+          const department_id = response.data[0].resident.department_id;
           if (
-            isMainResident === 1 &&
-            currentUserResidentId === response.data[0].resident_id &&
-            currentUserPatientId === response.data[0].patient_id
+            role === "chiefResident" ||
+            department_id === currentUserDepartmentId
           ) {
             setAuthorized(true);
             fetchPatientDetails(patientID);
@@ -109,17 +99,12 @@ const PatientHistoryPage = () => {
             return;
           }
 
-          // Check if there are shared records matching the current patient ID
-          const sharedRecords = response.data.filter((record) => {
-            return (
-              record.isMainResident === 0 &&
-              record.resident_id === currentUserResidentId &&
-              record.patient_id === currentUserPatientId
-            );
-          });
-
-          // If there's a matching shared record, grant access
-          if (sharedRecords.length > 0) {
+          const resident_id = response.data[0].resident_id;
+          const patient_id = response.data[0].patient_id;
+          if (
+            resident_id === currentUserResidentId &&
+            patient_id === router.query.patient_id
+          ) {
             setAuthorized(true);
             fetchPatientDetails(patientID);
             fetchAdmittedAndDischargedDates(patientID);
