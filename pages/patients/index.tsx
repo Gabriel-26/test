@@ -73,7 +73,7 @@ const PatientSearch: React.FC<PatientSearchProps> & {
         ? "/admin/patients"
         : "/residentAssignedPatients/get/PatientsByResident";
 
-    // Fetch the list of patients from the constructed API route
+    // Fetch the list of patients from the constructed APXI route
     axiosInstance.get(apiRoute).then((response) => {
       setPatients(response.data);
 
@@ -95,7 +95,7 @@ const PatientSearch: React.FC<PatientSearchProps> & {
 
   useEffect(() => {
     // Filter patients based on the search term and categoryAtt_name
-    const filteredPatients = Array.from(patients).filter((patient) => {
+    const filteredPatients = patients.filter((patient) => {
       // Check if any patient's attributes match the search term
       const matchesSearchTerm = Object.values(patient).some(
         (value) =>
