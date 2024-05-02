@@ -230,554 +230,569 @@ const PatientSearch: React.FC<PatientSearchProps> & {
           />
         </div>
         <div style={{ overflowX: "auto", maxWidth: "100%" }}>
-          <TableContainer
-            style={{
-              display: "flex",
-              // justifyContent: "center",
-              // textAlign: "center",
-              // minHeight: "400px",
-              minWidth: "2800px",
-            }}
-          >
-            <Table
-              className="custom-table"
-              stickyHeader
-              aria-label="sticky table"
+          {displayedPatients.length === 0 ? (
+            <Typography variant="subtitle1" align="center">
+              No patients to display
+            </Typography>
+          ) : (
+            <TableContainer
+              style={{
+                display: "flex",
+                // justifyContent: "center",
+                // textAlign: "center",
+                // minHeight: "400px",
+                minWidth: "2800px",
+              }}
             >
-              <TableHead>
-                <TableRow>
-                  <TableCell>
-                    <Typography variant="subtitle2" fontWeight={600}>
-                      ID
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="subtitle2" fontWeight={600}>
-                      First Name
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="subtitle2" fontWeight={600}>
-                      Last Name
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="subtitle2" fontWeight={600}>
-                      Middle Name
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="subtitle2" fontWeight={600}>
-                      Age
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="subtitle2" fontWeight={600}>
-                      Sex
-                    </Typography>
-                  </TableCell>
-                  {/* Display PHR fields */}
-                  <TableCell>
-                    <Typography variant="subtitle2" fontWeight={600}>
-                      Malignancy
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="subtitle2" fontWeight={600}>
-                      Cathetic
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="subtitle2" fontWeight={600}>
-                      Obese
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="subtitle2" fontWeight={600}>
-                      Dental Canes
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="subtitle2" fontWeight={600}>
-                      Gingivitis
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="subtitle2" fontWeight={600}>
-                      Oral Ulcers
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="subtitle2" fontWeight={600}>
-                      Oral Petachie
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="subtitle2" fontWeight={600}>
-                      Skin Rash
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="subtitle2" fontWeight={600}>
-                      Skin Eccymosis
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="subtitle2" fontWeight={600}>
-                      Skin Nodules
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="subtitle2" fontWeight={600}>
-                      Skin Ulcer
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="subtitle2" fontWeight={600}>
-                      CHF
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="subtitle2" fontWeight={600}>
-                      Asthma
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="subtitle2" fontWeight={600}>
-                      HTN
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="subtitle2" fontWeight={600}>
-                      Thyroid
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="subtitle2" fontWeight={600}>
-                      Diabetes
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="subtitle2" fontWeight={600}>
-                      HepaticRenal
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="subtitle2" fontWeight={600}>
-                      Tuberculosis
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="subtitle2" fontWeight={600}>
-                      Psychiatric
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="subtitle2" fontWeight={600}>
-                      CAD
-                    </Typography>
-                  </TableCell>
-                  {/* Add more columns for additional PHR fields */}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {displayedPatients
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((patient: any) => (
-                    <TableRow key={patient.patient_id}>
-                      <TableCell>
-                        <Typography variant="subtitle2">
-                          {/* Use router.push to navigate to patient history page */}
-                          <span
-                            style={{ cursor: "pointer", color: "blue" }}
-                            onClick={() =>
-                              router.push(`patients/${patient.patient_id}`)
-                            }
-                          >
-                            {patient.patient_id}
-                          </span>
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="subtitle2">
-                          {patient.patient_fName}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="subtitle2">
-                          {patient.patient_lName}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="subtitle2">
-                          {patient.patient_mName}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="subtitle2">
-                          {patient.patient_age}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="subtitle2">
-                          {patient.patient_sex}
-                        </Typography>
-                      </TableCell>
-                      {/* Display PHR fields for each patient */}
-                      <TableCell>
-                        <Typography variant="subtitle2">
-                          {patientHistory[patient.patient_id]?.map(
-                            (phrData) => {
-                              const attributeName =
-                                phrData.categoryAtt_name.replace("phr_", "");
-                              const value =
-                                phrData.attributeVal_values === "1"
-                                  ? "Yes"
-                                  : "No";
-                              return attributeName === "malignancy"
-                                ? value
-                                : null;
-                            }
-                          )}
-                        </Typography>
-                      </TableCell>
+              <Table
+                className="custom-table"
+                stickyHeader
+                aria-label="sticky table"
+              >
+                <TableHead>
+                  <TableRow>
+                    <TableCell>
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        ID
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        First Name
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        Last Name
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        Middle Name
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        Age
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        Sex
+                      </Typography>
+                    </TableCell>
+                    {/* Display PHR fields */}
+                    <TableCell>
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        Malignancy
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        Cathetic
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        Obese
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        Dental Canes
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        Gingivitis
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        Oral Ulcers
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        Oral Petachie
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        Skin Rash
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        Skin Eccymosis
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        Skin Nodules
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        Skin Ulcer
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        CHF
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        Asthma
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        HTN
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        Thyroid
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        Diabetes
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        HepaticRenal
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        Tuberculosis
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        Psychiatric
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        CAD
+                      </Typography>
+                    </TableCell>
+                    {/* Add more columns for additional PHR fields */}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {displayedPatients
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((patient: any) => (
+                      <TableRow key={patient.patient_id}>
+                        <TableCell>
+                          <Typography variant="subtitle2">
+                            {/* Use router.push to navigate to patient history page */}
+                            <span
+                              style={{ cursor: "pointer", color: "blue" }}
+                              onClick={() =>
+                                router.push(`patients/${patient.patient_id}`)
+                              }
+                            >
+                              {patient.patient_id}
+                            </span>
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="subtitle2">
+                            {patient.patient_fName}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="subtitle2">
+                            {patient.patient_lName}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="subtitle2">
+                            {patient.patient_mName}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="subtitle2">
+                            {patient.patient_age}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="subtitle2">
+                            {patient.patient_sex}
+                          </Typography>
+                        </TableCell>
+                        {/* Display PHR fields for each patient */}
+                        <TableCell>
+                          <Typography variant="subtitle2">
+                            {patientHistory[patient.patient_id]?.map(
+                              (phrData) => {
+                                const attributeName =
+                                  phrData.categoryAtt_name.replace("phr_", "");
+                                const value =
+                                  phrData.attributeVal_values === "1"
+                                    ? "Yes"
+                                    : "No";
+                                return attributeName === "malignancy"
+                                  ? value
+                                  : null;
+                              }
+                            )}
+                          </Typography>
+                        </TableCell>
 
-                      <TableCell>
-                        <Typography variant="subtitle2">
-                          {patientHistory[patient.patient_id]?.map(
-                            (phrData) => {
-                              const attributeName =
-                                phrData.categoryAtt_name.replace("phr_", "");
-                              const value =
-                                phrData.attributeVal_values === "1"
-                                  ? "Yes"
-                                  : "No";
-                              return attributeName === "bodyHabitusCathetic"
-                                ? value
-                                : null;
-                            }
-                          )}
-                        </Typography>
-                      </TableCell>
+                        <TableCell>
+                          <Typography variant="subtitle2">
+                            {patientHistory[patient.patient_id]?.map(
+                              (phrData) => {
+                                const attributeName =
+                                  phrData.categoryAtt_name.replace("phr_", "");
+                                const value =
+                                  phrData.attributeVal_values === "1"
+                                    ? "Yes"
+                                    : "No";
+                                return attributeName === "bodyHabitusCathetic"
+                                  ? value
+                                  : null;
+                              }
+                            )}
+                          </Typography>
+                        </TableCell>
 
-                      <TableCell>
-                        <Typography variant="subtitle2">
-                          {patientHistory[patient.patient_id]?.map(
-                            (phrData) => {
-                              const attributeName =
-                                phrData.categoryAtt_name.replace("phr_", "");
-                              const value =
-                                phrData.attributeVal_values === "1"
-                                  ? "Yes"
-                                  : "No";
-                              return attributeName === "bodyHabitusObese"
-                                ? value
-                                : null;
-                            }
-                          )}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="subtitle2">
-                          {patientHistory[patient.patient_id]?.map(
-                            (phrData) => {
-                              const attributeName =
-                                phrData.categoryAtt_name.replace("phr_", "");
-                              const value =
-                                phrData.attributeVal_values === "1"
-                                  ? "Yes"
-                                  : "No";
-                              return attributeName ===
-                                "dentionAndGumsDentalCanes"
-                                ? value
-                                : null;
-                            }
-                          )}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="subtitle2">
-                          {patientHistory[patient.patient_id]?.map(
-                            (phrData) => {
-                              const attributeName =
-                                phrData.categoryAtt_name.replace("phr_", "");
-                              const value =
-                                phrData.attributeVal_values === "1"
-                                  ? "Yes"
-                                  : "No";
-                              return attributeName ===
-                                "dentionAndGumsGingivitis"
-                                ? value
-                                : null;
-                            }
-                          )}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="subtitle2">
-                          {patientHistory[patient.patient_id]?.map(
-                            (phrData) => {
-                              const attributeName =
-                                phrData.categoryAtt_name.replace("phr_", "");
-                              const value =
-                                phrData.attributeVal_values === "1"
-                                  ? "Yes"
-                                  : "No";
-                              return attributeName === "oropharynxOralUlcers"
-                                ? value
-                                : null;
-                            }
-                          )}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="subtitle2">
-                          {patientHistory[patient.patient_id]?.map(
-                            (phrData) => {
-                              const attributeName =
-                                phrData.categoryAtt_name.replace("phr_", "");
-                              const value =
-                                phrData.attributeVal_values === "1"
-                                  ? "Yes"
-                                  : "No";
-                              return attributeName === "oropharynxOralPetachie"
-                                ? value
-                                : null;
-                            }
-                          )}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="subtitle2">
-                          {patientHistory[patient.patient_id]?.map(
-                            (phrData) => {
-                              const attributeName =
-                                phrData.categoryAtt_name.replace("phr_", "");
-                              const value =
-                                phrData.attributeVal_values === "1"
-                                  ? "Yes"
-                                  : "No";
-                              return attributeName === "skinRash"
-                                ? value
-                                : null;
-                            }
-                          )}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="subtitle2">
-                          {patientHistory[patient.patient_id]?.map(
-                            (phrData) => {
-                              const attributeName =
-                                phrData.categoryAtt_name.replace("phr_", "");
-                              const value =
-                                phrData.attributeVal_values === "1"
-                                  ? "Yes"
-                                  : "No";
-                              return attributeName === "skinEccymosis"
-                                ? value
-                                : null;
-                            }
-                          )}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="subtitle2">
-                          {patientHistory[patient.patient_id]?.map(
-                            (phrData) => {
-                              const attributeName =
-                                phrData.categoryAtt_name.replace("phr_", "");
-                              const value =
-                                phrData.attributeVal_values === "1"
-                                  ? "Yes"
-                                  : "No";
-                              return attributeName === "skinNodules"
-                                ? value
-                                : null;
-                            }
-                          )}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="subtitle2">
-                          {patientHistory[patient.patient_id]?.map(
-                            (phrData) => {
-                              const attributeName =
-                                phrData.categoryAtt_name.replace("phr_", "");
-                              const value =
-                                phrData.attributeVal_values === "1"
-                                  ? "Yes"
-                                  : "No";
-                              return attributeName === "skinUlcer"
-                                ? value
-                                : null;
-                            }
-                          )}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="subtitle2">
-                          {patientHistory[patient.patient_id]?.map(
-                            (phrData) => {
-                              const attributeName =
-                                phrData.categoryAtt_name.replace("phr_", "");
-                              const value =
-                                phrData.attributeVal_values === "1"
-                                  ? "Yes"
-                                  : "No";
-                              return attributeName === "PMH_CHF" ? value : null;
-                            }
-                          )}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="subtitle2">
-                          {patientHistory[patient.patient_id]?.map(
-                            (phrData) => {
-                              const attributeName =
-                                phrData.categoryAtt_name.replace("phr_", "");
-                              const value =
-                                phrData.attributeVal_values === "1"
-                                  ? "Yes"
-                                  : "No";
-                              return attributeName === "PMH_Asthma"
-                                ? value
-                                : null;
-                            }
-                          )}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="subtitle2">
-                          {patientHistory[patient.patient_id]?.map(
-                            (phrData) => {
-                              const attributeName =
-                                phrData.categoryAtt_name.replace("phr_", "");
-                              const value =
-                                phrData.attributeVal_values === "1"
-                                  ? "Yes"
-                                  : "No";
-                              return attributeName === "PMH_HTN" ? value : null;
-                            }
-                          )}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="subtitle2">
-                          {patientHistory[patient.patient_id]?.map(
-                            (phrData) => {
-                              const attributeName =
-                                phrData.categoryAtt_name.replace("phr_", "");
-                              const value =
-                                phrData.attributeVal_values === "1"
-                                  ? "Yes"
-                                  : "No";
-                              return attributeName === "PMH_Thyroid"
-                                ? value
-                                : null;
-                            }
-                          )}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="subtitle2">
-                          {patientHistory[patient.patient_id]?.map(
-                            (phrData) => {
-                              const attributeName =
-                                phrData.categoryAtt_name.replace("phr_", "");
-                              const value =
-                                phrData.attributeVal_values === "1"
-                                  ? "Yes"
-                                  : "No";
-                              return attributeName === "PMH_Diabetes"
-                                ? value
-                                : null;
-                            }
-                          )}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="subtitle2">
-                          {patientHistory[patient.patient_id]?.map(
-                            (phrData) => {
-                              const attributeName =
-                                phrData.categoryAtt_name.replace("phr_", "");
-                              const value =
-                                phrData.attributeVal_values === "1"
-                                  ? "Yes"
-                                  : "No";
-                              return attributeName === "PMH_HepaticRenal"
-                                ? value
-                                : null;
-                            }
-                          )}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="subtitle2">
-                          {patientHistory[patient.patient_id]?.map(
-                            (phrData) => {
-                              const attributeName =
-                                phrData.categoryAtt_name.replace("phr_", "");
-                              const value =
-                                phrData.attributeVal_values === "1"
-                                  ? "Yes"
-                                  : "No";
-                              return attributeName === "PMH_Tuberculosis"
-                                ? value
-                                : null;
-                            }
-                          )}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="subtitle2">
-                          {patientHistory[patient.patient_id]?.map(
-                            (phrData) => {
-                              const attributeName =
-                                phrData.categoryAtt_name.replace("phr_", "");
-                              const value =
-                                phrData.attributeVal_values === "1"
-                                  ? "Yes"
-                                  : "No";
-                              return attributeName === "PMH_Psychiatric"
-                                ? value
-                                : null;
-                            }
-                          )}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="subtitle2">
-                          {patientHistory[patient.patient_id]?.map(
-                            (phrData) => {
-                              const attributeName =
-                                phrData.categoryAtt_name.replace("phr_", "");
-                              const value =
-                                phrData.attributeVal_values === "1"
-                                  ? "Yes"
-                                  : "No";
-                              return attributeName === "PMH_CAD" ? value : null;
-                            }
-                          )}
-                        </Typography>
-                      </TableCell>
-                      {/* Add more cells for additional PHR fields */}
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                        <TableCell>
+                          <Typography variant="subtitle2">
+                            {patientHistory[patient.patient_id]?.map(
+                              (phrData) => {
+                                const attributeName =
+                                  phrData.categoryAtt_name.replace("phr_", "");
+                                const value =
+                                  phrData.attributeVal_values === "1"
+                                    ? "Yes"
+                                    : "No";
+                                return attributeName === "bodyHabitusObese"
+                                  ? value
+                                  : null;
+                              }
+                            )}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="subtitle2">
+                            {patientHistory[patient.patient_id]?.map(
+                              (phrData) => {
+                                const attributeName =
+                                  phrData.categoryAtt_name.replace("phr_", "");
+                                const value =
+                                  phrData.attributeVal_values === "1"
+                                    ? "Yes"
+                                    : "No";
+                                return attributeName ===
+                                  "dentionAndGumsDentalCanes"
+                                  ? value
+                                  : null;
+                              }
+                            )}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="subtitle2">
+                            {patientHistory[patient.patient_id]?.map(
+                              (phrData) => {
+                                const attributeName =
+                                  phrData.categoryAtt_name.replace("phr_", "");
+                                const value =
+                                  phrData.attributeVal_values === "1"
+                                    ? "Yes"
+                                    : "No";
+                                return attributeName ===
+                                  "dentionAndGumsGingivitis"
+                                  ? value
+                                  : null;
+                              }
+                            )}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="subtitle2">
+                            {patientHistory[patient.patient_id]?.map(
+                              (phrData) => {
+                                const attributeName =
+                                  phrData.categoryAtt_name.replace("phr_", "");
+                                const value =
+                                  phrData.attributeVal_values === "1"
+                                    ? "Yes"
+                                    : "No";
+                                return attributeName === "oropharynxOralUlcers"
+                                  ? value
+                                  : null;
+                              }
+                            )}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="subtitle2">
+                            {patientHistory[patient.patient_id]?.map(
+                              (phrData) => {
+                                const attributeName =
+                                  phrData.categoryAtt_name.replace("phr_", "");
+                                const value =
+                                  phrData.attributeVal_values === "1"
+                                    ? "Yes"
+                                    : "No";
+                                return attributeName ===
+                                  "oropharynxOralPetachie"
+                                  ? value
+                                  : null;
+                              }
+                            )}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="subtitle2">
+                            {patientHistory[patient.patient_id]?.map(
+                              (phrData) => {
+                                const attributeName =
+                                  phrData.categoryAtt_name.replace("phr_", "");
+                                const value =
+                                  phrData.attributeVal_values === "1"
+                                    ? "Yes"
+                                    : "No";
+                                return attributeName === "skinRash"
+                                  ? value
+                                  : null;
+                              }
+                            )}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="subtitle2">
+                            {patientHistory[patient.patient_id]?.map(
+                              (phrData) => {
+                                const attributeName =
+                                  phrData.categoryAtt_name.replace("phr_", "");
+                                const value =
+                                  phrData.attributeVal_values === "1"
+                                    ? "Yes"
+                                    : "No";
+                                return attributeName === "skinEccymosis"
+                                  ? value
+                                  : null;
+                              }
+                            )}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="subtitle2">
+                            {patientHistory[patient.patient_id]?.map(
+                              (phrData) => {
+                                const attributeName =
+                                  phrData.categoryAtt_name.replace("phr_", "");
+                                const value =
+                                  phrData.attributeVal_values === "1"
+                                    ? "Yes"
+                                    : "No";
+                                return attributeName === "skinNodules"
+                                  ? value
+                                  : null;
+                              }
+                            )}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="subtitle2">
+                            {patientHistory[patient.patient_id]?.map(
+                              (phrData) => {
+                                const attributeName =
+                                  phrData.categoryAtt_name.replace("phr_", "");
+                                const value =
+                                  phrData.attributeVal_values === "1"
+                                    ? "Yes"
+                                    : "No";
+                                return attributeName === "skinUlcer"
+                                  ? value
+                                  : null;
+                              }
+                            )}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="subtitle2">
+                            {patientHistory[patient.patient_id]?.map(
+                              (phrData) => {
+                                const attributeName =
+                                  phrData.categoryAtt_name.replace("phr_", "");
+                                const value =
+                                  phrData.attributeVal_values === "1"
+                                    ? "Yes"
+                                    : "No";
+                                return attributeName === "PMH_CHF"
+                                  ? value
+                                  : null;
+                              }
+                            )}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="subtitle2">
+                            {patientHistory[patient.patient_id]?.map(
+                              (phrData) => {
+                                const attributeName =
+                                  phrData.categoryAtt_name.replace("phr_", "");
+                                const value =
+                                  phrData.attributeVal_values === "1"
+                                    ? "Yes"
+                                    : "No";
+                                return attributeName === "PMH_Asthma"
+                                  ? value
+                                  : null;
+                              }
+                            )}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="subtitle2">
+                            {patientHistory[patient.patient_id]?.map(
+                              (phrData) => {
+                                const attributeName =
+                                  phrData.categoryAtt_name.replace("phr_", "");
+                                const value =
+                                  phrData.attributeVal_values === "1"
+                                    ? "Yes"
+                                    : "No";
+                                return attributeName === "PMH_HTN"
+                                  ? value
+                                  : null;
+                              }
+                            )}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="subtitle2">
+                            {patientHistory[patient.patient_id]?.map(
+                              (phrData) => {
+                                const attributeName =
+                                  phrData.categoryAtt_name.replace("phr_", "");
+                                const value =
+                                  phrData.attributeVal_values === "1"
+                                    ? "Yes"
+                                    : "No";
+                                return attributeName === "PMH_Thyroid"
+                                  ? value
+                                  : null;
+                              }
+                            )}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="subtitle2">
+                            {patientHistory[patient.patient_id]?.map(
+                              (phrData) => {
+                                const attributeName =
+                                  phrData.categoryAtt_name.replace("phr_", "");
+                                const value =
+                                  phrData.attributeVal_values === "1"
+                                    ? "Yes"
+                                    : "No";
+                                return attributeName === "PMH_Diabetes"
+                                  ? value
+                                  : null;
+                              }
+                            )}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="subtitle2">
+                            {patientHistory[patient.patient_id]?.map(
+                              (phrData) => {
+                                const attributeName =
+                                  phrData.categoryAtt_name.replace("phr_", "");
+                                const value =
+                                  phrData.attributeVal_values === "1"
+                                    ? "Yes"
+                                    : "No";
+                                return attributeName === "PMH_HepaticRenal"
+                                  ? value
+                                  : null;
+                              }
+                            )}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="subtitle2">
+                            {patientHistory[patient.patient_id]?.map(
+                              (phrData) => {
+                                const attributeName =
+                                  phrData.categoryAtt_name.replace("phr_", "");
+                                const value =
+                                  phrData.attributeVal_values === "1"
+                                    ? "Yes"
+                                    : "No";
+                                return attributeName === "PMH_Tuberculosis"
+                                  ? value
+                                  : null;
+                              }
+                            )}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="subtitle2">
+                            {patientHistory[patient.patient_id]?.map(
+                              (phrData) => {
+                                const attributeName =
+                                  phrData.categoryAtt_name.replace("phr_", "");
+                                const value =
+                                  phrData.attributeVal_values === "1"
+                                    ? "Yes"
+                                    : "No";
+                                return attributeName === "PMH_Psychiatric"
+                                  ? value
+                                  : null;
+                              }
+                            )}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="subtitle2">
+                            {patientHistory[patient.patient_id]?.map(
+                              (phrData) => {
+                                const attributeName =
+                                  phrData.categoryAtt_name.replace("phr_", "");
+                                const value =
+                                  phrData.attributeVal_values === "1"
+                                    ? "Yes"
+                                    : "No";
+                                return attributeName === "PMH_CAD"
+                                  ? value
+                                  : null;
+                              }
+                            )}
+                          </Typography>
+                        </TableCell>
+                        {/* Add more cells for additional PHR fields */}
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
         </div>
-        <TablePagination
-          rowsPerPageOptions={[10, 25]}
-          component="div"
-          count={displayedPatients.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
+        {displayedPatients.length > 0 && (
+          <TablePagination
+            rowsPerPageOptions={[10, 25]}
+            component="div"
+            count={displayedPatients.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        )}
       </DashboardCard>
     </PageContainer>
   );
