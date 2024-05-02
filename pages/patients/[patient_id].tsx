@@ -86,29 +86,17 @@ const PatientHistoryPage = () => {
         const currentUserPatientId = router.query.patient_id;
 
         if (response.data) {
-          // Check for chiefResident role or matching department_id
-          const role = localStorage.getItem("userRole");
-          const currentUserDepartmentId = localStorage.getItem("depID");
-          const department_id = response.data[0].resident.department_id;
-          if (
-            role === "chiefResident" ||
-            department_id === currentUserDepartmentId
-          ) {
-            setAuthorized(true);
-            fetchPatientDetails(patientID);
-            fetchAdmittedAndDischargedDates(patientID);
-            return;
-          }
+          // Check if there are shared records matching the current patient ID
+          const sharedRecords = response.data.filter((record) => {
+            return (
+              record.isMainResident === 0 &&
+              record.resident_id === currentUserResidentId &&
+              record.patient_id === currentUserPatientId
+            );
+          });
 
-          // Check if isMainResident is equal to 0 and resident_id matches the resident_id in local storage and patient_id matches the router query patient_id
-          const isMainResident = response.data[0].isMainResident;
-          const resident_id = response.data[0].resident_id;
-          const patient_id = response.data[0].patient_id;
-          if (
-            isMainResident === 0 &&
-            resident_id === currentUserResidentId &&
-            patient_id === currentUserPatientId
-          ) {
+          // If there's a matching shared record, grant access
+          if (sharedRecords.length > 0) {
             setAuthorized(true);
             fetchPatientDetails(patientID);
             fetchAdmittedAndDischargedDates(patientID);
