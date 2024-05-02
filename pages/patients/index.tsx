@@ -36,30 +36,24 @@ const PatientSearch: React.FC<PatientSearchProps> & {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [loading, setLoading] = useState(false);
-  const [patientHistory, setPatientHistory] = useState<any[]>([]);
+  const [patientHistory, setPatientHistory] = useState<any>({});
   const [error, setError] = useState<any>(null);
 
-  // const fetchPatientHistory = async (patientID) => {
-  //   try {
-  //     const token = localStorage.getItem("authToken");
-  //     axiosInstance.defaults.headers.common[
-  //       "Authorization"
-  //     ] = `Bearer ${token}`;
-  //     const response = await axiosInstance.get(
-  //       `/attributeValues/getPHR/${patientID}`
-  //     );
-  //     const phrData = response.data;
-  //     setPatientHistory((prevPatientHistory) => ({
-  //       ...prevPatientHistory,
-  //       [patientID]: phrData,
-  //     }));
-  //   } catch (error) {
-  //     console.error(
-  //       `Error fetching patient history for patient ${patientID}:`,
-  //       error
-  //     );
-  //   }
-  // };
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+  const displayedPatients = searchTerm ? filteredPatients : patients;
+
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   useEffect(() => {
     // Fetch user role using the getUserRole function
@@ -98,7 +92,6 @@ const PatientSearch: React.FC<PatientSearchProps> & {
         }
       });
       console.log("Updated Patient History:", updatedPatientHistory);
-      //@ts-ignore
 
       setPatientHistory(updatedPatientHistory);
     });
@@ -106,130 +99,50 @@ const PatientSearch: React.FC<PatientSearchProps> & {
 
   useEffect(() => {
     // Filter patients based on the search term and categoryAtt_name
-    const filteredPatients = Array.isArray(patients)
-      ? patients.filter((patient) => {
-          // Check if any patient's attributes match the search term
-          const matchesSearchTerm = Object.values(patient).some(
-            (value) =>
-              typeof value === "string" &&
-              value.toLowerCase().includes(searchTerm.toLowerCase())
-          );
-          // Check if any patient history matches the search term for categoryAtt_name and value
-          const matchesCategoryAttName = patientHistory[
-            patient.patient_id
-          ]?.some((phrData) => {
-            // Remove "phr_" prefix from categoryAtt_name
-            const attributeName = phrData.categoryAtt_name.replace("phr_", "");
-            // Check if categoryAtt_name matches the search term and the value is not "No"
-            const value =
-              phrData.attributeVal_values === "1" ? "Malignancy" : "No";
-            const value2 =
-              phrData.attributeVal_values === "1" ? "Cathetic" : "No";
-            const value3 = phrData.attributeVal_values === "1" ? "Obese" : "No";
-            const value4 =
-              phrData.attributeVal_values === "1" ? "DentalCanes" : "No";
-            const value5 =
-              phrData.attributeVal_values === "1" ? "Gingivitis" : "No";
-            const value6 =
-              phrData.attributeVal_values === "1" ? "OralUlcers" : "No";
-            const value7 =
-              phrData.attributeVal_values === "1" ? "OralPetachie" : "No";
-            const value8 =
-              phrData.attributeVal_values === "1" ? "SkinRash" : "No";
-            const value9 =
-              phrData.attributeVal_values === "1" ? "SkinEccymosis" : "No";
-            const value10 =
-              phrData.attributeVal_values === "1" ? "SkinNodules" : "No";
-            const value11 =
-              phrData.attributeVal_values === "1" ? "SkinUlcer" : "No";
-            const value12 = phrData.attributeVal_values === "1" ? "CHF" : "No";
-            const value13 =
-              phrData.attributeVal_values === "1" ? "Asthma" : "No";
-            const value14 = phrData.attributeVal_values === "1" ? "HTN" : "No";
-            const value15 =
-              phrData.attributeVal_values === "1" ? "Thyroid" : "No";
-            const value16 =
-              phrData.attributeVal_values === "1" ? "Diabetes" : "No";
-            const value17 =
-              phrData.attributeVal_values === "1" ? "HepaticRenal" : "No";
-            const value18 =
-              phrData.attributeVal_values === "1" ? "Tuberculosis" : "No";
-            const value19 =
-              phrData.attributeVal_values === "1" ? "Psychiatric" : "No";
-            const value20 = phrData.attributeVal_values === "1" ? "CAD" : "No";
-            return (
-              (attributeName.toLowerCase().includes(searchTerm.toLowerCase()) &&
-                value.toLowerCase().includes(searchTerm.toLowerCase())) ||
-              (attributeName.toLowerCase().includes(searchTerm.toLowerCase()) &&
-                value2.toLowerCase().includes(searchTerm.toLowerCase())) ||
-              (attributeName.toLowerCase().includes(searchTerm.toLowerCase()) &&
-                value3.toLowerCase().includes(searchTerm.toLowerCase())) ||
-              (attributeName.toLowerCase().includes(searchTerm.toLowerCase()) &&
-                value4.toLowerCase().includes(searchTerm.toLowerCase())) ||
-              (attributeName.toLowerCase().includes(searchTerm.toLowerCase()) &&
-                value5.toLowerCase().includes(searchTerm.toLowerCase())) ||
-              (attributeName.toLowerCase().includes(searchTerm.toLowerCase()) &&
-                value6.toLowerCase().includes(searchTerm.toLowerCase())) ||
-              (attributeName.toLowerCase().includes(searchTerm.toLowerCase()) &&
-                value7.toLowerCase().includes(searchTerm.toLowerCase())) ||
-              (attributeName.toLowerCase().includes(searchTerm.toLowerCase()) &&
-                value8.toLowerCase().includes(searchTerm.toLowerCase())) ||
-              (attributeName.toLowerCase().includes(searchTerm.toLowerCase()) &&
-                value9.toLowerCase().includes(searchTerm.toLowerCase())) ||
-              (attributeName.toLowerCase().includes(searchTerm.toLowerCase()) &&
-                value10.toLowerCase().includes(searchTerm.toLowerCase())) ||
-              (attributeName.toLowerCase().includes(searchTerm.toLowerCase()) &&
-                value11.toLowerCase().includes(searchTerm.toLowerCase())) ||
-              (attributeName.toLowerCase().includes(searchTerm.toLowerCase()) &&
-                value12.toLowerCase().includes(searchTerm.toLowerCase())) ||
-              (attributeName.toLowerCase().includes(searchTerm.toLowerCase()) &&
-                value13.toLowerCase().includes(searchTerm.toLowerCase())) ||
-              (attributeName.toLowerCase().includes(searchTerm.toLowerCase()) &&
-                value14.toLowerCase().includes(searchTerm.toLowerCase())) ||
-              (attributeName.toLowerCase().includes(searchTerm.toLowerCase()) &&
-                value15.toLowerCase().includes(searchTerm.toLowerCase())) ||
-              (attributeName.toLowerCase().includes(searchTerm.toLowerCase()) &&
-                value16.toLowerCase().includes(searchTerm.toLowerCase())) ||
-              (attributeName.toLowerCase().includes(searchTerm.toLowerCase()) &&
-                value17.toLowerCase().includes(searchTerm.toLowerCase())) ||
-              (attributeName.toLowerCase().includes(searchTerm.toLowerCase()) &&
-                value18.toLowerCase().includes(searchTerm.toLowerCase())) ||
-              (attributeName.toLowerCase().includes(searchTerm.toLowerCase()) &&
-                value19.toLowerCase().includes(searchTerm.toLowerCase())) ||
-              (attributeName.toLowerCase().includes(searchTerm.toLowerCase()) &&
-                value20.toLowerCase().includes(searchTerm.toLowerCase()))
-            );
-          });
+    const filteredPatients =
+      typeof patients === "object"
+        ? Object.keys(patients)
+            .filter((patientID) => {
+              const patient = patients[patientID];
+              // Check if any patient's attributes match the search term
+              const matchesSearchTerm = Object.values(patient.patient).some(
+                (value) =>
+                  typeof value === "string" &&
+                  value.toLowerCase().includes(searchTerm.toLowerCase())
+              );
 
-          // Return true if either the patient's attributes or patient history matches the search term
-          return matchesSearchTerm || matchesCategoryAttName;
-        })
-      : [];
+              // Check if any PHR data matches the search term for categoryAtt_name and value
+              const matchesCategoryAttName = patientHistory[patientID]?.some(
+                (phrData) => {
+                  // Remove "phr_" prefix from categoryAtt_name
+                  const attributeName = phrData.categoryAtt_name.replace(
+                    "phr_",
+                    ""
+                  );
+                  // Check if categoryAtt_name matches the search term and the value is not "No"
+                  const value =
+                    phrData.attributeVal_values === "1" ? attributeName : "No";
+                  return (
+                    attributeName
+                      .toLowerCase()
+                      .includes(searchTerm.toLowerCase()) &&
+                    value.toLowerCase().includes(searchTerm.toLowerCase())
+                  );
+                }
+              );
+
+              // Return true if either the patient's attributes or patient history matches the search term
+              return matchesSearchTerm || matchesCategoryAttName;
+            })
+            .reduce((filtered, patientID) => {
+              filtered[patientID] = patients[patientID];
+              return filtered;
+            }, {})
+        : {};
+    //@ts-ignore
+
     setFilteredPatients(filteredPatients);
   }, [searchTerm, patients, patientHistory]);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-  };
-  const displayedPatients = searchTerm ? filteredPatients : patients;
-
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  // useEffect(() => {
-  //   // Fetch patient history when patient_id changes
-  //   displayedPatients.forEach((patient: any) => {
-  //     fetchPatientHistory(patient.patient_id);
-  //   });
-  // }, [displayedPatients]);
 
   return (
     <PageContainer>
