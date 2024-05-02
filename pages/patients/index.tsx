@@ -388,7 +388,7 @@ const PatientSearch: React.FC<PatientSearchProps> & {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {displayedPatients
+                  {Array.from(displayedPatients)
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((patient: any) => (
                       <TableRow key={patient.patient_id}>
