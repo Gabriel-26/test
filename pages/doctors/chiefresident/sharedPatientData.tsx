@@ -13,6 +13,7 @@ const SharedPatientDataPage = () => {
   const [sharedPatientData, setSharedPatientData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const residentID = localStorage.getItem("resID");
 
   const columns = [
     {
@@ -62,7 +63,12 @@ const SharedPatientDataPage = () => {
       const response = await axiosInstance.get(
         "/residentAssignedPatients/get/PatientsAssignedToResident"
       );
-      setSharedPatientData(response.data);
+      // Filter out records where isMainResident is equal to 0 and resident_id matches the residentID from local storage
+      const filteredData = response.data.filter(
+        (record) =>
+          record.isMainResident === 1 || record.resident_id !== residentID
+      );
+      setSharedPatientData(filteredData);
     } catch (error) {
       setError(error.message || "An error occurred while fetching data.");
       console.error("Error fetching shared patient data:", error);
