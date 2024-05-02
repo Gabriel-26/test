@@ -31,6 +31,7 @@ const LabResultsPage = ({ patientData }) => {
     results: "",
   });
   const [editLoading, setEditLoading] = useState(false);
+  const residentID = localStorage.getItem("resID");
 
   const fetchLabResults = async () => {
     setLoading(true);
@@ -230,6 +231,9 @@ const LabResultsPage = ({ patientData }) => {
                         alignItems: "center",
                       }}
                     >
+                      <p style={{ marginBottom: "8px" }}>
+                        <strong>Added by:</strong> {residentID}
+                      </p>
                       <p>
                         <strong>Lab Result Date:</strong>{" "}
                         {moment(result.labResultDate)
