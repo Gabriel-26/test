@@ -169,6 +169,7 @@ const PatientHistory = ({ patientData }) => {
     "bodyHabitusObese",
     "hrRegular",
     "hrIrregular",
+    "historyOfPresentIllness",
   ];
 
   const formatAttributeName = (categoryAtt_name, attributeVal_values) => {
