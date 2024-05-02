@@ -98,6 +98,7 @@ const PatientSearch: React.FC<PatientSearchProps> & {
         }
       });
       console.log("Updated Patient History:", updatedPatientHistory);
+      //@ts-ignore
 
       setPatientHistory(updatedPatientHistory);
     });
