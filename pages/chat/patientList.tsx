@@ -73,8 +73,8 @@ const PatientListPage = ({ onSelectPatients }) => {
         <CircularProgress />
       ) : (
         <div>
-          {patients.length === 0 ? ( // Check if patients array is empty
-            <Typography variant="body1">No patients found.</Typography> // Render message if empty
+          {Array.isArray(patients) && patients.length === 0 ? (
+            <Typography variant="body1">No patients found.</Typography>
           ) : (
             <List>
               {patients.map((patient) => (
