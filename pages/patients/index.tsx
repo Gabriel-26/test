@@ -78,11 +78,12 @@ const PatientSearch: React.FC<PatientSearchProps> & {
       setPatients(response.data);
 
       // Store PHR data in patientHistory with patientID as the key
-      const patientData = response.data.map((patient) => ({
-        patientID: patient.patient_id,
-        phrData: patient.phr_data,
-      }));
-
+      const patientData = Array.isArray(response.data)
+        ? response.data.map((patient) => ({
+            patientID: patient.patient_id,
+            phrData: patient.phr_data,
+          }))
+        : [];
       const updatedPatientHistory = {};
       patientData.forEach((data) => {
         updatedPatientHistory[data.patientID] = data.phrData;
