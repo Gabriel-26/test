@@ -231,9 +231,9 @@ const LabResultsPage = ({ patientData }) => {
                         alignItems: "center",
                       }}
                     >
-                      <p style={{ marginBottom: "8px" }}>
+                      {/* <p style={{ marginBottom: "8px" }}>
                         <strong>Added by:</strong> {residentID}
-                      </p>
+                      </p> */}
                       <p>
                         <strong>Lab Result Date:</strong>{" "}
                         {moment(result.labResultDate)

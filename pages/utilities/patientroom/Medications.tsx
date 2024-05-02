@@ -566,9 +566,9 @@ const Medication = (props: any) => {
                     </div>
                   </div>
                   {/* Display Resident ID */}
-                  <p style={{ marginBottom: "8px" }}>
+                  {/* <p style={{ marginBottom: "8px" }}>
                     {`Added by: ${residentID}`}
-                  </p>
+                  </p> */}
                   {/* Render indicator if medication date is past the deadline */}
                   {new Date(medication.patientMedicineDate) < new Date() && (
                     <p style={{ color: "red" }}>
