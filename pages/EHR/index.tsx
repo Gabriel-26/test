@@ -486,7 +486,7 @@ export function EHRForm() {
                       <option value="">Select a room</option>
                       {roomData.map((room) => (
                         <option key={room.room_id} value={room.room_id}>
-                          {room.room_id}
+                          {room.room_name}
                         </option>
                       ))}
                     </select>
