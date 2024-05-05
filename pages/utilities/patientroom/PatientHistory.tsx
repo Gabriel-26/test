@@ -391,8 +391,10 @@ const PatientHistory = ({ patientData }) => {
 
   const renderBooleanInput = (entry) => (
     <Checkbox
-      checked={editedValue === "1"}
-      onChange={(e) => setEditedValue(e.target.checked ? "1" : "0")}
+      //@ts-ignore
+      checked={editedValue}
+      //@ts-ignore
+      onChange={(e) => setEditedValue(e.target.checked)}
     />
   );
 
