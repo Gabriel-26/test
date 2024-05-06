@@ -11,6 +11,9 @@ import {
   Button,
   TextField,
   Checkbox,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
 } from "@mui/material";
 import axiosInstance from "../../../src/components/utils/axiosInstance";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -390,12 +393,13 @@ const PatientHistory = ({ patientData }) => {
   };
 
   const renderBooleanInput = (entry) => (
-    <Checkbox
-      //@ts-ignore
-      checked={editedValue}
-      //@ts-ignore
-      onChange={(e) => setEditedValue(e.target.checked)}
-    />
+    <RadioGroup
+      value={editedValue}
+      onChange={(e) => setEditedValue(e.target.value)}
+    >
+      <FormControlLabel value="Yes" control={<Radio />} label="Yes" />
+      <FormControlLabel value="No" control={<Radio />} label="No" />
+    </RadioGroup>
   );
 
   return (
