@@ -11,9 +11,9 @@ import {
   Button,
   TextField,
   Checkbox,
-  RadioGroup,
   FormControlLabel,
   Radio,
+  RadioGroup,
 } from "@mui/material";
 import axiosInstance from "../../../src/components/utils/axiosInstance";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -348,7 +348,7 @@ const PatientHistory = ({ patientData }) => {
         : entry.attributeVal_values === "0"
         ? false
         : entry.attributeVal_values;
-    setEditedValue(editedValue);
+    setEditedValue(entry.attributeVal_values);
     setEditingEntry(entry);
   };
 
@@ -394,11 +394,11 @@ const PatientHistory = ({ patientData }) => {
 
   const renderBooleanInput = (entry) => (
     <RadioGroup
-      value={editedValue}
+      value={editedValue !== "" ? editedValue : entry.attributeVal_values}
       onChange={(e) => setEditedValue(e.target.value)}
     >
-      <FormControlLabel value="Yes" control={<Radio />} label="Yes" />
-      <FormControlLabel value="No" control={<Radio />} label="No" />
+      <FormControlLabel value="1" control={<Radio />} label="Yes" />
+      <FormControlLabel value="0" control={<Radio />} label="No" />
     </RadioGroup>
   );
 
@@ -430,7 +430,7 @@ const PatientHistory = ({ patientData }) => {
                       editingEntry.attributeVal_id ===
                         historyEntry.attributeVal_id ? (
                         <>
-                          {/* Render checkbox input for boolean attributes */}
+                          {/* Render radio button input for boolean attributes */}
                           {booleanAttributes.includes(
                             historyEntry.categoryAtt_name.replace(/^phr_/, "")
                           ) ? (
@@ -450,7 +450,7 @@ const PatientHistory = ({ patientData }) => {
                             onClick={saveEditedValue}
                             variant="contained"
                             style={{
-                              backgroundColor: "#0096FF	",
+                              backgroundColor: "#0096FF",
                               // "&:hover": { backgroundColor: "orange" },
                             }}
                           >
